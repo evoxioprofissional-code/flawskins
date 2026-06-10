@@ -9,6 +9,7 @@ import { getUser } from "@/lib/auth";
 import { formatBRL } from "@/lib/format";
 import { SellerBlock } from "@/components/skins/SellerBlock";
 import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
+import { BackButton } from "@/components/layout/BackButton";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,7 @@ export default async function SkinPage({ params }: Params) {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-5">
+      <BackButton className="mb-4" fallback="/" />
       {/* Imagem grande */}
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
         <Image

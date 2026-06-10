@@ -3,21 +3,16 @@ import { z } from "zod";
 import { CATEGORIAS, EXTERIORES } from "@/types/database";
 import { sanitizeWhatsapp } from "@/lib/format";
 
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024; // ~5MB
-const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
-// Validação da imagem. No SSR `File` não existe, então só validamos
-// de fato quando estamos no browser (onde o form realmente roda).
-const imagemSchema = z
-  .custom<File>((file) => typeof File !== "undefined" && file instanceof File, {
-    message: "Selecione uma imagem da skin.",
-  })
-  .refine((file) => file.size <= MAX_IMAGE_BYTES, {
-    message: "A imagem deve ter no máximo 5MB.",
-  })
-  .refine((file) => IMAGE_TYPES.includes(file.type), {
-    message: "Formato inválido. Use JPEG, PNG ou WebP.",
-  });
+// Validação da imagem: apenas exige que um arquivo de imagem seja escolhido.
+// Sem limite de peso nem de dimensões.
+const imagemSchema = z.custom<File>(
+  (file) =>
+    typeof File !== "undefined" &&
+    file instanceof File &&
+    file.size > 0 &&
+    file.type.startsWith("image/"),
+  { message: "Selecione uma imagem da skin." }
+);
 
 export const anuncioSchema = z.object({
   titulo: z

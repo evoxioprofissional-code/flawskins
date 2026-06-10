@@ -8,11 +8,12 @@ import type { ActionResult } from "@/actions/anuncios";
 import type { Profile } from "@/types/database";
 
 const AVATAR_BUCKET = "avatars";
-const EXT_BY_TYPE: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
+
+function extFromType(type: string): string {
+  const sub = (type.split("/")[1] || "jpg").toLowerCase();
+  if (sub === "jpeg") return "jpg";
+  return sub.replace(/[^a-z0-9]/g, "") || "jpg";
+}
 
 // Busca um perfil por id (público).
 export async function buscarPerfil(id: string): Promise<Profile | null> {
@@ -48,17 +49,11 @@ export async function atualizarPerfil(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Faça login." };
 
-  // Upload do avatar (opcional)
+  // Upload do avatar (opcional) — sem limite de peso ou dimensões.
   let avatarUrl: string | undefined;
   const avatar = formData.get("avatar");
   if (avatar instanceof File && avatar.size > 0) {
-    if (!EXT_BY_TYPE[avatar.type]) {
-      return { ok: false, error: "Imagem inválida. Use JPEG, PNG ou WebP." };
-    }
-    if (avatar.size > 5 * 1024 * 1024) {
-      return { ok: false, error: "A imagem deve ter no máximo 5MB." };
-    }
-    const path = `${user.id}/${Date.now()}.${EXT_BY_TYPE[avatar.type]}`;
+    const path = `${user.id}/${Date.now()}.${extFromType(avatar.type)}`;
     const { error: upErr } = await supabase.storage
       .from(AVATAR_BUCKET)
       .upload(path, avatar, { contentType: avatar.type, upsert: true });

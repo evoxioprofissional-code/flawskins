@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import { buscarPerfil } from "@/actions/perfil";
 import { SkinForm } from "@/components/skins/SkinForm";
+import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = {
   title: "Anunciar skin — FlawSkins",
@@ -19,6 +20,7 @@ export default async function NovoAnuncioPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
+      <BackButton className="mb-4" />
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
           Anunciar uma skin

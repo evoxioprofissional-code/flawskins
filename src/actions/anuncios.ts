@@ -12,11 +12,12 @@ export type ActionResult<T> =
 
 const BUCKET = "skins";
 
-const EXT_BY_TYPE: Record<string, string> = {
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-};
+// Extensão a partir do content-type (sem restringir formatos).
+function extFromType(type: string): string {
+  const sub = (type.split("/")[1] || "jpg").toLowerCase();
+  if (sub === "jpeg") return "jpg";
+  return sub.replace(/[^a-z0-9]/g, "") || "jpg";
+}
 
 // Cria um anúncio: valida, sobe a imagem para o Storage e insere a linha.
 export async function criarAnuncio(
@@ -54,8 +55,8 @@ export async function criarAnuncio(
   }
 
   // 1) Upload da imagem
-  const ext = EXT_BY_TYPE[values.imagem.type] ?? "jpg";
-  const path = `${crypto.randomUUID()}.${ext}`;
+  const ext = extFromType(values.imagem.type);
+  const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
 
   const { error: uploadError } = await supabase.storage
     .from(BUCKET)

@@ -96,7 +96,7 @@ export function ProfileForm({ email, nome, regiao, whatsapp, avatarUrl }: Props)
             </span>
             <input
               type="file"
-              accept="image/jpeg,image/png,image/webp"
+              accept="image/*"
               className="hidden"
               onChange={onPickAvatar}
             />

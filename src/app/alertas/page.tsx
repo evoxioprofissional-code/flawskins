@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Bell } from "lucide-react";
 
 import { getUser } from "@/lib/auth";
+import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = { title: "Alertas — FlawSkins" };
 
@@ -11,6 +12,7 @@ export default async function AlertasPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
+      <BackButton className="mb-4" />
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
           Alertas

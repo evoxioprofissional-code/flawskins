@@ -6,6 +6,7 @@ import { buscarPerfil } from "@/actions/perfil";
 import { meusAnuncios } from "@/actions/anuncios";
 import { ProfileForm } from "@/components/perfil/ProfileForm";
 import { MySkins } from "@/components/perfil/MySkins";
+import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = { title: "Meu perfil — FlawSkins" };
 export const dynamic = "force-dynamic";
@@ -21,6 +22,7 @@ export default async function PerfilPage() {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
+      <BackButton className="mb-4" />
       <h1 className="mb-6 text-2xl font-bold tracking-tight text-zinc-100">
         Meu perfil
       </h1>

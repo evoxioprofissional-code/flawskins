@@ -283,14 +283,13 @@ export function SkinForm({
                     <>
                       <ImagePlus className="size-7 text-zinc-500" />
                       <span className="text-sm text-zinc-400">
-                        Toque para escolher uma imagem (JPEG, PNG ou WebP, até
-                        5MB)
+                        Toque para escolher uma imagem da skin
                       </span>
                     </>
                   )}
                   <input
                     type="file"
-                    accept="image/jpeg,image/png,image/webp"
+                    accept="image/*"
                     className="hidden"
                     onChange={onPickImage}
                   />

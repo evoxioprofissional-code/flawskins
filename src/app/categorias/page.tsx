@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { CATEGORIAS, type Categoria } from "@/types/database";
+import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = { title: "Categorias — FlawSkins" };
 
@@ -28,6 +29,7 @@ const ICONS: Record<Categoria, LucideIcon> = {
 export default function CategoriasPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-6">
+      <BackButton className="mb-4" />
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
           Categorias

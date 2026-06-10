@@ -5,6 +5,8 @@ import { dirname } from "node:path";
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
+  // Esconde o indicador de desenvolvimento do Next (o "N" no canto).
+  devIndicators: false,
   // Há um package-lock.json no diretório pai; fixamos a raiz neste projeto.
   turbopack: {
     root: projectRoot,
