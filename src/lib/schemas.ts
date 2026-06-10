@@ -65,3 +65,48 @@ export const anuncioSchema = z.object({
 });
 
 export type AnuncioFormValues = z.infer<typeof anuncioSchema>;
+
+// ---- Autenticação ----
+
+export const loginSchema = z.object({
+  email: z.string().trim().email("Informe um email válido."),
+  senha: z.string().min(6, "A senha precisa de ao menos 6 caracteres."),
+});
+export type LoginFormValues = z.infer<typeof loginSchema>;
+
+export const cadastroSchema = loginSchema.extend({
+  nome: z
+    .string()
+    .trim()
+    .min(2, "Mínimo de 2 caracteres.")
+    .max(60, "Máximo de 60 caracteres."),
+});
+export type CadastroFormValues = z.infer<typeof cadastroSchema>;
+
+// ---- Perfil ----
+
+export const perfilSchema = z.object({
+  nome: z
+    .string()
+    .trim()
+    .min(2, "Mínimo de 2 caracteres.")
+    .max(60, "Máximo de 60 caracteres."),
+  regiao: z
+    .string()
+    .trim()
+    .max(80, "Máximo de 80 caracteres.")
+    .optional()
+    .or(z.literal("")),
+  whatsapp: z
+    .string()
+    .trim()
+    .transform(sanitizeWhatsapp)
+    .pipe(
+      z
+        .string()
+        .regex(/^[0-9]{10,13}$/, "Informe DDD + número (apenas dígitos).")
+    )
+    .optional()
+    .or(z.literal("")),
+});
+export type PerfilFormValues = z.infer<typeof perfilSchema>;

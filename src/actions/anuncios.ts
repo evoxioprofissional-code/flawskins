@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { createClient } from "@/lib/supabase/server";
 import { anuncioSchema } from "@/lib/schemas";
-import type { Anuncio } from "@/types/database";
+import { CATEGORIAS, type Anuncio, type Categoria } from "@/types/database";
 
 export type ActionResult<T> =
   | { ok: true; data: T }
@@ -45,6 +45,14 @@ export async function criarAnuncio(
   const values = parsed.data;
   const supabase = await createClient();
 
+  // Exige usuário logado (a RLS também bloqueia, mas falhamos cedo e claro).
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { ok: false, error: "Faça login para anunciar." };
+  }
+
   // 1) Upload da imagem
   const ext = EXT_BY_TYPE[values.imagem.type] ?? "jpg";
   const path = `${crypto.randomUUID()}.${ext}`;
@@ -74,6 +82,7 @@ export async function criarAnuncio(
       preco: values.preco,
       whatsapp: values.whatsapp,
       image_url: publicUrl,
+      user_id: user.id,
       vendedor_nome: values.vendedor_nome,
       cidade: values.cidade ?? null,
       float_val: values.float_val ?? null,
@@ -92,18 +101,74 @@ export async function criarAnuncio(
   return { ok: true, data };
 }
 
-// Lista os anúncios ativos para o feed (mais recentes primeiro).
-export async function listarAnuncios(): Promise<Anuncio[]> {
+// Lista os anúncios ativos para o feed, com busca e filtro opcionais.
+export async function listarAnuncios(filtros?: {
+  q?: string;
+  categoria?: string;
+}): Promise<Anuncio[]> {
   const supabase = await createClient();
-  const { data, error } = await supabase
+  let query = supabase
     .from("anuncios")
     .select("*")
     .eq("status", "ativo")
+    .order("created_at", { ascending: false });
+
+  const q = filtros?.q?.trim();
+  if (q) query = query.ilike("titulo", `%${q}%`);
+
+  const categoria = filtros?.categoria?.trim();
+  if (categoria && (CATEGORIAS as readonly string[]).includes(categoria)) {
+    query = query.eq("categoria", categoria as Categoria);
+  }
+
+  const { data, error } = await query.returns<Anuncio[]>();
+  if (error) throw new Error(error.message);
+  return data ?? [];
+}
+
+// Anúncios do usuário logado (todos os status) — para a página de perfil.
+export async function meusAnuncios(): Promise<Anuncio[]> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const { data, error } = await supabase
+    .from("anuncios")
+    .select("*")
+    .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .returns<Anuncio[]>();
 
   if (error) throw new Error(error.message);
   return data ?? [];
+}
+
+// Exclui um anúncio do próprio usuário (RLS garante a posse).
+export async function excluirAnuncio(id: string): Promise<ActionResult<null>> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("anuncios").delete().eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/perfil");
+  revalidatePath("/");
+  return { ok: true, data: null };
+}
+
+// Alterna o status entre ativo/vendido (RLS garante a posse).
+export async function alternarVendido(
+  id: string,
+  vendido: boolean
+): Promise<ActionResult<null>> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("anuncios")
+    .update({ status: vendido ? "vendido" : "ativo" })
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/perfil");
+  revalidatePath("/");
+  return { ok: true, data: null };
 }
 
 // Busca um único anúncio por id (página de detalhe).

@@ -34,7 +34,15 @@ import {
 
 type Created = { id: string; texto: string };
 
-export function SkinForm() {
+export function SkinForm({
+  defaultNome = "",
+  defaultWhatsapp = "",
+  defaultCidade = "",
+}: {
+  defaultNome?: string;
+  defaultWhatsapp?: string;
+  defaultCidade?: string;
+}) {
   const router = useRouter();
   const [preview, setPreview] = useState<string | null>(null);
   const [created, setCreated] = useState<Created | null>(null);
@@ -47,9 +55,9 @@ export function SkinForm() {
     defaultValues: {
       titulo: "",
       preco: undefined,
-      whatsapp: "",
-      vendedor_nome: "",
-      cidade: "",
+      whatsapp: defaultWhatsapp,
+      vendedor_nome: defaultNome,
+      cidade: defaultCidade,
       phase: "",
     },
   });

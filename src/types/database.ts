@@ -32,6 +32,7 @@ export type Anuncio = {
   whatsapp: string;
   image_url: string;
   status: Status;
+  user_id: string | null;
   vendedor_nome: string;
   cidade: string | null;
   float_val: number | null;
@@ -44,3 +45,12 @@ export type NovoAnuncio = Omit<
   Anuncio,
   "id" | "status" | "image_url" | "created_at"
 >;
+
+export type Profile = {
+  id: string;
+  nome: string | null;
+  avatar_url: string | null;
+  regiao: string | null;
+  whatsapp: string | null;
+  updated_at: string;
+};

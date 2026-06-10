@@ -1,8 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { Lock } from "lucide-react";
 
 import { buscarAnuncio } from "@/actions/anuncios";
+import { getUser } from "@/lib/auth";
 import { formatBRL } from "@/lib/format";
 import { SellerBlock } from "@/components/skins/SellerBlock";
 import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
@@ -20,7 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
 export default async function SkinPage({ params }: Params) {
   const { id } = await params;
-  const anuncio = await buscarAnuncio(id);
+  const [anuncio, user] = await Promise.all([buscarAnuncio(id), getUser()]);
 
   if (!anuncio) notFound();
 
@@ -68,13 +71,28 @@ export default async function SkinPage({ params }: Params) {
         <SellerBlock nome={anuncio.vendedor_nome} cidade={anuncio.cidade} />
       </div>
 
-      {/* CTA */}
+      {/* CTA — número do vendedor só é exposto para usuários logados */}
       <div className="mt-6">
-        <WhatsAppButton
-          whatsapp={anuncio.whatsapp}
-          titulo={anuncio.titulo}
-          preco={anuncio.preco}
-        />
+        {user ? (
+          <WhatsAppButton
+            whatsapp={anuncio.whatsapp}
+            titulo={anuncio.titulo}
+            preco={anuncio.preco}
+          />
+        ) : (
+          <div className="space-y-1.5">
+            <Link
+              href={`/cadastro?next=/skin/${anuncio.id}`}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-4 text-base font-bold text-white shadow-[0_0_24px_-6px] shadow-whatsapp/60 transition-colors hover:bg-whatsapp-dark"
+            >
+              <Lock className="size-5" />
+              CADASTRE-SE PARA FALAR COM O VENDEDOR
+            </Link>
+            <p className="text-center text-xs text-zinc-500">
+              É rápido e grátis — leva menos de 1 minuto.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

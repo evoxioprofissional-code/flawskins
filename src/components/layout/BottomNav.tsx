@@ -11,16 +11,17 @@ type Item = {
   icon: typeof LayoutGrid;
 };
 
-// Categories/Notifications/Profile são placeholders no MVP (apontam para "#").
 const items: Item[] = [
   { href: "/", label: "Feed", icon: LayoutGrid },
-  { href: "#", label: "Categorias", icon: List },
-  { href: "#", label: "Alertas", icon: Bell },
-  { href: "#", label: "Perfil", icon: User },
+  { href: "/categorias", label: "Categorias", icon: List },
+  { href: "/alertas", label: "Alertas", icon: Bell },
+  { href: "/perfil", label: "Perfil", icon: User },
 ];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <nav
@@ -28,8 +29,8 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-800/80 bg-zinc-950/90 backdrop-blur md:hidden"
     >
       <div className="mx-auto grid max-w-md grid-cols-5 items-center px-2">
-        <NavLink item={items[0]} active={pathname === "/"} />
-        <NavLink item={items[1]} active={false} />
+        <NavLink item={items[0]} active={isActive(items[0].href)} />
+        <NavLink item={items[1]} active={isActive(items[1].href)} />
 
         {/* FAB central — leva a /novo */}
         <div className="flex justify-center">
@@ -42,8 +43,8 @@ export function BottomNav() {
           </Link>
         </div>
 
-        <NavLink item={items[2]} active={false} />
-        <NavLink item={items[3]} active={false} />
+        <NavLink item={items[2]} active={isActive(items[2].href)} />
+        <NavLink item={items[3]} active={isActive(items[3].href)} />
       </div>
     </nav>
   );
