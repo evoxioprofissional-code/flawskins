@@ -7,14 +7,6 @@ import { perfilSchema } from "@/lib/schemas";
 import type { ActionResult } from "@/actions/anuncios";
 import type { Profile } from "@/types/database";
 
-const AVATAR_BUCKET = "avatars";
-
-function extFromType(type: string): string {
-  const sub = (type.split("/")[1] || "jpg").toLowerCase();
-  if (sub === "jpeg") return "jpg";
-  return sub.replace(/[^a-z0-9]/g, "") || "jpg";
-}
-
 // Busca um perfil por id (público).
 export async function buscarPerfil(id: string): Promise<Profile | null> {
   const supabase = await createClient();
@@ -27,14 +19,22 @@ export async function buscarPerfil(id: string): Promise<Profile | null> {
   return data;
 }
 
+// A foto já vem como URL (upload feito no navegador, ver lib/upload.ts).
+export type PerfilInput = {
+  nome: string;
+  regiao?: string;
+  whatsapp?: string;
+  avatarUrl?: string;
+};
+
 // Atualiza o perfil do usuário logado (nome, região, whatsapp e foto).
 export async function atualizarPerfil(
-  formData: FormData
+  input: PerfilInput
 ): Promise<ActionResult<Profile>> {
   const parsed = perfilSchema.safeParse({
-    nome: formData.get("nome"),
-    regiao: formData.get("regiao"),
-    whatsapp: formData.get("whatsapp"),
+    nome: input.nome,
+    regiao: input.regiao,
+    whatsapp: input.whatsapp,
   });
   if (!parsed.success) {
     return {
@@ -49,19 +49,13 @@ export async function atualizarPerfil(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Faça login." };
 
-  // Upload do avatar (opcional) — sem limite de peso ou dimensões.
-  let avatarUrl: string | undefined;
-  const avatar = formData.get("avatar");
-  if (avatar instanceof File && avatar.size > 0) {
-    const path = `${user.id}/${Date.now()}.${extFromType(avatar.type)}`;
-    const { error: upErr } = await supabase.storage
-      .from(AVATAR_BUCKET)
-      .upload(path, avatar, { contentType: avatar.type, upsert: true });
-    if (upErr) {
-      return { ok: false, error: `Falha no upload da foto: ${upErr.message}` };
+  // Valida a URL do avatar, se enviada.
+  const avatarUrl = input.avatarUrl;
+  if (avatarUrl) {
+    const base = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/avatars/`;
+    if (!avatarUrl.startsWith(base)) {
+      return { ok: false, error: "Imagem inválida." };
     }
-    avatarUrl = supabase.storage.from(AVATAR_BUCKET).getPublicUrl(path)
-      .data.publicUrl;
   }
 
   const { nome, regiao, whatsapp } = parsed.data;

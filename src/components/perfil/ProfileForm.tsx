@@ -10,6 +10,7 @@ import { Camera, Loader2 } from "lucide-react";
 
 import { perfilSchema, type PerfilFormValues } from "@/lib/schemas";
 import { atualizarPerfil } from "@/actions/perfil";
+import { uploadParaBucket } from "@/lib/upload";
 
 import {
   Form,
@@ -52,21 +53,33 @@ export function ProfileForm({ email, nome, regiao, whatsapp, avatarUrl }: Props)
 
   async function onSubmit(values: PerfilFormValues) {
     setSaving(true);
-    const fd = new FormData();
-    fd.append("nome", values.nome);
-    fd.append("regiao", values.regiao ?? "");
-    fd.append("whatsapp", values.whatsapp ?? "");
-    if (file) fd.append("avatar", file);
+    try {
+      // Sobe a foto direto pro Storage (sem limite de body), se houver.
+      const novaAvatarUrl = file
+        ? await uploadParaBucket("avatars", file)
+        : undefined;
 
-    const res = await atualizarPerfil(fd);
-    setSaving(false);
-    if (!res.ok) {
-      toast.error(res.error);
-      return;
+      const res = await atualizarPerfil({
+        nome: values.nome,
+        regiao: values.regiao || undefined,
+        whatsapp: values.whatsapp || undefined,
+        avatarUrl: novaAvatarUrl,
+      });
+      if (!res.ok) {
+        toast.error(res.error);
+        return;
+      }
+      toast.success("Perfil salvo!");
+      setFile(null);
+      router.refresh();
+    } catch (e) {
+      console.error("Falha ao salvar perfil:", e);
+      toast.error(
+        e instanceof Error ? e.message : "Não foi possível salvar. Tente novamente."
+      );
+    } finally {
+      setSaving(false);
     }
-    toast.success("Perfil salvo!");
-    setFile(null);
-    router.refresh();
   }
 
   const inicial = (form.watch("nome") || email || "?").trim().charAt(0).toUpperCase();

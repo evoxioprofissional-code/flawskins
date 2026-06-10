@@ -10,50 +10,60 @@ export type ActionResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: string };
 
-const BUCKET = "skins";
+// As imagens já vêm como URLs (upload feito no navegador, ver lib/upload.ts),
+// então a Server Action recebe só texto — sem limite de body.
+export type NovoAnuncioInput = {
+  titulo: string;
+  categoria: string;
+  exterior: string;
+  preco: number | string;
+  whatsapp: string;
+  vendedor_nome: string;
+  cidade?: string;
+  float_val?: number | string | null;
+  phase?: string;
+  imageUrls: string[];
+};
 
-// Extensão a partir do content-type (sem restringir formatos).
-function extFromType(type: string): string {
-  const sub = (type.split("/")[1] || "jpg").toLowerCase();
-  if (sub === "jpeg") return "jpg";
-  return sub.replace(/[^a-z0-9]/g, "") || "jpg";
-}
-
-// Cria um anúncio: valida, sobe a imagem para o Storage e insere a linha.
+// Cria um anúncio: valida os campos e insere a linha (capa = 1ª imagem).
 export async function criarAnuncio(
-  formData: FormData
+  input: NovoAnuncioInput
 ): Promise<ActionResult<Anuncio>> {
-  // Normaliza opcionais vazios para undefined antes de validar.
-  const raw = {
-    titulo: formData.get("titulo"),
-    categoria: formData.get("categoria"),
-    exterior: formData.get("exterior"),
-    preco: formData.get("preco"),
-    whatsapp: formData.get("whatsapp"),
-    vendedor_nome: formData.get("vendedor_nome"),
-    cidade: emptyToUndefined(formData.get("cidade")),
-    float_val: emptyToUndefined(formData.get("float_val")),
-    phase: emptyToUndefined(formData.get("phase")),
-  };
-
-  const parsed = anuncioSchema.safeParse(raw);
+  const parsed = anuncioSchema.safeParse({
+    titulo: input.titulo,
+    categoria: input.categoria,
+    exterior: input.exterior,
+    preco: input.preco,
+    whatsapp: input.whatsapp,
+    vendedor_nome: input.vendedor_nome,
+    cidade: input.cidade || undefined,
+    float_val:
+      input.float_val === "" || input.float_val == null
+        ? undefined
+        : input.float_val,
+    phase: input.phase || undefined,
+  });
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message ?? "Dados inválidos.";
     return { ok: false, error: first };
   }
 
-  // Imagens (uma ou mais) — sem limite de peso/dimensões.
-  const imagens = formData
-    .getAll("imagens")
-    .filter((f): f is File => f instanceof File && f.size > 0);
-  if (imagens.length === 0) {
+  const urls = (input.imageUrls ?? []).filter(
+    (u) => typeof u === "string" && u.length > 0
+  );
+  if (urls.length === 0) {
     return { ok: false, error: "Adicione pelo menos uma imagem da skin." };
+  }
+
+  // Segurança: só aceitamos URLs do nosso bucket de skins.
+  const base = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/skins/`;
+  if (!urls.every((u) => u.startsWith(base))) {
+    return { ok: false, error: "Imagens inválidas." };
   }
 
   const values = parsed.data;
   const supabase = await createClient();
 
-  // Exige usuário logado (a RLS também bloqueia, mas falhamos cedo e claro).
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -61,24 +71,6 @@ export async function criarAnuncio(
     return { ok: false, error: "Faça login para anunciar." };
   }
 
-  // 1) Upload de todas as imagens
-  const paths: string[] = [];
-  const urls: string[] = [];
-  for (const img of imagens) {
-    const path = `${user.id}/${crypto.randomUUID()}.${extFromType(img.type)}`;
-    const { error: uploadError } = await supabase.storage
-      .from(BUCKET)
-      .upload(path, img, { contentType: img.type, upsert: false });
-    if (uploadError) {
-      // Limpa o que já subiu antes de falhar.
-      if (paths.length) await supabase.storage.from(BUCKET).remove(paths);
-      return { ok: false, error: `Falha ao enviar a imagem: ${uploadError.message}` };
-    }
-    paths.push(path);
-    urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
-  }
-
-  // 2) Insert da linha (capa = 1ª imagem)
   const { data, error } = await supabase
     .from("anuncios")
     .insert({
@@ -99,8 +91,6 @@ export async function criarAnuncio(
     .single<Anuncio>();
 
   if (error) {
-    // Best-effort: remove as imagens órfãs se o insert falhar.
-    await supabase.storage.from(BUCKET).remove(paths);
     return { ok: false, error: `Falha ao salvar o anúncio: ${error.message}` };
   }
 
@@ -189,10 +179,4 @@ export async function buscarAnuncio(id: string): Promise<Anuncio | null> {
 
   if (error) throw new Error(error.message);
   return data;
-}
-
-function emptyToUndefined(v: FormDataEntryValue | null): string | undefined {
-  if (v == null) return undefined;
-  const s = String(v).trim();
-  return s === "" ? undefined : s;
 }

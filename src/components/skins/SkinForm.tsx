@@ -12,6 +12,7 @@ import { Check, Copy, ImagePlus, Loader2, X } from "lucide-react";
 import { anuncioSchema, type AnuncioFormValues } from "@/lib/schemas";
 import { CATEGORIAS, EXTERIORES } from "@/types/database";
 import { criarAnuncio } from "@/actions/anuncios";
+import { uploadParaBucket } from "@/lib/upload";
 import { buildAnuncioText } from "@/lib/whatsapp";
 
 import {
@@ -89,34 +90,57 @@ export function SkinForm({
   async function onSubmit(values: AnuncioFormValues) {
     if (images.length === 0) {
       setImgError("Adicione pelo menos uma imagem da skin.");
+      toast.error("Adicione pelo menos uma imagem da skin.");
       return;
     }
 
-    const fd = new FormData();
-    fd.append("titulo", values.titulo);
-    fd.append("categoria", values.categoria);
-    fd.append("exterior", values.exterior);
-    fd.append("preco", String(values.preco));
-    fd.append("whatsapp", values.whatsapp);
-    fd.append("vendedor_nome", values.vendedor_nome);
-    if (values.cidade) fd.append("cidade", values.cidade);
-    if (values.float_val != null) fd.append("float_val", String(values.float_val));
-    if (values.phase) fd.append("phase", values.phase);
-    images.forEach(({ file }) => fd.append("imagens", file));
+    try {
+      // 1) Sobe as imagens direto pro Storage (sem passar pela Server Action,
+      //    então não há limite prático de tamanho).
+      const imageUrls: string[] = [];
+      for (const { file } of images) {
+        imageUrls.push(await uploadParaBucket("skins", file));
+      }
 
-    const result = await criarAnuncio(fd);
+      // 2) Cria o anúncio só com as URLs (payload pequeno).
+      const result = await criarAnuncio({
+        titulo: values.titulo,
+        categoria: values.categoria,
+        exterior: values.exterior,
+        preco: values.preco,
+        whatsapp: values.whatsapp,
+        vendedor_nome: values.vendedor_nome,
+        cidade: values.cidade || undefined,
+        float_val: values.float_val ?? undefined,
+        phase: values.phase || undefined,
+        imageUrls,
+      });
 
-    if (!result.ok) {
-      toast.error(result.error);
-      return;
+      if (!result.ok) {
+        toast.error(result.error);
+        return;
+      }
+
+      toast.success("Anúncio publicado!");
+      const texto = buildAnuncioText(result.data);
+      setCreated({ id: result.data.id, texto });
+      form.reset();
+      images.forEach(({ url }) => URL.revokeObjectURL(url));
+      setImages([]);
+    } catch (e) {
+      console.error("Falha ao publicar anúncio:", e);
+      toast.error(
+        e instanceof Error
+          ? e.message
+          : "Não foi possível publicar. Tente novamente."
+      );
     }
+  }
 
-    toast.success("Anúncio publicado!");
-    const texto = buildAnuncioText(result.data);
-    setCreated({ id: result.data.id, texto });
-    form.reset();
-    images.forEach(({ url }) => URL.revokeObjectURL(url));
-    setImages([]);
+  // Avisa quando a validação dos campos barra o envio (erros podem estar
+  // fora da tela em um formulário longo).
+  function onInvalid() {
+    toast.error("Confira os campos destacados em vermelho.");
   }
 
   async function copyText() {
@@ -172,7 +196,7 @@ export function SkinForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-8">
         {/* Seção: dados da skin */}
         <Section title="Dados da skin">
           <FormField
