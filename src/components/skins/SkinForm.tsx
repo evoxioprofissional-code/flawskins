@@ -7,13 +7,12 @@ import Link from "next/link";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Check, Copy, ImagePlus, Loader2 } from "lucide-react";
+import { Check, Copy, ImagePlus, Loader2, X } from "lucide-react";
 
 import { anuncioSchema, type AnuncioFormValues } from "@/lib/schemas";
 import { CATEGORIAS, EXTERIORES } from "@/types/database";
 import { criarAnuncio } from "@/actions/anuncios";
 import { buildAnuncioText } from "@/lib/whatsapp";
-import { cn } from "@/lib/utils";
 
 import {
   Form,
@@ -44,7 +43,8 @@ export function SkinForm({
   defaultCidade?: string;
 }) {
   const router = useRouter();
-  const [preview, setPreview] = useState<string | null>(null);
+  const [images, setImages] = useState<{ file: File; url: string }[]>([]);
+  const [imgError, setImgError] = useState<string | null>(null);
   const [created, setCreated] = useState<Created | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -66,17 +66,32 @@ export function SkinForm({
     formState: { isSubmitting },
   } = form;
 
-  function onPickImage(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    form.setValue("imagem", file, { shouldValidate: true });
-    setPreview((old) => {
-      if (old) URL.revokeObjectURL(old);
-      return URL.createObjectURL(file);
+  function onPickImages(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    if (files.length === 0) return;
+    setImages((old) => [
+      ...old,
+      ...files.map((file) => ({ file, url: URL.createObjectURL(file) })),
+    ]);
+    setImgError(null);
+    // Permite re-selecionar o mesmo arquivo depois.
+    e.target.value = "";
+  }
+
+  function removeImage(index: number) {
+    setImages((old) => {
+      const alvo = old[index];
+      if (alvo) URL.revokeObjectURL(alvo.url);
+      return old.filter((_, i) => i !== index);
     });
   }
 
   async function onSubmit(values: AnuncioFormValues) {
+    if (images.length === 0) {
+      setImgError("Adicione pelo menos uma imagem da skin.");
+      return;
+    }
+
     const fd = new FormData();
     fd.append("titulo", values.titulo);
     fd.append("categoria", values.categoria);
@@ -87,7 +102,7 @@ export function SkinForm({
     if (values.cidade) fd.append("cidade", values.cidade);
     if (values.float_val != null) fd.append("float_val", String(values.float_val));
     if (values.phase) fd.append("phase", values.phase);
-    fd.append("imagem", values.imagem);
+    images.forEach(({ file }) => fd.append("imagens", file));
 
     const result = await criarAnuncio(fd);
 
@@ -100,8 +115,8 @@ export function SkinForm({
     const texto = buildAnuncioText(result.data);
     setCreated({ id: result.data.id, texto });
     form.reset();
-    if (preview) URL.revokeObjectURL(preview);
-    setPreview(null);
+    images.forEach(({ url }) => URL.revokeObjectURL(url));
+    setImages([]);
   }
 
   async function copyText() {
@@ -256,53 +271,60 @@ export function SkinForm({
             )}
           />
 
-          {/* Imagem (controlada à parte do register) */}
-          <FormField
-            control={form.control}
-            name="imagem"
-            render={() => (
-              <FormItem>
-                <FormLabel>Imagem da skin</FormLabel>
-                <label
-                  className={cn(
-                    "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-900 px-4 py-6 text-center transition-colors hover:border-violet-500/60",
-                    preview && "border-solid border-zinc-700"
-                  )}
+          {/* Imagens (uma ou mais) */}
+          <FormItem>
+            <FormLabel>Imagens da skin</FormLabel>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+              {images.map((img, i) => (
+                <div
+                  key={img.url}
+                  className="group relative aspect-square overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950"
                 >
-                  {preview ? (
-                    <div className="relative size-40">
-                      <Image
-                        src={preview}
-                        alt="Prévia da skin"
-                        fill
-                        className="rounded-lg object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  ) : (
-                    <>
-                      <ImagePlus className="size-7 text-zinc-500" />
-                      <span className="text-sm text-zinc-400">
-                        Toque para escolher uma imagem da skin
-                      </span>
-                    </>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={onPickImage}
+                  <Image
+                    src={img.url}
+                    alt={`Imagem ${i + 1}`}
+                    fill
+                    className="object-cover"
+                    unoptimized
                   />
-                  {preview && (
-                    <span className="text-xs text-violet-400">
-                      Trocar imagem
+                  {i === 0 && (
+                    <span className="absolute top-1 left-1 rounded bg-violet-600/90 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                      Capa
                     </span>
                   )}
-                </label>
-                <FormMessage />
-              </FormItem>
+                  <button
+                    type="button"
+                    onClick={() => removeImage(i)}
+                    aria-label="Remover imagem"
+                    className="absolute top-1 right-1 grid size-6 place-items-center rounded-full bg-zinc-950/80 text-zinc-200 transition-colors hover:bg-red-600 hover:text-white"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              ))}
+
+              {/* Tile para adicionar mais */}
+              <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-zinc-700 bg-zinc-900 text-center transition-colors hover:border-violet-500/60">
+                <ImagePlus className="size-6 text-zinc-500" />
+                <span className="px-1 text-[11px] leading-tight text-zinc-400">
+                  Adicionar
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={onPickImages}
+                />
+              </label>
+            </div>
+            <p className="text-xs text-zinc-500">
+              A primeira imagem é a capa. Você pode adicionar várias.
+            </p>
+            {imgError && (
+              <p className="text-sm text-destructive">{imgError}</p>
             )}
-          />
+          </FormItem>
         </Section>
 
         {/* Seção: extras opcionais */}

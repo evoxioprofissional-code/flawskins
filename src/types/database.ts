@@ -31,6 +31,7 @@ export type Anuncio = {
   preco: number;
   whatsapp: string;
   image_url: string;
+  image_urls: string[];
   status: Status;
   user_id: string | null;
   vendedor_nome: string;

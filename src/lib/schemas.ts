@@ -3,17 +3,8 @@ import { z } from "zod";
 import { CATEGORIAS, EXTERIORES } from "@/types/database";
 import { sanitizeWhatsapp } from "@/lib/format";
 
-// Validação da imagem: apenas exige que um arquivo de imagem seja escolhido.
-// Sem limite de peso nem de dimensões.
-const imagemSchema = z.custom<File>(
-  (file) =>
-    typeof File !== "undefined" &&
-    file instanceof File &&
-    file.size > 0 &&
-    file.type.startsWith("image/"),
-  { message: "Selecione uma imagem da skin." }
-);
-
+// As imagens são gerenciadas em estado próprio no formulário (uma ou mais,
+// sem limite de peso/dimensões), por isso não entram neste schema de campos.
 export const anuncioSchema = z.object({
   titulo: z
     .string()
@@ -56,7 +47,6 @@ export const anuncioSchema = z.object({
     .max(40, "Máximo de 40 caracteres.")
     .optional()
     .or(z.literal("")),
-  imagem: imagemSchema,
 });
 
 export type AnuncioFormValues = z.infer<typeof anuncioSchema>;

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -9,6 +8,8 @@ import { getUser } from "@/lib/auth";
 import { formatBRL } from "@/lib/format";
 import { SellerBlock } from "@/components/skins/SellerBlock";
 import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
+import { OfferButton } from "@/components/skins/OfferButton";
+import { SkinGallery } from "@/components/skins/SkinGallery";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const dynamic = "force-dynamic";
@@ -31,24 +32,14 @@ export default async function SkinPage({ params }: Params) {
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-5">
       <BackButton className="mb-4" fallback="/" />
-      {/* Imagem grande */}
-      <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
-        <Image
-          src={anuncio.image_url}
-          alt={anuncio.titulo}
-          fill
-          sizes="(max-width: 768px) 100vw, 42rem"
-          className="object-contain"
-          priority
-        />
-        {anuncio.status === "vendido" && (
-          <div className="absolute inset-0 grid place-items-center bg-zinc-950/70">
-            <span className="rounded-md border border-zinc-500 px-3 py-1.5 text-sm font-bold tracking-widest text-zinc-100">
-              VENDIDO
-            </span>
-          </div>
-        )}
-      </div>
+      {/* Galeria de imagens */}
+      <SkinGallery
+        imagens={
+          anuncio.image_urls?.length ? anuncio.image_urls : [anuncio.image_url]
+        }
+        titulo={anuncio.titulo}
+        vendido={anuncio.status === "vendido"}
+      />
 
       {/* Título */}
       <div className="mt-5">
@@ -76,11 +67,18 @@ export default async function SkinPage({ params }: Params) {
       {/* CTA — número do vendedor só é exposto para usuários logados */}
       <div className="mt-6">
         {user ? (
-          <WhatsAppButton
-            whatsapp={anuncio.whatsapp}
-            titulo={anuncio.titulo}
-            preco={anuncio.preco}
-          />
+          <div className="space-y-3">
+            <WhatsAppButton
+              whatsapp={anuncio.whatsapp}
+              titulo={anuncio.titulo}
+              preco={anuncio.preco}
+            />
+            <OfferButton
+              whatsapp={anuncio.whatsapp}
+              titulo={anuncio.titulo}
+              preco={anuncio.preco}
+            />
+          </div>
         ) : (
           <div className="space-y-1.5">
             <Link

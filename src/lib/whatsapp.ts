@@ -20,6 +20,22 @@ export function buildWhatsappLink(
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
 }
 
+// Monta o link wa.me com uma OFERTA (lance) do comprador.
+export function buildLanceLink(
+  whatsapp: string,
+  titulo: string,
+  preco: number,
+  lance: number
+): string {
+  const numero = comDDI(whatsapp);
+  const mensagem = `Olá! Vi sua skin "${titulo}" anunciada por ${formatBRL(
+    preco
+  )} no FlawSkins. Quero fazer um lance de ${formatBRL(
+    lance
+  )}. Podemos negociar?`;
+  return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
+}
+
 type AnuncioTextInput = {
   titulo: string;
   categoria: string;

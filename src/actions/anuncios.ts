@@ -34,13 +34,20 @@ export async function criarAnuncio(
     cidade: emptyToUndefined(formData.get("cidade")),
     float_val: emptyToUndefined(formData.get("float_val")),
     phase: emptyToUndefined(formData.get("phase")),
-    imagem: formData.get("imagem"),
   };
 
   const parsed = anuncioSchema.safeParse(raw);
   if (!parsed.success) {
     const first = parsed.error.issues[0]?.message ?? "Dados inválidos.";
     return { ok: false, error: first };
+  }
+
+  // Imagens (uma ou mais) — sem limite de peso/dimensões.
+  const imagens = formData
+    .getAll("imagens")
+    .filter((f): f is File => f instanceof File && f.size > 0);
+  if (imagens.length === 0) {
+    return { ok: false, error: "Adicione pelo menos uma imagem da skin." };
   }
 
   const values = parsed.data;
@@ -54,26 +61,24 @@ export async function criarAnuncio(
     return { ok: false, error: "Faça login para anunciar." };
   }
 
-  // 1) Upload da imagem
-  const ext = extFromType(values.imagem.type);
-  const path = `${user.id}/${crypto.randomUUID()}.${ext}`;
-
-  const { error: uploadError } = await supabase.storage
-    .from(BUCKET)
-    .upload(path, values.imagem, {
-      contentType: values.imagem.type,
-      upsert: false,
-    });
-
-  if (uploadError) {
-    return { ok: false, error: `Falha ao enviar a imagem: ${uploadError.message}` };
+  // 1) Upload de todas as imagens
+  const paths: string[] = [];
+  const urls: string[] = [];
+  for (const img of imagens) {
+    const path = `${user.id}/${crypto.randomUUID()}.${extFromType(img.type)}`;
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, img, { contentType: img.type, upsert: false });
+    if (uploadError) {
+      // Limpa o que já subiu antes de falhar.
+      if (paths.length) await supabase.storage.from(BUCKET).remove(paths);
+      return { ok: false, error: `Falha ao enviar a imagem: ${uploadError.message}` };
+    }
+    paths.push(path);
+    urls.push(supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
   }
 
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from(BUCKET).getPublicUrl(path);
-
-  // 2) Insert da linha
+  // 2) Insert da linha (capa = 1ª imagem)
   const { data, error } = await supabase
     .from("anuncios")
     .insert({
@@ -82,7 +87,8 @@ export async function criarAnuncio(
       exterior: values.exterior,
       preco: values.preco,
       whatsapp: values.whatsapp,
-      image_url: publicUrl,
+      image_url: urls[0],
+      image_urls: urls,
       user_id: user.id,
       vendedor_nome: values.vendedor_nome,
       cidade: values.cidade ?? null,
@@ -93,8 +99,8 @@ export async function criarAnuncio(
     .single<Anuncio>();
 
   if (error) {
-    // Best-effort: remove a imagem órfã se o insert falhar.
-    await supabase.storage.from(BUCKET).remove([path]);
+    // Best-effort: remove as imagens órfãs se o insert falhar.
+    await supabase.storage.from(BUCKET).remove(paths);
     return { ok: false, error: `Falha ao salvar o anúncio: ${error.message}` };
   }
 
