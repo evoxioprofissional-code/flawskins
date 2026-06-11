@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import { buscarPerfil } from "@/actions/perfil";
 import { meusAnuncios } from "@/actions/anuncios";
+import { getArenaStats } from "@/actions/arena";
 import { ProfileForm } from "@/components/perfil/ProfileForm";
 import { MySkins } from "@/components/perfil/MySkins";
+import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = { title: "Meu perfil — FlawSkins" };
@@ -15,9 +17,10 @@ export default async function PerfilPage() {
   const user = await getUser();
   if (!user) redirect("/login?next=/perfil");
 
-  const [perfil, anuncios] = await Promise.all([
+  const [perfil, anuncios, arenaStats] = await Promise.all([
     buscarPerfil(user.id),
     meusAnuncios(),
+    getArenaStats(user.id),
   ]);
 
   return (
@@ -35,7 +38,11 @@ export default async function PerfilPage() {
         avatarUrl={perfil?.avatar_url ?? null}
       />
 
-      <section className="mt-10">
+      <div className="mt-8">
+        <ArenaStatsPanel stats={arenaStats} />
+      </div>
+
+      <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold text-zinc-100">
           Minhas skins{" "}
           <span className="text-sm font-normal text-zinc-500">

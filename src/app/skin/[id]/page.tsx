@@ -61,7 +61,11 @@ export default async function SkinPage({ params }: Params) {
 
       {/* Vendedor */}
       <div className="mt-5">
-        <SellerBlock nome={anuncio.vendedor_nome} cidade={anuncio.cidade} />
+        <SellerBlock
+          nome={anuncio.vendedor_nome}
+          cidade={anuncio.cidade}
+          userId={anuncio.user_id}
+        />
       </div>
 
       {/* CTA — número do vendedor só é exposto para usuários logados */}

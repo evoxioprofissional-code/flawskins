@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, LayoutGrid, List, Plus, User } from "lucide-react";
+import { LayoutGrid, List, Plus, Swords, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Item = {
@@ -14,7 +14,7 @@ type Item = {
 const items: Item[] = [
   { href: "/", label: "Feed", icon: LayoutGrid },
   { href: "/categorias", label: "Categorias", icon: List },
-  { href: "/alertas", label: "Alertas", icon: Bell },
+  { href: "/arena", label: "Arena", icon: Swords },
   { href: "/perfil", label: "Perfil", icon: User },
 ];
 

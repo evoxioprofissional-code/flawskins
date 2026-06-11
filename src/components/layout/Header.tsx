@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { Bell, Plus, Search, SlidersHorizontal } from "lucide-react";
+import { Plus, Search, SlidersHorizontal, Swords } from "lucide-react";
 
 import { Logo } from "@/components/layout/Logo";
 import { AccountButton } from "@/components/layout/AccountButton";
-import { Button } from "@/components/ui/button";
 import { getUser } from "@/lib/auth";
 
 export async function Header() {
@@ -20,14 +19,13 @@ export async function Header() {
         <div className="flex h-14 items-center justify-between gap-3">
           <Logo />
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Notificações"
-              className="rounded-full border border-zinc-800 text-zinc-300"
+            <Link
+              href="/arena"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-violet-500/40 bg-violet-500/10 px-3 text-sm font-semibold text-violet-200 transition-colors hover:bg-violet-500/20"
             >
-              <Bell className="size-5" />
-            </Button>
+              <Swords className="size-4" />
+              Arena
+            </Link>
             <AccountButton nome={nome} />
           </div>
         </div>
