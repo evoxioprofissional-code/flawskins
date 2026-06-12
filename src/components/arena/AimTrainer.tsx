@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { sfx, resumeAudio } from "@/lib/arena/sound";
-import { drawCrosshair, getCrosshair, type CrosshairId } from "@/lib/arena/crosshairs";
+import { drawCrosshairCfg, type CrosshairConfig } from "@/lib/arena/crosshairs";
 import {
   ARENA_GAMES,
   DIFF_PARAMS,
@@ -42,12 +42,14 @@ const DURATION = 30000; // ms
 export function AimTrainer({
   game,
   difficulty,
-  crosshairId,
+  crosshair,
+  crosshairNome,
   onFinish,
 }: {
   game: ArenaGame;
   difficulty: Difficulty;
-  crosshairId: CrosshairId;
+  crosshair: CrosshairConfig;
+  crosshairNome?: string;
   onFinish: (m: MatchMetrics) => void;
 }) {
   const [phase, setPhase] = useState<"intro" | "play">("intro");
@@ -70,7 +72,6 @@ export function AimTrainer({
     const canvas = canvasRef.current!;
     const container = containerRef.current!;
     const ctx = canvas.getContext("2d")!;
-    const cross = getCrosshair(crosshairId);
     const accent = ARENA_GAMES[game].accent;
     const d = DIFF_PARAMS[difficulty];
 
@@ -451,7 +452,7 @@ export function AimTrainer({
       }
 
       // crosshair
-      drawCrosshair(ctx, pointer.x, pointer.y, cross.id as CrosshairId, cross.cor);
+      drawCrosshairCfg(ctx, pointer.x, pointer.y, crosshair);
 
       // HUD throttle
       hudAcc += dt;
@@ -561,7 +562,7 @@ export function AimTrainer({
           <h2 className="text-xl font-bold text-zinc-100">{meta.nome}</h2>
           <p className="max-w-sm text-sm text-zinc-400">{meta.desc}</p>
           <p className="text-xs text-zinc-500">
-            Cursor escondido · crosshair {getCrosshair(crosshairId).nome} · 30s
+            Cursor escondido · crosshair {crosshairNome ?? "custom"} · 30s
           </p>
           <button
             type="button"

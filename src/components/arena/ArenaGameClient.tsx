@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
@@ -8,11 +8,13 @@ import { RotateCcw, Trophy, Volume2, VolumeX } from "lucide-react";
 import { registrarScore } from "@/actions/arena";
 import { AimTrainer } from "@/components/arena/AimTrainer";
 import { ReflexAdvanced } from "@/components/arena/ReflexAdvanced";
+import { CrosshairCanvas } from "@/components/arena/CrosshairCanvas";
 import { setMuted, sfx } from "@/lib/arena/sound";
 import {
-  CROSSHAIRS,
-  drawCrosshair,
-  type CrosshairId,
+  CROSSHAIR_PRESETS,
+  DEFAULT_CROSSHAIR,
+  presetById,
+  type CrosshairConfig,
 } from "@/lib/arena/crosshairs";
 import {
   ARENA_GAMES,
@@ -25,38 +27,61 @@ import {
 } from "@/types/arena";
 import { cn } from "@/lib/utils";
 
+type Applied = { cfg: CrosshairConfig; preset: string; nome: string };
+
+function loadApplied(): Applied {
+  if (typeof window === "undefined")
+    return { cfg: DEFAULT_CROSSHAIR, preset: "classic", nome: "Classic" };
+  try {
+    const cfg = localStorage.getItem("flaw_cross_cfg");
+    const preset = localStorage.getItem("flaw_cross_preset");
+    const nome = localStorage.getItem("flaw_cross_nome");
+    if (cfg && preset) return { cfg: JSON.parse(cfg), preset, nome: nome ?? preset };
+  } catch {
+    /* ignore */
+  }
+  return { cfg: DEFAULT_CROSSHAIR, preset: "classic", nome: "Classic" };
+}
+
 export function ArenaGameClient({ game }: { game: ArenaGame }) {
   const meta = ARENA_GAMES[game];
   const isReflex = meta.tipo === "reflex";
 
   const [diff, setDiff] = useState<Difficulty>("medio");
-  const [cross, setCross] = useState<CrosshairId>("classic");
   const [mute, setMute] = useState(false);
   const [round, setRound] = useState(0);
   const [enviando, setEnviando] = useState(false);
+  const [applied, setApplied] = useState<Applied>({
+    cfg: DEFAULT_CROSSHAIR,
+    preset: "classic",
+    nome: "Classic",
+  });
   const [result, setResult] = useState<{
     m: MatchMetrics;
     posicao: number | null;
   } | null>(null);
 
-  // Preferências persistidas.
   useEffect(() => {
     const d = localStorage.getItem("flaw_diff") as Difficulty | null;
-    const c = localStorage.getItem("flaw_cross") as CrosshairId | null;
     const mu = localStorage.getItem("flaw_mute") === "1";
     if (d) setDiff(d);
-    if (c) setCross(c);
     setMute(mu);
     setMuted(mu);
+    setApplied(loadApplied());
   }, []);
 
   function pickDiff(d: Difficulty) {
     setDiff(d);
     localStorage.setItem("flaw_diff", d);
   }
-  function pickCross(c: CrosshairId) {
-    setCross(c);
-    localStorage.setItem("flaw_cross", c);
+  function pickPreset(id: string) {
+    const p = presetById(id);
+    if (!p) return;
+    const a = { cfg: p.cfg, preset: p.id, nome: p.nome };
+    setApplied(a);
+    localStorage.setItem("flaw_cross_cfg", JSON.stringify(a.cfg));
+    localStorage.setItem("flaw_cross_preset", a.preset);
+    localStorage.setItem("flaw_cross_nome", a.nome);
   }
   function toggleMute() {
     const v = !mute;
@@ -67,7 +92,7 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
 
   async function onFinish(m: MatchMetrics) {
     setEnviando(true);
-    const res = await registrarScore(game, m);
+    const res = await registrarScore(game, m, applied.preset);
     setEnviando(false);
     if (!res.ok) {
       toast.error(res.error);
@@ -88,6 +113,7 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
       <RichResult
         game={game}
         m={result.m}
+        preset={applied.nome}
         posicao={result.posicao}
         enviando={enviando}
         onReplay={replay}
@@ -95,9 +121,10 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
     );
   }
 
+  const ehPreset = CROSSHAIR_PRESETS.some((p) => p.id === applied.preset);
+
   return (
     <div className="space-y-4">
-      {/* Dificuldade + som */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold tracking-widest text-zinc-500 uppercase">
           Dificuldade
@@ -127,40 +154,51 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
         </button>
       </div>
 
-      {/* Crosshair (só pros modos de mira) */}
       {!isReflex && (
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-semibold tracking-widest text-zinc-500 uppercase">
             Mira
           </span>
-          {CROSSHAIRS.map((c) => (
+          {CROSSHAIR_PRESETS.map((p) => (
             <button
-              key={c.id}
+              key={p.id}
               type="button"
-              onClick={() => pickCross(c.id)}
-              title={c.nome}
+              onClick={() => pickPreset(p.id)}
+              title={p.nome}
               className={cn(
                 "grid size-10 place-items-center rounded-lg border bg-zinc-950 transition-colors",
-                c.id === cross
+                p.id === applied.preset
                   ? "border-violet-500 ring-1 ring-violet-500/50"
                   : "border-zinc-800 hover:bg-zinc-800"
               )}
             >
-              <CrosshairPreview id={c.id} cor={c.cor} />
+              <CrosshairCanvas cfg={p.cfg} size={34} />
             </button>
           ))}
+          {!ehPreset && (
+            <span className="inline-flex items-center gap-2 rounded-lg border border-violet-500/40 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-200">
+              <CrosshairCanvas cfg={applied.cfg} size={22} />
+              {applied.nome}
+            </span>
+          )}
+          <Link
+            href="/arena/pro-lab"
+            className="ml-auto text-xs text-violet-400 hover:underline"
+          >
+            Pro Lab →
+          </Link>
         </div>
       )}
 
-      {/* Trainer */}
       {isReflex ? (
         <ReflexAdvanced key={`${round}-${diff}`} difficulty={diff} onFinish={onFinish} />
       ) : (
         <AimTrainer
-          key={`${round}-${diff}-${cross}`}
+          key={`${round}-${diff}-${applied.preset}`}
           game={game}
           difficulty={diff}
-          crosshairId={cross}
+          crosshair={applied.cfg}
+          crosshairNome={applied.nome}
           onFinish={onFinish}
         />
       )}
@@ -168,31 +206,17 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
   );
 }
 
-function CrosshairPreview({ id, cor }: { id: CrosshairId; cor: string }) {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const c = ref.current;
-    if (!c) return;
-    const ctx = c.getContext("2d")!;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    c.width = 34 * dpr;
-    c.height = 34 * dpr;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, 34, 34);
-    drawCrosshair(ctx, 17, 17, id, cor);
-  }, [id, cor]);
-  return <canvas ref={ref} style={{ width: 34, height: 34 }} />;
-}
-
 function RichResult({
   game,
   m,
+  preset,
   posicao,
   enviando,
   onReplay,
 }: {
   game: ArenaGame;
   m: MatchMetrics;
+  preset: string;
   posicao: number | null;
   enviando: boolean;
   onReplay: () => void;
@@ -205,6 +229,7 @@ function RichResult({
       <p className="mt-2 text-5xl font-black text-zinc-50">
         {formatScore(game, m.valor)}
       </p>
+      <p className="mt-1 text-xs text-zinc-500">Mira: {preset}</p>
       {enviando ? (
         <p className="mt-2 text-sm text-zinc-400">Salvando…</p>
       ) : posicao ? (

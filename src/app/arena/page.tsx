@@ -113,12 +113,20 @@ export default async function ArenaPage() {
         )}
       </div>
 
-      <Link
-        href="/arena/ranking"
-        className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:bg-zinc-800"
-      >
-        <Trophy className="size-4 text-yellow-400" /> Ver rankings completos
-      </Link>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <Link
+          href="/arena/pro-lab"
+          className="flex items-center justify-center gap-2 rounded-xl border border-violet-500/40 bg-violet-500/10 py-3 text-sm font-semibold text-violet-200 transition-colors hover:bg-violet-500/20"
+        >
+          <Crosshair className="size-4" /> Pro Player Lab
+        </Link>
+        <Link
+          href="/arena/ranking"
+          className="flex items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 py-3 text-sm font-semibold text-zinc-200 transition-colors hover:bg-zinc-800"
+        >
+          <Trophy className="size-4 text-yellow-400" /> Rankings
+        </Link>
+      </div>
     </div>
   );
 }
