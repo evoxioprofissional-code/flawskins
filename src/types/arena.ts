@@ -201,6 +201,15 @@ function buildAchievements() {
     streak30: { emoji: "🔥", label: "30 dias consecutivos" },
     ads100: { emoji: "💰", label: "100 anúncios publicados" },
     season_champion: { emoji: "⭐", label: "Campeão de Temporada" },
+    // Skill (difíceis mesmo solo)
+    reflexo_sub250: { emoji: "⚡", label: "Reflexo abaixo de 250ms" },
+    reflexo_sub200: { emoji: "⚡", label: "Reflexo abaixo de 200ms" },
+    combo25: { emoji: "🔗", label: "Combo de 25" },
+    combo50: { emoji: "🔗", label: "Combo de 50" },
+    sharp90: { emoji: "🎯", label: "90% de accuracy" },
+    sharp95: { emoji: "🎯", label: "95% de accuracy" },
+    veterano: { emoji: "🎖️", label: "50 partidas jogadas" },
+    maniaco: { emoji: "🏆", label: "250 partidas jogadas" },
   };
   for (const g of ARENA_GAME_SLUGS) {
     map[`top100_${g}`] = { emoji: "🥉", label: `Top 100 ${TOP_LABEL[g]}` };
