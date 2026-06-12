@@ -190,3 +190,17 @@ export async function salvarCrosshair(
   revalidatePath("/arena/pro-lab");
   return { ok: true, data: { id: data.id } };
 }
+
+// Exclui uma mira da comunidade (a RLS garante que só o dono apaga).
+export async function excluirCrosshair(
+  id: string
+): Promise<ActionResult<null>> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("arena_community_crosshairs")
+    .delete()
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/arena/pro-lab");
+  return { ok: true, data: null };
+}

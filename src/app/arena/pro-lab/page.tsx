@@ -42,6 +42,7 @@ export default async function ProLabPage() {
 
       <ProLab
         logged={!!user}
+        meuId={user?.id ?? null}
         presetRanking={presetRanking}
         topPreset={topPreset}
         comunidade={comunidade}

@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Crosshair, Play, Save, Users, Zap } from "lucide-react";
+import { Check, Crosshair, Play, Save, Trash2, Users, Zap } from "lucide-react";
 
-import { salvarCrosshair } from "@/actions/arena";
+import { excluirCrosshair, salvarCrosshair } from "@/actions/arena";
 import type {
   CommunityCrosshair,
   PresetMeu,
@@ -28,12 +28,14 @@ function aplicar(cfg: CrosshairConfig, preset: string, nome: string) {
 
 export function ProLab({
   logged,
+  meuId,
   presetRanking,
   topPreset,
   comunidade,
   myStats,
 }: {
   logged: boolean;
+  meuId: string | null;
   presetRanking: PresetUso[];
   topPreset: TopPreset;
   comunidade: CommunityCrosshair[];
@@ -93,6 +95,7 @@ export function ProLab({
         <ComunidadeTab
           comunidade={comunidade}
           logged={logged}
+          meuId={meuId}
           onApply={(c, cfg) => {
             aplicar(cfg, `com:${c.id}`, c.nome);
             toast.success(`"${c.nome}" aplicada!`);
@@ -304,11 +307,13 @@ function MelhorSetup({ myStats }: { myStats: PresetMeu[] }) {
 function ComunidadeTab({
   comunidade,
   logged,
+  meuId,
   onApply,
   onTest,
 }: {
   comunidade: CommunityCrosshair[];
   logged: boolean;
+  meuId: string | null;
   onApply: (c: CommunityCrosshair, cfg: CrosshairConfig) => void;
   onTest: (c: CommunityCrosshair, cfg: CrosshairConfig) => void;
 }) {
@@ -333,44 +338,109 @@ function ComunidadeTab({
           </p>
         ) : (
           <div className="grid gap-2 sm:grid-cols-2">
-            {comunidade.map((c) => {
-              const cfg = c.config as CrosshairConfig;
-              return (
-                <div
-                  key={c.id}
-                  className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3"
-                >
-                  <div className="grid size-11 shrink-0 place-items-center rounded-lg border border-zinc-800 bg-zinc-950">
-                    <CrosshairCanvas cfg={cfg} size={38} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-zinc-100">{c.nome}</p>
-                    <p className="truncate text-xs text-zinc-500">
-                      por {c.autor ?? "anônimo"}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => onApply(c, cfg)}
-                      className="rounded-lg border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 hover:bg-zinc-800"
-                    >
-                      Aplicar
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onTest(c, cfg)}
-                      className="rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-2.5 py-1 text-xs font-semibold text-white"
-                    >
-                      Testar
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {comunidade.map((c) => (
+              <CommunityItem
+                key={c.id}
+                c={c}
+                meu={!!meuId && c.user_id === meuId}
+                onApply={onApply}
+                onTest={onTest}
+              />
+            ))}
           </div>
         )}
       </section>
+    </div>
+  );
+}
+
+function CommunityItem({
+  c,
+  meu,
+  onApply,
+  onTest,
+}: {
+  c: CommunityCrosshair;
+  meu: boolean;
+  onApply: (c: CommunityCrosshair, cfg: CrosshairConfig) => void;
+  onTest: (c: CommunityCrosshair, cfg: CrosshairConfig) => void;
+}) {
+  const router = useRouter();
+  const cfg = c.config as CrosshairConfig;
+  const [confirmar, setConfirmar] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
+
+  async function excluir() {
+    setExcluindo(true);
+    const res = await excluirCrosshair(c.id);
+    setExcluindo(false);
+    if (!res.ok) {
+      toast.error(res.error);
+      return;
+    }
+    toast.success("Mira excluída.");
+    router.refresh();
+  }
+
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3">
+      <div className="grid size-11 shrink-0 place-items-center rounded-lg border border-zinc-800 bg-zinc-950">
+        <CrosshairCanvas cfg={cfg} size={38} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold text-zinc-100">{c.nome}</p>
+        <p className="truncate text-xs text-zinc-500">
+          por {meu ? "você" : c.autor ?? "anônimo"}
+        </p>
+      </div>
+      <div className="flex shrink-0 items-center gap-1.5">
+        {confirmar ? (
+          <>
+            <button
+              type="button"
+              onClick={excluir}
+              disabled={excluindo}
+              className="rounded-lg bg-red-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-60"
+            >
+              {excluindo ? "..." : "Excluir"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setConfirmar(false)}
+              className="rounded-lg border border-zinc-700 px-2.5 py-1 text-xs text-zinc-300"
+            >
+              Não
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => onApply(c, cfg)}
+              className="rounded-lg border border-zinc-700 px-2.5 py-1 text-xs text-zinc-200 hover:bg-zinc-800"
+            >
+              Aplicar
+            </button>
+            <button
+              type="button"
+              onClick={() => onTest(c, cfg)}
+              className="rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-2.5 py-1 text-xs font-semibold text-white"
+            >
+              Testar
+            </button>
+            {meu && (
+              <button
+                type="button"
+                onClick={() => setConfirmar(true)}
+                aria-label="Excluir mira"
+                className="grid size-7 place-items-center rounded-lg border border-zinc-700 text-red-400 transition-colors hover:bg-red-500/10"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
