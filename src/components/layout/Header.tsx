@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Plus, Search, SlidersHorizontal, Swords } from "lucide-react";
+import { Plus, Search, SlidersHorizontal, Swords, Ticket } from "lucide-react";
 
 import { Logo } from "@/components/layout/Logo";
 import { AccountButton } from "@/components/layout/AccountButton";
@@ -20,11 +20,18 @@ export async function Header() {
           <Logo />
           <div className="flex items-center gap-2">
             <Link
+              href="/rifas"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-orange-500/40 bg-orange-500/10 px-3 text-sm font-semibold text-orange-200 transition-colors hover:bg-orange-500/20"
+            >
+              <Ticket className="size-4" />
+              <span className="hidden sm:inline">Rifas</span>
+            </Link>
+            <Link
               href="/arena"
               className="inline-flex h-9 items-center gap-1.5 rounded-full border border-violet-500/40 bg-violet-500/10 px-3 text-sm font-semibold text-violet-200 transition-colors hover:bg-violet-500/20"
             >
               <Swords className="size-4" />
-              Arena
+              <span className="hidden sm:inline">Arena</span>
             </Link>
             <AccountButton nome={nome} />
           </div>
