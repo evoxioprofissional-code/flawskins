@@ -1,9 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
+import { criarPagamentoPix } from "@/lib/mercadopago";
 import type { ActionResult } from "@/actions/anuncios";
 import type { Rifa, RifaNumero } from "@/types/rifa";
 
@@ -120,6 +122,106 @@ export async function reservarNumeros(
   if (got.length === 0)
     return { ok: false, error: "Esses números já foram pegos. Tente outros." };
   return { ok: true, data: { numeros: got } };
+}
+
+// ---- Pagamento Pix (Mercado Pago) ----
+export type CompraSel =
+  | { tipo: "aleatorio"; qtd: number }
+  | { tipo: "numeros"; numeros: number[] };
+
+export type PixPagamento = {
+  pagamentoId: string;
+  valor: number;
+  qrBase64: string;
+  copiaCola: string;
+  numeros: number[];
+};
+
+// Reserva os números e gera o Pix do Mercado Pago.
+export async function comprarCotas(
+  rifaId: string,
+  sel: CompraSel
+): Promise<ActionResult<PixPagamento>> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) return { ok: false, error: "Entre para comprar cotas." };
+
+  // 1) Reserva os números + cria o registro de pagamento (atômico).
+  const { data: ini, error: e1 } = await supabase.rpc("rifa_iniciar_pagamento", {
+    p_rifa: rifaId,
+    p_qtd: sel.tipo === "aleatorio" ? sel.qtd : null,
+    p_numeros: sel.tipo === "numeros" ? sel.numeros : null,
+  });
+  if (e1) return { ok: false, error: e1.message };
+  const info = ini as { pagamento_id: string; numeros: number[]; valor: number };
+
+  // 2) Gera o Pix no Mercado Pago.
+  try {
+    const origin =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (await headers()).get("origin") ||
+      "";
+    const pix = await criarPagamentoPix({
+      valor: info.valor,
+      descricao: `FlawSkins · ${info.numeros.length} cota(s) de rifa`,
+      email: user.email,
+      idempotency: info.pagamento_id,
+      externalReference: info.pagamento_id,
+      notificationUrl: origin ? `${origin}/api/mp/webhook` : undefined,
+      expiraEmMin: 30,
+    });
+
+    await supabase.rpc("rifa_set_pix", {
+      p_pagamento: info.pagamento_id,
+      p_mp_id: pix.id,
+      p_copia: pix.qr_copia,
+      p_base64: pix.qr_base64,
+    });
+
+    revalidatePath(`/rifas/${rifaId}`);
+    return {
+      ok: true,
+      data: {
+        pagamentoId: info.pagamento_id,
+        valor: info.valor,
+        qrBase64: pix.qr_base64,
+        copiaCola: pix.qr_copia,
+        numeros: info.numeros,
+      },
+    };
+  } catch (err) {
+    // Falhou o Pix → libera os números reservados.
+    await supabase.rpc("rifa_cancelar_proprio", { p_pagamento: info.pagamento_id });
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : "Falha ao gerar o Pix.",
+    };
+  }
+}
+
+export async function statusPagamento(
+  pagamentoId: string
+): Promise<"pendente" | "pago" | "cancelado" | "desconhecido"> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("rifa_pagamentos")
+    .select("status")
+    .eq("id", pagamentoId)
+    .maybeSingle<{ status: "pendente" | "pago" | "cancelado" }>();
+  return data?.status ?? "desconhecido";
+}
+
+export async function cancelarMeuPagamento(
+  pagamentoId: string
+): Promise<ActionResult<null>> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("rifa_cancelar_proprio", {
+    p_pagamento: pagamentoId,
+  });
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, data: null };
 }
 
 // ---- Admin ----

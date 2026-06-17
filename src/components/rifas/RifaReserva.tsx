@@ -1,14 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Dice5, Ticket } from "lucide-react";
 
-import { reservarAleatorio, reservarNumeros } from "@/actions/rifas";
+import { comprarCotas } from "@/actions/rifas";
+import { PixModal } from "@/components/rifas/PixModal";
 import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import type { PixPagamento } from "@/actions/rifas";
 import type { RifaNumero } from "@/types/rifa";
 
 const GRID_MAX = 300;
@@ -32,10 +33,10 @@ export function RifaReserva({
   taken: { numero: number; user_id: string }[];
   meus: RifaNumero[];
 }) {
-  const router = useRouter();
   const [qtd, setQtd] = useState(1);
   const [sel, setSel] = useState<Set<number>>(new Set());
   const [busy, setBusy] = useState(false);
+  const [pix, setPix] = useState<PixPagamento | null>(null);
 
   const restante = total - vendidos;
   const takenSet = useMemo(() => new Set(taken.map((t) => t.numero)), [taken]);
@@ -52,22 +53,20 @@ export function RifaReserva({
 
   async function aleatorio() {
     setBusy(true);
-    const res = await reservarAleatorio(rifaId, qtd);
+    const res = await comprarCotas(rifaId, { tipo: "aleatorio", qtd });
     setBusy(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success(`Reservado: ${res.data.numeros.sort((a, b) => a - b).join(", ")}`);
-    router.refresh();
+    setPix(res.data);
   }
 
   async function reservarSelecionados() {
     if (sel.size === 0) return;
     setBusy(true);
-    const res = await reservarNumeros(rifaId, [...sel]);
+    const res = await comprarCotas(rifaId, { tipo: "numeros", numeros: [...sel] });
     setBusy(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success(`Reservado: ${res.data.numeros.sort((a, b) => a - b).join(", ")}`);
     setSel(new Set());
-    router.refresh();
+    setPix(res.data);
   }
 
   if (!aberta) {
@@ -143,7 +142,7 @@ export function RifaReserva({
             className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 text-sm font-semibold text-white disabled:opacity-60"
           >
             <Dice5 className="size-4" />
-            Reservar {qtd} · {formatBRL(qtd * preco)}
+            Comprar {qtd} · {formatBRL(qtd * preco)}
           </button>
         </div>
       </div>
@@ -160,7 +159,7 @@ export function RifaReserva({
                 disabled={busy}
                 className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-3 text-sm font-semibold text-white disabled:opacity-60"
               >
-                <Ticket className="size-4" /> Reservar {sel.size} · {formatBRL(sel.size * preco)}
+                <Ticket className="size-4" /> Comprar {sel.size} · {formatBRL(sel.size * preco)}
               </button>
             )}
           </div>
@@ -199,10 +198,12 @@ export function RifaReserva({
       )}
 
       <p className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-500">
-        💡 As cotas ficam <b>reservadas</b> assim que você clica. O pagamento
-        via <b>Pix</b> será habilitado em breve — por enquanto o admin confirma
-        os pagamentos manualmente.
+        💳 Pagamento por <b>Pix</b> (Mercado Pago). As cotas são confirmadas
+        automaticamente assim que o pagamento cair. Se não pagar, elas voltam a
+        ficar livres.
       </p>
+
+      {pix && <PixModal pix={pix} onClose={() => setPix(null)} />}
     </div>
   );
 }
