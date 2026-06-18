@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
+import { getCreatorToken } from "@/lib/supabase/admin";
 import { criarPagamentoPix } from "@/lib/mercadopago";
 import type { ActionResult } from "@/actions/anuncios";
 import type { Rifa, RifaNumero } from "@/types/rifa";
@@ -210,7 +211,27 @@ export async function comprarCotas(
   if (e1) return { ok: false, error: e1.message };
   const info = ini as { pagamento_id: string; numeros: number[]; valor: number };
 
-  // 2) Gera o Pix no Mercado Pago.
+  // Define se o dinheiro vai pra conta do criador (rifa de usuário) ou nossa.
+  const { data: pay } = await supabase
+    .from("rifa_pagamentos")
+    .select("mp_conta_user")
+    .eq("id", info.pagamento_id)
+    .maybeSingle<{ mp_conta_user: string | null }>();
+
+  let accessToken: string | undefined;
+  if (pay?.mp_conta_user) {
+    const tok = await getCreatorToken(pay.mp_conta_user);
+    if (!tok) {
+      await supabase.rpc("rifa_cancelar_proprio", { p_pagamento: info.pagamento_id });
+      return {
+        ok: false,
+        error: "Pagamento desta rifa indisponível no momento. Tente mais tarde.",
+      };
+    }
+    accessToken = tok;
+  }
+
+  // 2) Gera o Pix no Mercado Pago (na conta certa).
   try {
     const origin =
       process.env.NEXT_PUBLIC_SITE_URL ||
@@ -224,6 +245,7 @@ export async function comprarCotas(
       externalReference: info.pagamento_id,
       notificationUrl: origin ? `${origin}/api/mp/webhook` : undefined,
       expiraEmMin: 30,
+      accessToken,
     });
 
     await supabase.rpc("rifa_set_pix", {
@@ -277,6 +299,131 @@ export async function cancelarMeuPagamento(
   return { ok: true, data: null };
 }
 
+// Inicia o pagamento da TAXA de criação (Pix na nossa conta). Vira crédito.
+export async function iniciarTaxa(): Promise<ActionResult<PixPagamento>> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user?.email) return { ok: false, error: "Entre para continuar." };
+
+  const { data: ini, error: e1 } = await supabase.rpc("rifa_iniciar_taxa");
+  if (e1) return { ok: false, error: e1.message };
+  const info = ini as { pagamento_id: string; valor: number };
+
+  try {
+    const origin =
+      process.env.NEXT_PUBLIC_SITE_URL || (await headers()).get("origin") || "";
+    const pix = await criarPagamentoPix({
+      valor: info.valor,
+      descricao: "FlawSkins · taxa de criação de rifa",
+      email: user.email,
+      idempotency: info.pagamento_id,
+      externalReference: info.pagamento_id,
+      notificationUrl: origin ? `${origin}/api/mp/webhook` : undefined,
+      expiraEmMin: 30,
+    });
+    await supabase.rpc("rifa_set_pix", {
+      p_pagamento: info.pagamento_id,
+      p_mp_id: pix.id,
+      p_copia: pix.qr_copia,
+      p_base64: pix.qr_base64,
+    });
+    return {
+      ok: true,
+      data: {
+        pagamentoId: info.pagamento_id,
+        valor: info.valor,
+        qrBase64: pix.qr_base64,
+        copiaCola: pix.qr_copia,
+        numeros: [],
+      },
+    };
+  } catch (err) {
+    await supabase.rpc("rifa_cancelar_proprio", { p_pagamento: info.pagamento_id });
+    return { ok: false, error: err instanceof Error ? err.message : "Falha no Pix." };
+  }
+}
+
+// Cria a rifa consumindo 1 crédito (exige MP conectado + crédito).
+export async function criarRifaUsuario(
+  input: NovaRifa
+): Promise<ActionResult<{ id: string }>> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("rifa_criar_com_credito", {
+    p_titulo: input.titulo,
+    p_premio: input.premio,
+    p_descricao: input.descricao ?? "",
+    p_image_url: input.image_url ?? "",
+    p_preco: input.preco_cota,
+    p_total: input.total_numeros,
+  });
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/rifas");
+  return { ok: true, data: { id: (data as { id: string }).id } };
+}
+
+// Estado do criador: tem MP conectado? quantos créditos?
+export async function meuPainelRifa(): Promise<{
+  creditos: number;
+  mp_conectado: boolean;
+}> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { creditos: 0, mp_conectado: false };
+  const { data } = await supabase
+    .from("profiles")
+    .select("creditos_rifa,mp_conectado")
+    .eq("id", user.id)
+    .maybeSingle<{ creditos_rifa: number; mp_conectado: boolean }>();
+  return {
+    creditos: data?.creditos_rifa ?? 0,
+    mp_conectado: data?.mp_conectado ?? false,
+  };
+}
+
+export type Participante = {
+  user_id: string;
+  nome: string | null;
+  numeros: number[];
+  pagos: number;
+};
+
+// Quem comprou cotas (nome + números).
+export async function listarParticipantes(
+  rifaId: string
+): Promise<Participante[]> {
+  const supabase = await createClient();
+  const { data: nums } = await supabase
+    .from("rifa_numeros")
+    .select("numero,user_id,status")
+    .eq("rifa_id", rifaId)
+    .order("numero", { ascending: true })
+    .returns<{ numero: number; user_id: string; status: string }[]>();
+  if (!nums || nums.length === 0) return [];
+
+  const ids = [...new Set(nums.map((n) => n.user_id))];
+  const { data: profs } = await supabase
+    .from("profiles")
+    .select("id,nome")
+    .in("id", ids);
+  const nameMap = new Map((profs ?? []).map((p) => [p.id, p.nome as string | null]));
+
+  const map = new Map<string, Participante>();
+  for (const n of nums) {
+    let p = map.get(n.user_id);
+    if (!p) {
+      p = { user_id: n.user_id, nome: nameMap.get(n.user_id) ?? null, numeros: [], pagos: 0 };
+      map.set(n.user_id, p);
+    }
+    p.numeros.push(n.numero);
+    if (n.status === "pago") p.pagos++;
+  }
+  return [...map.values()].sort((a, b) => b.numeros.length - a.numeros.length);
+}
+
 // ---- Admin ----
 async function exigirAdmin() {
   const supabase = await createClient();
@@ -302,12 +449,9 @@ export async function marcarTodosPagos(
 }
 
 export async function encerrarRifa(rifaId: string): Promise<ActionResult<null>> {
-  const { supabase, ok } = await exigirAdmin();
-  if (!ok) return { ok: false, error: "Não autorizado." };
-  const { error } = await supabase
-    .from("rifas")
-    .update({ status: "encerrada" })
-    .eq("id", rifaId);
+  // Admin OU o próprio criador (validado na RPC).
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("rifa_encerrar", { p_rifa: rifaId });
   if (error) return { ok: false, error: error.message };
   revalidatePath(`/rifas/${rifaId}`);
   return { ok: true, data: null };

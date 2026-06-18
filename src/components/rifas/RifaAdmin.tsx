@@ -17,11 +17,13 @@ export function RifaAdmin({
   status,
   reservados,
   pagos,
+  souAdmin = true,
 }: {
   rifaId: string;
   status: RifaStatus;
   reservados: number;
   pagos: number;
+  souAdmin?: boolean;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -38,7 +40,7 @@ export function RifaAdmin({
   return (
     <div className="rounded-2xl border border-violet-500/30 bg-violet-500/5 p-4">
       <p className="mb-3 flex items-center gap-2 text-sm font-bold text-violet-200">
-        <ShieldCheck className="size-4" /> Controles do admin
+        <ShieldCheck className="size-4" /> {souAdmin ? "Controles do admin" : "Gerenciar minha rifa"}
       </p>
       <div className="mb-3 grid grid-cols-2 gap-2 text-center text-sm">
         <div className="rounded-lg bg-zinc-950 px-2 py-2">
@@ -51,14 +53,16 @@ export function RifaAdmin({
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          disabled={busy || reservados === 0}
-          onClick={() => run(() => marcarTodosPagos(rifaId), "Reservas marcadas como pagas.")}
-          className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 text-sm text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
-        >
-          <BadgeDollarSign className="size-4" /> Marcar reservados como pagos
-        </button>
+        {souAdmin && (
+          <button
+            type="button"
+            disabled={busy || reservados === 0}
+            onClick={() => run(() => marcarTodosPagos(rifaId), "Reservas marcadas como pagas.")}
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 text-sm text-zinc-200 hover:bg-zinc-800 disabled:opacity-50"
+          >
+            <BadgeDollarSign className="size-4" /> Marcar reservados como pagos
+          </button>
+        )}
         {status === "aberta" && (
           <button
             type="button"

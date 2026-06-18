@@ -65,7 +65,9 @@ export function PixModal({ pix, onClose }: { pix: PixPagamento; onClose: () => v
             </span>
             <p className="text-lg font-bold text-zinc-100">Pagamento confirmado!</p>
             <p className="text-sm text-zinc-400">
-              Suas cotas ({pix.numeros.sort((a, b) => a - b).join(", ")}) estão garantidas.
+              {pix.numeros.length > 0
+                ? `Suas cotas (${pix.numeros.sort((a, b) => a - b).join(", ")}) estão garantidas.`
+                : "Tudo certo! Você já pode criar sua rifa."}
             </p>
             <button
               type="button"

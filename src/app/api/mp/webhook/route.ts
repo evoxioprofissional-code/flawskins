@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 import { consultarPagamento } from "@/lib/mercadopago";
+import { getCreatorToken, serviceClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,8 +33,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ignored: true });
     }
 
+    // Descobre em qual conta o pagamento foi processado (criador ou plataforma)
+    // para consultar com o token certo.
+    let accessToken: string | undefined;
+    const sc = serviceClient();
+    if (sc) {
+      const { data: pay } = await sc
+        .from("rifa_pagamentos")
+        .select("mp_conta_user")
+        .eq("mp_payment_id", mpId)
+        .maybeSingle<{ mp_conta_user: string | null }>();
+      if (pay?.mp_conta_user) {
+        const tok = await getCreatorToken(pay.mp_conta_user);
+        if (tok) accessToken = tok;
+      }
+    }
+
     // Verifica o status REAL no Mercado Pago (fonte da verdade).
-    const pag = await consultarPagamento(mpId);
+    const pag = await consultarPagamento(mpId, accessToken);
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

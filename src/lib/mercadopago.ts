@@ -23,6 +23,7 @@ export async function criarPagamentoPix(params: {
   externalReference: string;
   notificationUrl?: string;
   expiraEmMin?: number;
+  accessToken?: string; // token do criador (split); default = plataforma
 }): Promise<PixResult> {
   const exp = new Date(Date.now() + (params.expiraEmMin ?? 30) * 60_000);
 
@@ -39,7 +40,7 @@ export async function criarPagamentoPix(params: {
   const res = await fetch(`${BASE}/v1/payments`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${token()}`,
+      Authorization: `Bearer ${params.accessToken ?? token()}`,
       "Content-Type": "application/json",
       "X-Idempotency-Key": params.idempotency,
     },
@@ -61,10 +62,11 @@ export async function criarPagamentoPix(params: {
 }
 
 export async function consultarPagamento(
-  id: string
+  id: string,
+  accessToken?: string
 ): Promise<{ id: string; status: string; external_reference: string | null }> {
   const res = await fetch(`${BASE}/v1/payments/${id}`, {
-    headers: { Authorization: `Bearer ${token()}` },
+    headers: { Authorization: `Bearer ${accessToken ?? token()}` },
     cache: "no-store",
   });
   const data = await res.json();

@@ -5,12 +5,13 @@ import { Trophy } from "lucide-react";
 
 import { getUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/admin";
-import { buscarRifa, numerosDaRifa } from "@/actions/rifas";
+import { buscarRifa, listarParticipantes, numerosDaRifa } from "@/actions/rifas";
 import { buscarPerfil } from "@/actions/perfil";
 import { formatBRL } from "@/lib/format";
 import { RIFA_STATUS_LABEL } from "@/types/rifa";
 import { RifaReserva } from "@/components/rifas/RifaReserva";
 import { RifaAdmin } from "@/components/rifas/RifaAdmin";
+import { Participantes } from "@/components/rifas/Participantes";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +30,12 @@ export default async function RifaPage({ params }: Params) {
   if (!rifa) notFound();
 
   const admin = isAdminEmail(user?.email);
-  const numeros = await numerosDaRifa(rifa.id);
+  const ehDono = !!user && user.id === rifa.created_by;
+  const podeGerenciar = admin || ehDono;
+  const [numeros, participantes] = await Promise.all([
+    numerosDaRifa(rifa.id),
+    listarParticipantes(rifa.id),
+  ]);
   const meus = user ? numeros.filter((n) => n.user_id === user.id) : [];
   const pagos = numeros.filter((n) => n.status === "pago").length;
   const reservados = numeros.length - pagos;
@@ -98,14 +104,15 @@ export default async function RifaPage({ params }: Params) {
         </div>
       )}
 
-      {/* Controles do admin */}
-      {admin && (
+      {/* Controles do admin / criador */}
+      {podeGerenciar && (
         <div className="mt-5">
           <RifaAdmin
             rifaId={rifa.id}
             status={rifa.status}
             reservados={reservados}
             pagos={pagos}
+            souAdmin={admin}
           />
         </div>
       )}
@@ -123,6 +130,8 @@ export default async function RifaPage({ params }: Params) {
           meus={meus}
         />
       </div>
+
+      <Participantes lista={participantes} />
     </div>
   );
 }

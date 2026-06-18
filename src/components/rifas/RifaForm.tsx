@@ -6,11 +6,11 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { ImagePlus, Loader2 } from "lucide-react";
 
-import { criarRifa, editarRifa } from "@/actions/rifas";
+import { criarRifa, criarRifaUsuario, editarRifa } from "@/actions/rifas";
 import { uploadParaBucket } from "@/lib/upload";
 import type { Rifa } from "@/types/rifa";
 
-export function RifaForm({ rifa }: { rifa?: Rifa }) {
+export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) {
   const router = useRouter();
   const edicao = !!rifa;
   const [titulo, setTitulo] = useState(rifa?.titulo ?? "");
@@ -58,7 +58,9 @@ export function RifaForm({ rifa }: { rifa?: Rifa }) {
       };
       const res = edicao
         ? await editarRifa(rifa!.id, payload)
-        : await criarRifa(payload);
+        : usuario
+          ? await criarRifaUsuario(payload)
+          : await criarRifa(payload);
       if (!res.ok) {
         toast.error(res.error);
         return;

@@ -1,6 +1,8 @@
+import Link from "next/link";
 import type { Metadata } from "next";
-import { Ticket } from "lucide-react";
+import { Plus, Ticket } from "lucide-react";
 
+import { getUser } from "@/lib/auth";
 import { listarRifas } from "@/actions/rifas";
 import { RifaCard } from "@/components/rifas/RifaCard";
 import { BackButton } from "@/components/layout/BackButton";
@@ -9,22 +11,32 @@ export const metadata: Metadata = { title: "Rifas de skins — FlawSkins" };
 export const dynamic = "force-dynamic";
 
 export default async function RifasPage() {
-  const rifas = await listarRifas();
+  const [user, rifas] = await Promise.all([getUser(), listarRifas()]);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
       <BackButton className="mb-4" />
 
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
-          Rifas de{" "}
-          <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
-            skins
-          </span>
-        </h1>
-        <p className="mt-1 text-sm text-zinc-400">
-          Compre cotas, escolha seus números e concorra à skin.
-        </p>
+      <header className="mb-6 flex items-end justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+            Rifas de{" "}
+            <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
+              skins
+            </span>
+          </h1>
+          <p className="mt-1 text-sm text-zinc-400">
+            Compre cotas, escolha seus números e concorra à skin.
+          </p>
+        </div>
+        {user && (
+          <Link
+            href="/rifas/criar"
+            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-4 text-sm font-semibold text-white"
+          >
+            <Plus className="size-4" /> Criar minha rifa
+          </Link>
+        )}
       </header>
 
       {rifas.length === 0 ? (
