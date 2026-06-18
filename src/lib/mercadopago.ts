@@ -76,6 +76,55 @@ export async function consultarPagamento(
   };
 }
 
+// ---- OAuth (conectar a conta do criador) ----
+
+export function oauthRedirectUri(): string {
+  const base = process.env.NEXT_PUBLIC_SITE_URL || "";
+  return `${base}/api/mp/oauth/callback`;
+}
+
+export function oauthAuthUrl(state: string): string {
+  const params = new URLSearchParams({
+    client_id: process.env.MP_CLIENT_ID || "",
+    response_type: "code",
+    platform_id: "mp",
+    redirect_uri: oauthRedirectUri(),
+    state,
+  });
+  return `https://auth.mercadopago.com.br/authorization?${params.toString()}`;
+}
+
+export type OAuthToken = {
+  access_token: string;
+  refresh_token: string | null;
+  user_id: string | null;
+  public_key: string | null;
+  expires_in: number | null;
+};
+
+export async function oauthExchange(code: string): Promise<OAuthToken> {
+  const res = await fetch(`${BASE}/oauth/token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      client_id: process.env.MP_CLIENT_ID,
+      client_secret: process.env.MP_CLIENT_SECRET,
+      grant_type: "authorization_code",
+      code,
+      redirect_uri: oauthRedirectUri(),
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.message || "Falha ao conectar Mercado Pago.");
+  return {
+    access_token: data.access_token,
+    refresh_token: data.refresh_token ?? null,
+    user_id: data.user_id ? String(data.user_id) : null,
+    public_key: data.public_key ?? null,
+    expires_in: data.expires_in ?? null,
+  };
+}
+
 // Mercado Pago exige data com offset (ex: 2024-01-01T10:00:00.000-03:00).
 function isoComOffset(d: Date): string {
   const pad = (n: number) => String(Math.floor(Math.abs(n))).padStart(2, "0");

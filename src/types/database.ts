@@ -53,5 +53,6 @@ export type Profile = {
   avatar_url: string | null;
   regiao: string | null;
   whatsapp: string | null;
+  mp_conectado: boolean;
   updated_at: string;
 };
