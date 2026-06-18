@@ -6,18 +6,20 @@ import Image from "next/image";
 import { toast } from "sonner";
 import { ImagePlus, Loader2 } from "lucide-react";
 
-import { criarRifa } from "@/actions/rifas";
+import { criarRifa, editarRifa } from "@/actions/rifas";
 import { uploadParaBucket } from "@/lib/upload";
+import type { Rifa } from "@/types/rifa";
 
-export function RifaForm() {
+export function RifaForm({ rifa }: { rifa?: Rifa }) {
   const router = useRouter();
-  const [titulo, setTitulo] = useState("");
-  const [premio, setPremio] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [preco, setPreco] = useState("");
-  const [total, setTotal] = useState("");
+  const edicao = !!rifa;
+  const [titulo, setTitulo] = useState(rifa?.titulo ?? "");
+  const [premio, setPremio] = useState(rifa?.premio ?? "");
+  const [descricao, setDescricao] = useState(rifa?.descricao ?? "");
+  const [preco, setPreco] = useState(rifa ? String(rifa.preco_cota) : "");
+  const [total, setTotal] = useState(rifa ? String(rifa.total_numeros) : "");
   const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(rifa?.image_url ?? null);
   const [busy, setBusy] = useState(false);
 
   function pick(e: React.ChangeEvent<HTMLInputElement>) {
@@ -42,25 +44,30 @@ export function RifaForm() {
 
     setBusy(true);
     try {
-      let image_url: string | undefined;
+      // Mantém a imagem atual se nenhuma nova for escolhida.
+      let image_url: string | undefined = rifa?.image_url ?? undefined;
       if (file) image_url = await uploadParaBucket("skins", file);
-      const res = await criarRifa({
+
+      const payload = {
         titulo,
         premio,
         descricao,
         image_url,
         preco_cota: precoN,
         total_numeros: totalN,
-      });
+      };
+      const res = edicao
+        ? await editarRifa(rifa!.id, payload)
+        : await criarRifa(payload);
       if (!res.ok) {
         toast.error(res.error);
         return;
       }
-      toast.success("Rifa criada!");
+      toast.success(edicao ? "Rifa atualizada!" : "Rifa criada!");
       router.push(`/rifas/${res.data.id}`);
       router.refresh();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erro ao criar.");
+      toast.error(err instanceof Error ? err.message : "Erro ao salvar.");
     } finally {
       setBusy(false);
     }
@@ -143,7 +150,7 @@ export function RifaForm() {
         className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-orange-500 text-base font-semibold text-white disabled:opacity-60"
       >
         {busy && <Loader2 className="size-5 animate-spin" />}
-        {busy ? "Criando…" : "Criar rifa"}
+        {busy ? "Salvando…" : edicao ? "Salvar alterações" : "Criar rifa"}
       </button>
     </form>
   );

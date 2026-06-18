@@ -91,6 +91,59 @@ export async function criarRifa(
   return { ok: true, data: { id: data.id } };
 }
 
+export async function editarRifa(
+  id: string,
+  input: NovaRifa
+): Promise<ActionResult<{ id: string }>> {
+  const { supabase, ok } = await exigirAdmin();
+  if (!ok) return { ok: false, error: "Apenas o admin pode editar rifas." };
+
+  const titulo = input.titulo.trim();
+  if (titulo.length < 3) return { ok: false, error: "Título muito curto." };
+  if (!input.premio.trim()) return { ok: false, error: "Informe o prêmio." };
+  if (!(input.preco_cota >= 0)) return { ok: false, error: "Preço inválido." };
+
+  // Não deixa reduzir o total abaixo do que já foi vendido.
+  const { data: atual } = await supabase
+    .from("rifas_pub")
+    .select("vendidos")
+    .eq("id", id)
+    .maybeSingle<{ vendidos: number }>();
+  const vendidos = atual?.vendidos ?? 0;
+  if (input.total_numeros < vendidos) {
+    return {
+      ok: false,
+      error: `Já foram vendidas ${vendidos} cotas — o total não pode ser menor.`,
+    };
+  }
+
+  const { error } = await supabase
+    .from("rifas")
+    .update({
+      titulo,
+      premio: input.premio.trim(),
+      descricao: input.descricao?.trim() || null,
+      image_url: input.image_url || null,
+      preco_cota: input.preco_cota,
+      total_numeros: Math.round(input.total_numeros),
+    })
+    .eq("id", id);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath("/rifas");
+  revalidatePath(`/rifas/${id}`);
+  return { ok: true, data: { id } };
+}
+
+export async function excluirRifa(id: string): Promise<ActionResult<null>> {
+  const { supabase, ok } = await exigirAdmin();
+  if (!ok) return { ok: false, error: "Não autorizado." };
+  const { error } = await supabase.from("rifas").delete().eq("id", id);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/rifas");
+  return { ok: true, data: null };
+}
+
 // Reserva rápida: N números aleatórios.
 export async function reservarAleatorio(
   rifaId: string,

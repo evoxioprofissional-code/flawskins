@@ -9,15 +9,19 @@ import {
   TrendingUp,
   UserPlus,
   ExternalLink,
+  Plus,
+  Ticket,
   type LucideIcon,
 } from "lucide-react";
 
 import { getUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/admin";
 import { getAdminMetrics, getAdminUsers } from "@/actions/admin";
+import { listarRifas } from "@/actions/rifas";
 import { formatBRL } from "@/lib/format";
 import { Logo } from "@/components/layout/Logo";
 import { AdminSignOut } from "@/components/admin/AdminSignOut";
+import { AdminRifaRow } from "@/components/rifas/AdminRifaRow";
 
 export const metadata: Metadata = { title: "Painel — FlawSkins" };
 export const dynamic = "force-dynamic";
@@ -26,9 +30,10 @@ export default async function AdminPage() {
   const user = await getUser();
   if (!isAdminEmail(user?.email)) redirect("/admin/login");
 
-  const [metrics, users] = await Promise.all([
+  const [metrics, users, rifas] = await Promise.all([
     getAdminMetrics(),
     getAdminUsers(),
+    listarRifas(),
   ]);
 
   if (!metrics) {
@@ -151,6 +156,32 @@ export default async function AdminPage() {
           </div>
         </section>
       </div>
+
+      {/* Rifas */}
+      <section className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
+            <Ticket className="size-4 text-orange-400" /> Rifas ({rifas.length})
+          </h2>
+          <Link
+            href="/rifas/nova"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-3 text-sm font-semibold text-white"
+          >
+            <Plus className="size-4" /> Nova rifa
+          </Link>
+        </div>
+        {rifas.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-zinc-800 px-4 py-6 text-center text-sm text-zinc-500">
+            Nenhuma rifa criada ainda.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {rifas.map((r) => (
+              <AdminRifaRow key={r.id} rifa={r} />
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
