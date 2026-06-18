@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin"; // 👈 1. Importamos o Admin aqui
 import { oauthExchange } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
@@ -28,7 +29,8 @@ export async function GET(req: NextRequest) {
   try {
     const tok = await oauthExchange(code);
 
-    const { error: e1 } = await supabase.from("mp_contas").upsert(
+    // 👈 2. Trocamos "supabase" por "supabaseAdmin" nesta linha
+    const { error: e1 } = await supabaseAdmin.from("mp_contas").upsert(
       {
         user_id: user.id,
         mp_user_id: tok.user_id,
@@ -44,7 +46,8 @@ export async function GET(req: NextRequest) {
     );
     if (e1) return erro(e1.message);
 
-    await supabase.from("profiles").update({ mp_conectado: true }).eq("id", user.id);
+    // 👈 3. Usamos o "supabaseAdmin" aqui também para garantir a atualização do perfil
+    await supabaseAdmin.from("profiles").update({ mp_conectado: true }).eq("id", user.id);
 
     const res = NextResponse.redirect(`${origin}/perfil?mp=ok`);
     res.cookies.delete("mp_oauth_state");
