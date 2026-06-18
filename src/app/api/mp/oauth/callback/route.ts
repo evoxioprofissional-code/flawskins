@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { createClient } from "@/lib/supabase/server";
-import { serviceClient } from "@/lib/supabase/admin"; // 👈 Atualizado para o nome correto
+import { serviceClient } from "@/lib/supabase/admin";
 import { oauthExchange } from "@/lib/mercadopago";
 
 export const runtime = "nodejs";
@@ -29,8 +29,14 @@ export async function GET(req: NextRequest) {
   try {
     const tok = await oauthExchange(code);
 
-    // 👈 Atualizado: Usando serviceClient no banco
-    const { error: e1 } = await serviceClient.from("mp_contas").upsert(
+    // 1. Executamos a função para gerar o cliente admin
+    const adminSupabase = serviceClient();
+    
+    // 2. Garantimos para o TypeScript que o cliente existe
+    if (!adminSupabase) throw new Error("Falha ao inicializar cliente admin do Supabase");
+
+    // 3. Usamos a variável adminSupabase no banco
+    const { error: e1 } = await adminSupabase.from("mp_contas").upsert(
       {
         user_id: user.id,
         mp_user_id: tok.user_id,
@@ -46,8 +52,7 @@ export async function GET(req: NextRequest) {
     );
     if (e1) return erro(e1.message);
 
-    // 👈 Atualizado: Usando serviceClient no banco
-    await serviceClient.from("profiles").update({ mp_conectado: true }).eq("id", user.id);
+    await adminSupabase.from("profiles").update({ mp_conectado: true }).eq("id", user.id);
 
     const res = NextResponse.redirect(`${origin}/perfil?mp=ok`);
     res.cookies.delete("mp_oauth_state");
