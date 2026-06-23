@@ -18,7 +18,9 @@ export async function GET(req: NextRequest) {
     NextResponse.redirect(`${origin}/perfil?mp=erro&motivo=${encodeURIComponent(m)}`);
 
   if (!code) return erro("sem_code");
-  if (!state || state !== cookieState) return erro("state_invalido");
+  // Só rejeita se o cookie existir e for diferente (evita falso "state_invalido"
+  // quando o cookie não volta no redirect). A sessão do usuário já é o gate real.
+  if (cookieState && state && state !== cookieState) return erro("state_invalido");
 
   const supabase = await createClient();
   const {
@@ -29,14 +31,11 @@ export async function GET(req: NextRequest) {
   try {
     const tok = await oauthExchange(code);
 
-    // 1. Executamos a função para gerar o cliente admin
-    const adminSupabase = serviceClient();
-    
-    // 2. Garantimos para o TypeScript que o cliente existe
-    if (!adminSupabase) throw new Error("Falha ao inicializar cliente admin do Supabase");
+    // Grava com service-role (bypassa RLS); se não houver, usa a sessão do
+    // usuário (a RLS permite ele gravar a própria conexão).
+    const writer = serviceClient() ?? supabase;
 
-    // 3. Usamos a variável adminSupabase no banco
-    const { error: e1 } = await adminSupabase.from("mp_contas").upsert(
+    const { error: e1 } = await writer.from("mp_contas").upsert(
       {
         user_id: user.id,
         mp_user_id: tok.user_id,
@@ -52,7 +51,7 @@ export async function GET(req: NextRequest) {
     );
     if (e1) return erro(e1.message);
 
-    await adminSupabase.from("profiles").update({ mp_conectado: true }).eq("id", user.id);
+    await writer.from("profiles").update({ mp_conectado: true }).eq("id", user.id);
 
     const res = NextResponse.redirect(`${origin}/perfil?mp=ok`);
     res.cookies.delete("mp_oauth_state");

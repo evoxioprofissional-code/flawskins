@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { getCreatorToken } from "@/lib/supabase/admin";
-import { criarPagamentoPix } from "@/lib/mercadopago";
+import { consultarPagamento, criarPagamentoPix } from "@/lib/mercadopago";
 import type { ActionResult } from "@/actions/anuncios";
 import type { Rifa, RifaNumero } from "@/types/rifa";
 
@@ -282,10 +282,46 @@ export async function statusPagamento(
   const supabase = await createClient();
   const { data } = await supabase
     .from("rifa_pagamentos")
-    .select("status")
+    .select("status, mp_payment_id, mp_conta_user")
     .eq("id", pagamentoId)
-    .maybeSingle<{ status: "pendente" | "pago" | "cancelado" }>();
-  return data?.status ?? "desconhecido";
+    .maybeSingle<{
+      status: "pendente" | "pago" | "cancelado";
+      mp_payment_id: string | null;
+      mp_conta_user: string | null;
+    }>();
+  if (!data) return "desconhecido";
+  if (data.status !== "pendente") return data.status;
+
+  // Ainda pendente: confere DIRETO no Mercado Pago (não depende do webhook).
+  if (data.mp_payment_id) {
+    try {
+      let token: string | undefined;
+      if (data.mp_conta_user) {
+        token = (await getCreatorToken(data.mp_conta_user)) ?? undefined;
+      }
+      const pag = await consultarPagamento(data.mp_payment_id, token);
+      const secret = process.env.MP_WEBHOOK_SECRET;
+      if (pag.status === "approved") {
+        if (secret)
+          await supabase.rpc("rifa_confirmar_pagamento", {
+            p_mp_id: data.mp_payment_id,
+            p_secret: secret,
+          });
+        return "pago";
+      }
+      if (["cancelled", "rejected", "refunded", "charged_back"].includes(pag.status)) {
+        if (secret)
+          await supabase.rpc("rifa_cancelar_pagamento", {
+            p_mp_id: data.mp_payment_id,
+            p_secret: secret,
+          });
+        return "cancelado";
+      }
+    } catch {
+      // se a consulta falhar, mantém pendente e tenta de novo no próximo poll
+    }
+  }
+  return "pendente";
 }
 
 export async function cancelarMeuPagamento(

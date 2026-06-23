@@ -17,12 +17,12 @@ export const dynamic = "force-dynamic";
 export default async function PerfilPage({
   searchParams,
 }: {
-  searchParams: Promise<{ mp?: string }>;
+  searchParams: Promise<{ mp?: string; motivo?: string }>;
 }) {
   const user = await getUser();
   if (!user) redirect("/login?next=/perfil");
 
-  const { mp } = await searchParams;
+  const { mp, motivo } = await searchParams;
   const [perfil, anuncios, arenaStats] = await Promise.all([
     buscarPerfil(user.id),
     meusAnuncios(),
@@ -61,6 +61,7 @@ export default async function PerfilPage({
         {mp === "erro" && (
           <p className="mt-2 rounded-lg bg-red-500/10 px-3 py-1.5 text-xs text-red-300">
             Não foi possível conectar. Tente de novo.
+            {motivo && <span className="mt-1 block opacity-80">Motivo: {motivo}</span>}
           </p>
         )}
         <div className="mt-3">
