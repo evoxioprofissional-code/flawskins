@@ -55,9 +55,12 @@ export async function criarAnuncio(
     return { ok: false, error: "Adicione pelo menos uma imagem da skin." };
   }
 
-  // Segurança: só aceitamos URLs do nosso bucket de skins.
+  // Segurança: aceitamos imagens do nosso bucket ou do CDN da Steam
+  // (skins importadas do inventário entram com a URL oficial da Steam).
   const base = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/skins/`;
-  if (!urls.every((u) => u.startsWith(base))) {
+  const origemOk = (u: string) =>
+    u.startsWith(base) || /^https:\/\/[^/]+\.steamstatic\.com\/economy\/image\//.test(u);
+  if (!urls.every(origemOk)) {
     return { ok: false, error: "Imagens inválidas." };
   }
 

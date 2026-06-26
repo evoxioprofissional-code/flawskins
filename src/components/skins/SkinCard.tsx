@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import type { Anuncio } from "@/types/database";
 import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { SkinImage } from "@/components/skins/SkinImage";
 
 export function SkinCard({ anuncio }: { anuncio: Anuncio }) {
   const vendido = anuncio.status === "vendido";
@@ -18,12 +18,11 @@ export function SkinCard({ anuncio }: { anuncio: Anuncio }) {
     >
       {/* Imagem */}
       <div className="relative aspect-square overflow-hidden bg-zinc-950">
-        <Image
+        <SkinImage
           src={anuncio.image_url}
           alt={anuncio.titulo}
-          fill
           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          imgClassName="transition-transform duration-300 group-hover:scale-105"
         />
         {vendido && (
           <div className="absolute inset-0 grid place-items-center bg-zinc-950/70">

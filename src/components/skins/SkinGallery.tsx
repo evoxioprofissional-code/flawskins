@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 
 import { cn } from "@/lib/utils";
+import { SkinImage, isSteamImg } from "@/components/skins/SkinImage";
 
 // Galeria do detalhe: imagem principal + miniaturas clicáveis.
 export function SkinGallery({
@@ -21,12 +22,11 @@ export function SkinGallery({
   return (
     <div>
       <div className="relative aspect-square w-full overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950">
-        <Image
+        <SkinImage
           src={principal}
           alt={titulo}
-          fill
           sizes="(max-width: 768px) 100vw, 42rem"
-          className="object-contain"
+          fit="contain"
           priority
         />
         {vendido && (
@@ -58,7 +58,7 @@ export function SkinGallery({
                 alt={`${titulo} — imagem ${i + 1}`}
                 fill
                 sizes="80px"
-                className="object-cover"
+                className={cn("p-0.5", isSteamImg(url) ? "object-contain" : "object-cover")}
               />
             </button>
           ))}

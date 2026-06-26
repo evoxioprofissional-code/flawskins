@@ -14,6 +14,7 @@ import { CATEGORIAS, EXTERIORES } from "@/types/database";
 import { criarAnuncio } from "@/actions/anuncios";
 import { uploadParaBucket } from "@/lib/upload";
 import { buildAnuncioText } from "@/lib/whatsapp";
+import { isSteamImg } from "@/components/skins/SkinImage";
 
 import {
   Form,
@@ -321,11 +322,17 @@ export function SkinForm({
                   key={img.url}
                   className="group relative aspect-square overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950"
                 >
+                  {isSteamImg(img.url) && (
+                    <span
+                      aria-hidden
+                      className="absolute inset-0 bg-[radial-gradient(125%_95%_at_50%_8%,#4c2f86_0%,#241a44_38%,#0c0a16_78%)]"
+                    />
+                  )}
                   <Image
                     src={img.url}
                     alt={`Imagem ${i + 1}`}
                     fill
-                    className="object-cover"
+                    className={isSteamImg(img.url) ? "object-contain p-2" : "object-cover"}
                     unoptimized
                   />
                   {i === 0 && (

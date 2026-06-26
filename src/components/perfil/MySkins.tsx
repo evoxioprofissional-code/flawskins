@@ -11,6 +11,7 @@ import type { Anuncio } from "@/types/database";
 import { formatBRL } from "@/lib/format";
 import { alternarVendido, excluirAnuncio } from "@/actions/anuncios";
 import { cn } from "@/lib/utils";
+import { isSteamImg } from "@/components/skins/SkinImage";
 
 export function MySkins({ anuncios }: { anuncios: Anuncio[] }) {
   if (anuncios.length === 0) {
@@ -84,7 +85,7 @@ function MySkinRow({ anuncio }: { anuncio: Anuncio }) {
           alt={anuncio.titulo}
           fill
           sizes="64px"
-          className="object-cover"
+          className={cn("p-0.5", isSteamImg(anuncio.image_url) ? "object-contain" : "object-cover")}
         />
       </Link>
 
