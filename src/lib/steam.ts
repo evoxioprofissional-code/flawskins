@@ -43,8 +43,33 @@ export async function steamVerify(
 
 export type SteamPerfil = { nome: string; avatar: string | null };
 
-// Nome e avatar do jogador, sem precisar de API key (XML público do perfil).
+// Nome e avatar do jogador. Usa a Steam Web API (confiável p/ servidor) quando
+// há STEAM_API_KEY; senão cai no XML público do perfil.
 export async function steamPerfil(steamId: string): Promise<SteamPerfil> {
+  const key = process.env.STEAM_API_KEY;
+  if (key) {
+    try {
+      const r = await fetch(
+        `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${key}&steamids=${steamId}`,
+        { cache: "no-store" }
+      );
+      if (r.ok) {
+        const j = (await r.json()) as {
+          response?: { players?: { personaname?: string; avatarfull?: string }[] };
+        };
+        const p = j.response?.players?.[0];
+        if (p) {
+          return {
+            nome: p.personaname || `Jogador ${steamId.slice(-4)}`,
+            avatar: p.avatarfull || null,
+          };
+        }
+      }
+    } catch {
+      // cai no fallback XML abaixo
+    }
+  }
+
   try {
     const res = await fetch(
       `https://steamcommunity.com/profiles/${steamId}?xml=1`,
