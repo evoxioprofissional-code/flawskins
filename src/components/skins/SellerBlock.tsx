@@ -21,7 +21,7 @@ export function SellerBlock({
 }) {
   const card = (
     <div className="mt-2 flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 p-3 transition-colors data-[link=true]:hover:border-violet-500/50">
-      <div className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-orange-500 text-sm font-bold text-white">
+      <div className="grid size-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold text-white">
         {iniciais(nome) || "?"}
       </div>
       <div className="min-w-0">

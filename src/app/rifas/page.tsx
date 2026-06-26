@@ -7,7 +7,7 @@ import { listarRifas } from "@/actions/rifas";
 import { RifaCard } from "@/components/rifas/RifaCard";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Rifas de skins — FlawSkins" };
+export const metadata: Metadata = { title: "Rifas de skins — Vision Skins" };
 export const dynamic = "force-dynamic";
 
 export default async function RifasPage() {
@@ -21,7 +21,7 @@ export default async function RifasPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
             Rifas de{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               skins
             </span>
           </h1>
@@ -32,7 +32,7 @@ export default async function RifasPage() {
         {user && (
           <Link
             href="/rifas/criar"
-            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-4 text-sm font-semibold text-white"
+            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 text-sm font-semibold text-white"
           >
             <Plus className="size-4" /> Criar minha rifa
           </Link>

@@ -6,7 +6,7 @@ import { isAdminEmail } from "@/lib/admin";
 import { RifaForm } from "@/components/rifas/RifaForm";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Nova rifa — FlawSkins" };
+export const metadata: Metadata = { title: "Nova rifa — Vision Skins" };
 export const dynamic = "force-dynamic";
 
 export default async function NovaRifaPage() {

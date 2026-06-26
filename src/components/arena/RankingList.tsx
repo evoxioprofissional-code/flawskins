@@ -41,7 +41,7 @@ export function RankingList({
               href={`/u/${r.user_id}`}
               className="flex min-w-0 flex-1 items-center gap-2.5"
             >
-              <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-orange-500 text-xs font-bold text-white">
+              <span className="grid size-8 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-xs font-bold text-white">
                 {(r.nome ?? "?").charAt(0).toUpperCase()}
               </span>
               <span className="truncate text-sm font-medium text-zinc-100 hover:underline">
@@ -49,7 +49,7 @@ export function RankingList({
                 {eu && <span className="ml-1 text-violet-300">(você)</span>}
               </span>
             </Link>
-            <span className="shrink-0 text-sm font-bold text-orange-400">
+            <span className="shrink-0 text-sm font-bold text-fuchsia-400">
               {formatScore(game, r.best)}
             </span>
           </li>

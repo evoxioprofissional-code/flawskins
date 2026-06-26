@@ -21,7 +21,7 @@ export async function Header() {
           <div className="flex items-center gap-2">
             <Link
               href="/rifas"
-              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-orange-500/40 bg-orange-500/10 px-3 text-sm font-semibold text-orange-200 transition-colors hover:bg-orange-500/20"
+              className="inline-flex h-9 items-center gap-1.5 rounded-full border border-fuchsia-500/40 bg-fuchsia-500/10 px-3 text-sm font-semibold text-fuchsia-200 transition-colors hover:bg-fuchsia-500/20"
             >
               <Ticket className="size-4" />
               <span className="hidden sm:inline">Rifas</span>
@@ -58,7 +58,7 @@ export async function Header() {
           </Link>
           <Link
             href="/novo"
-            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-orange-500 px-3 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-fuchsia-500 px-3 text-sm font-semibold text-white transition-colors hover:bg-fuchsia-600"
           >
             <Plus className="size-4" />
             <span className="hidden sm:inline">sell</span>

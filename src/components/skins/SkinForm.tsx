@@ -178,7 +178,7 @@ export function SkinForm({
         <div className="flex gap-3">
           <Link
             href={`/skin/${created.id}`}
-            className="inline-flex h-10 items-center rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+            className="inline-flex h-10 items-center rounded-lg bg-fuchsia-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-fuchsia-600"
           >
             Ver anúncio
           </Link>
@@ -443,7 +443,7 @@ export function SkinForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-orange-500 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting && <Loader2 className="size-5 animate-spin" />}
           {isSubmitting ? "Publicando..." : "Publicar anúncio"}

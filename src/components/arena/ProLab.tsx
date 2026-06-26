@@ -182,7 +182,7 @@ function ProCard({
         </span>
         <span className="text-zinc-700">·</span>
         <span>
-          Gridshot ref. <b className="text-orange-400">{p.ref.gridshot} pts</b>
+          Gridshot ref. <b className="text-fuchsia-400">{p.ref.gridshot} pts</b>
         </span>
       </div>
 
@@ -204,7 +204,7 @@ function ProCard({
         <button
           type="button"
           onClick={onTest}
-          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 text-sm font-semibold text-white"
+          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 text-sm font-semibold text-white"
         >
           <Play className="size-4" /> Testar agora
         </button>
@@ -246,7 +246,7 @@ function PresetRankingBox({ ranking, top }: { ranking: PresetUso[]; top: TopPres
               </span>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-800">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-orange-500"
+                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
                   style={{ width: `${r.pct}%` }}
                 />
               </div>
@@ -294,7 +294,7 @@ function MelhorSetup({ myStats }: { myStats: PresetMeu[] }) {
           >
             <span className="text-zinc-200">{presetLabel(m.preset)}</span>
             <span className="text-zinc-400">
-              <b className="text-orange-400">{m.best} pts</b>
+              <b className="text-fuchsia-400">{m.best} pts</b>
               {m.media_acc != null ? ` · ${m.media_acc}% acc` : ""} · {m.partidas}x
             </span>
           </li>
@@ -424,7 +424,7 @@ function CommunityItem({
             <button
               type="button"
               onClick={() => onTest(c, cfg)}
-              className="rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-2.5 py-1 text-xs font-semibold text-white"
+              className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-2.5 py-1 text-xs font-semibold text-white"
             >
               Testar
             </button>
@@ -513,7 +513,7 @@ function CrosshairEditor() {
               type="button"
               onClick={salvar}
               disabled={salvando}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-4 text-sm font-semibold text-white disabled:opacity-60"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 text-sm font-semibold text-white disabled:opacity-60"
             >
               <Save className="size-4" /> {salvando ? "Salvando…" : "Compartilhar"}
             </button>

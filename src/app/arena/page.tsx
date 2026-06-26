@@ -18,7 +18,7 @@ import { ARENA_GAMES, type ArenaGame } from "@/types/arena";
 import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Flaw Arena — FlawSkins" };
+export const metadata: Metadata = { title: "Vision Arena — Vision Skins" };
 export const dynamic = "force-dynamic";
 
 const ICONS: Record<ArenaGame, LucideIcon> = {
@@ -52,8 +52,8 @@ export default async function ArenaPage() {
       <header className="mb-6">
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
-            Flaw{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
+            Vision{" "}
+            <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               Arena
             </span>
           </h1>
@@ -79,7 +79,7 @@ export default async function ArenaPage() {
                 href={`/arena/${g.slug}`}
                 className="group flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 transition-all hover:border-violet-500/50 hover:shadow-[0_0_24px_-8px] hover:shadow-violet-500/40"
               >
-                <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-violet-500/20 to-orange-500/20 text-violet-300">
+                <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 text-violet-300">
                   <Icon className="size-6" />
                 </span>
                 <span className="text-base font-semibold text-zinc-100">
@@ -105,7 +105,7 @@ export default async function ArenaPage() {
             </p>
             <Link
               href="/login?next=/arena"
-              className="mt-3 inline-flex h-10 items-center rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-5 text-sm font-semibold text-white"
+              className="mt-3 inline-flex h-10 items-center rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white"
             >
               Entrar
             </Link>

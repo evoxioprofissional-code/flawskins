@@ -21,7 +21,7 @@ export function MySkins({ anuncios }: { anuncios: Anuncio[] }) {
         </p>
         <Link
           href="/novo"
-          className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+          className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-fuchsia-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-fuchsia-600"
         >
           Anunciar uma skin
         </Link>
@@ -92,7 +92,7 @@ function MySkinRow({ anuncio }: { anuncio: Anuncio }) {
         <p className="truncate text-sm font-medium text-zinc-100">
           {anuncio.titulo}
         </p>
-        <p className="text-sm font-bold text-orange-400">
+        <p className="text-sm font-bold text-fuchsia-400">
           {formatBRL(anuncio.preco)}
         </p>
         <span

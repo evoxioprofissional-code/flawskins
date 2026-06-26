@@ -7,7 +7,7 @@ import { buscarRifa } from "@/actions/rifas";
 import { RifaForm } from "@/components/rifas/RifaForm";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Editar rifa — FlawSkins" };
+export const metadata: Metadata = { title: "Editar rifa — Vision Skins" };
 export const dynamic = "force-dynamic";
 
 type Params = { params: Promise<{ id: string }> };

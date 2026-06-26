@@ -34,7 +34,7 @@ export function SkinGrid({
             </p>
             <Link
               href="/novo"
-              className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+              className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-fuchsia-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-fuchsia-600"
             >
               Anunciar uma skin
             </Link>

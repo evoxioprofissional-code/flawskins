@@ -41,7 +41,7 @@ export function AccountButton({ nome }: { nome: string | null }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Conta"
-        className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-orange-500 text-sm font-bold text-white"
+        className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold text-white"
       >
         {inicial}
       </button>

@@ -37,7 +37,7 @@ export function BottomNav() {
           <Link
             href="/novo"
             aria-label="Criar anúncio"
-            className="-mt-6 grid size-14 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-orange-500 text-white shadow-[0_0_22px_-4px] shadow-violet-500/60 ring-4 ring-zinc-950"
+            className="-mt-6 grid size-14 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-[0_0_22px_-4px] shadow-violet-500/60 ring-4 ring-zinc-950"
           >
             <Plus className="size-6" />
           </Link>

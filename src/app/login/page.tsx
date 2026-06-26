@@ -5,7 +5,7 @@ import { Logo } from "@/components/layout/Logo";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Entrar — FlawSkins" };
+export const metadata: Metadata = { title: "Entrar — Vision Skins" };
 
 export default function LoginPage() {
   return (

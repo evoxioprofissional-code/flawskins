@@ -14,7 +14,7 @@ import {
 import { CATEGORIAS, type Categoria } from "@/types/database";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Categorias — FlawSkins" };
+export const metadata: Metadata = { title: "Categorias — Vision Skins" };
 
 const ICONS: Record<Categoria, LucideIcon> = {
   Faca: Swords,
@@ -48,7 +48,7 @@ export default function CategoriasPage() {
               href={`/?categoria=${encodeURIComponent(cat)}`}
               className="group flex flex-col items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-6 text-center transition-all hover:border-violet-500/50 hover:shadow-[0_0_20px_-6px] hover:shadow-violet-500/30"
             >
-              <span className="grid size-12 place-items-center rounded-xl bg-gradient-to-br from-violet-500/20 to-orange-500/20 text-violet-300 transition-colors group-hover:text-violet-200">
+              <span className="grid size-12 place-items-center rounded-xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 text-violet-300 transition-colors group-hover:text-violet-200">
                 <Icon className="size-6" />
               </span>
               <span className="text-sm font-semibold text-zinc-100">{cat}</span>

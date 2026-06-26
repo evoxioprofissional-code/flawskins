@@ -52,13 +52,13 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-orange-500"
+              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
               style={{ width: `${pct}%` }}
             />
           </div>
         </div>
 
-        <div className="mt-3 flex items-center gap-1.5 text-sm font-bold text-orange-400">
+        <div className="mt-3 flex items-center gap-1.5 text-sm font-bold text-fuchsia-400">
           <Ticket className="size-4" />
           {formatBRL(rifa.preco_cota)}{" "}
           <span className="text-xs font-normal text-zinc-500">/ cota</span>

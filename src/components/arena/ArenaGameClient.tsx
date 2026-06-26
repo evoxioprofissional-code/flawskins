@@ -137,7 +137,7 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
             className={cn(
               "rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors",
               d === diff
-                ? "border-orange-500 bg-orange-500/15 text-orange-300"
+                ? "border-fuchsia-500 bg-fuchsia-500/15 text-fuchsia-300"
                 : "border-zinc-800 text-zinc-300 hover:bg-zinc-800"
             )}
           >
@@ -250,7 +250,7 @@ function RichResult({
         <button
           type="button"
           onClick={onReplay}
-          className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-orange-500 px-5 text-sm font-semibold text-white"
+          className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white"
         >
           <RotateCcw className="size-4" /> Jogar de novo
         </button>

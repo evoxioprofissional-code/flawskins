@@ -239,7 +239,7 @@ export async function comprarCotas(
       "";
     const pix = await criarPagamentoPix({
       valor: info.valor,
-      descricao: `FlawSkins · ${info.numeros.length} cota(s) de rifa`,
+      descricao: `Vision Skins · ${info.numeros.length} cota(s) de rifa`,
       email: user.email,
       idempotency: info.pagamento_id,
       externalReference: info.pagamento_id,
@@ -352,7 +352,7 @@ export async function iniciarTaxa(): Promise<ActionResult<PixPagamento>> {
       process.env.NEXT_PUBLIC_SITE_URL || (await headers()).get("origin") || "";
     const pix = await criarPagamentoPix({
       valor: info.valor,
-      descricao: "FlawSkins · taxa de criação de rifa",
+      descricao: "Vision Skins · taxa de criação de rifa",
       email: user.email,
       idempotency: info.pagamento_id,
       externalReference: info.pagamento_id,

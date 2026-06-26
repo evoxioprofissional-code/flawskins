@@ -8,7 +8,7 @@ import { CriarRifaPainel } from "@/components/rifas/CriarRifaPainel";
 import { RifaForm } from "@/components/rifas/RifaForm";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Criar minha rifa — FlawSkins" };
+export const metadata: Metadata = { title: "Criar minha rifa — Vision Skins" };
 export const dynamic = "force-dynamic";
 
 export default async function CriarRifaPage() {
@@ -23,7 +23,7 @@ export default async function CriarRifaPage() {
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
           {admin ? "Criar " : "Criar minha "}
-          <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
             rifa
           </span>
         </h1>

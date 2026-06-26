@@ -5,7 +5,7 @@ import { Bell } from "lucide-react";
 import { getUser } from "@/lib/auth";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Alertas — FlawSkins" };
+export const metadata: Metadata = { title: "Alertas — Vision Skins" };
 
 export default async function AlertasPage() {
   const user = await getUser();
@@ -35,7 +35,7 @@ export default async function AlertasPage() {
         {!user && (
           <Link
             href="/login?next=/alertas"
-            className="mt-4 inline-flex h-10 items-center rounded-lg bg-orange-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-orange-600"
+            className="mt-4 inline-flex h-10 items-center rounded-lg bg-fuchsia-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-fuchsia-600"
           >
             Entrar
           </Link>

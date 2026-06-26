@@ -90,7 +90,7 @@ export function ProfileForm({ email, nome, regiao, whatsapp, avatarUrl }: Props)
         {/* Avatar */}
         <div className="flex items-center gap-4">
           <label className="group relative cursor-pointer">
-            <span className="grid size-20 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-orange-500 text-2xl font-bold text-white">
+            <span className="grid size-20 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-2xl font-bold text-white">
               {preview ? (
                 <Image
                   src={preview}
@@ -169,7 +169,7 @@ export function ProfileForm({ email, nome, regiao, whatsapp, avatarUrl }: Props)
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-orange-500 px-6 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {saving && <Loader2 className="size-4 animate-spin" />}
           {saving ? "Salvando..." : "Salvar perfil"}

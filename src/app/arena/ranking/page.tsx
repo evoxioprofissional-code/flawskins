@@ -16,7 +16,7 @@ import { RankingList } from "@/components/arena/RankingList";
 import { BackButton } from "@/components/layout/BackButton";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Rankings — Flaw Arena" };
+export const metadata: Metadata = { title: "Rankings — Vision Arena" };
 export const dynamic = "force-dynamic";
 
 type Search = { game?: string; period?: string };
@@ -45,7 +45,7 @@ export default async function RankingPage({
           Rankings da Arena
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Os melhores jogadores da comunidade FlawSkins.
+          Os melhores jogadores da comunidade Vision Skins.
         </p>
       </header>
 
@@ -76,7 +76,7 @@ export default async function RankingPage({
             className={cn(
               "rounded-full px-3 py-1 text-xs font-medium transition-colors",
               p === period
-                ? "bg-orange-500 text-white"
+                ? "bg-fuchsia-500 text-white"
                 : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
             )}
           >

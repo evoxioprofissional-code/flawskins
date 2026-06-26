@@ -83,7 +83,7 @@ export function RifaAdmin({
                 return r;
               }, "Vencedor sorteado!")
             }
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-3 text-sm font-semibold text-white disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 text-sm font-semibold text-white disabled:opacity-50"
           >
             <Dice5 className="size-4" /> Sortear vencedor
           </button>

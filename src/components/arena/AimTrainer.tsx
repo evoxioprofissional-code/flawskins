@@ -539,7 +539,7 @@ export function AimTrainer({
       {phase === "play" && (
         <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-wrap items-center gap-x-4 gap-y-1 bg-gradient-to-b from-zinc-950/90 to-transparent px-4 py-2.5 text-sm">
           <HudItem label="Tempo" valor={`${hud.restante.toFixed(1)}s`} destaque />
-          <HudItem label="Score" valor={hud.score.toLocaleString("pt-BR")} cor="text-orange-400" />
+          <HudItem label="Score" valor={hud.score.toLocaleString("pt-BR")} cor="text-fuchsia-400" />
           {game === "tracking" ? (
             <>
               <HudItem label="Tracking" valor={`${hud.acc}%`} cor="text-violet-300" />
@@ -571,7 +571,7 @@ export function AimTrainer({
               sfx.start();
               setPhase("play");
             }}
-            className="inline-flex h-12 items-center rounded-xl bg-gradient-to-r from-violet-600 to-orange-500 px-8 text-base font-bold text-white shadow-[0_0_30px_-6px] shadow-violet-500/60"
+            className="inline-flex h-12 items-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-8 text-base font-bold text-white shadow-[0_0_30px_-6px] shadow-violet-500/60"
           >
             Iniciar treino
           </button>

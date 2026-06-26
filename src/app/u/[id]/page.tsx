@@ -18,7 +18,7 @@ type Params = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
   const perfil = await buscarPerfil(id);
-  return { title: `${perfil?.nome ?? "Jogador"} — FlawSkins` };
+  return { title: `${perfil?.nome ?? "Jogador"} — Vision Skins` };
 }
 
 export default async function PublicProfilePage({ params }: Params) {
@@ -45,7 +45,7 @@ export default async function PublicProfilePage({ params }: Params) {
       <BackButton className="mb-4" />
 
       <header className="mb-6 flex items-center gap-4">
-        <span className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-orange-500 text-2xl font-bold text-white">
+        <span className="grid size-20 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-2xl font-bold text-white">
           {perfil.avatar_url ? (
             <Image
               src={perfil.avatar_url}

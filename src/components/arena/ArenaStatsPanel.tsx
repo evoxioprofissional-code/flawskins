@@ -23,7 +23,7 @@ export function ArenaStatsPanel({ stats }: { stats: ArenaStats | null }) {
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-bold tracking-wide text-zinc-100">
           <Swords className="size-4 text-violet-400" />
-          Flaw Arena Stats
+          Vision Arena Stats
         </h2>
         {stats && <RankBadge tier={stats.tier} />}
       </div>
@@ -33,7 +33,7 @@ export function ArenaStatsPanel({ stats }: { stats: ArenaStats | null }) {
           <p className="text-sm text-zinc-400">Ainda não jogou na Arena.</p>
           <Link
             href="/arena"
-            className="mt-3 inline-flex h-9 items-center rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-4 text-sm font-semibold text-white"
+            className="mt-3 inline-flex h-9 items-center rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 text-sm font-semibold text-white"
           >
             Entrar na Arena
           </Link>

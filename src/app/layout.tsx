@@ -14,7 +14,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FlawSkins — Classificados P2P de Skins de CS2",
+  title: "Vision Skins — Classificados P2P de Skins de CS2",
   description:
     "O classificado definitivo de skins de CS2. Anuncie em segundos e negocie direto no WhatsApp.",
 };

@@ -10,7 +10,7 @@ import {
 import { ProLab } from "@/components/arena/ProLab";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Pro Player Lab — Flaw Arena" };
+export const metadata: Metadata = { title: "Pro Player Lab — Vision Arena" };
 export const dynamic = "force-dynamic";
 
 export default async function ProLabPage() {
@@ -30,7 +30,7 @@ export default async function ProLabPage() {
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
           Pro Player{" "}
-          <span className="bg-gradient-to-r from-violet-400 to-orange-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
             Lab
           </span>
         </h1>

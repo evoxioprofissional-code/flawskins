@@ -16,7 +16,7 @@ export function buildWhatsappLink(
   const numero = comDDI(whatsapp);
   const mensagem = `Olá! Tenho interesse na skin "${titulo}" (${formatBRL(
     preco
-  )}) que você anunciou no FlawSkins. Ainda está disponível?`;
+  )}) que você anunciou no Vision Skins. Ainda está disponível?`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
 }
 
@@ -30,7 +30,7 @@ export function buildLanceLink(
   const numero = comDDI(whatsapp);
   const mensagem = `Olá! Vi sua skin "${titulo}" anunciada por ${formatBRL(
     preco
-  )} no FlawSkins. Quero fazer um lance de ${formatBRL(
+  )} no Vision Skins. Quero fazer um lance de ${formatBRL(
     lance
   )}. Podemos negociar?`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
@@ -59,7 +59,7 @@ export function buildAnuncioText(a: AnuncioTextInput): string {
   if (a.phase) linhas.push(`💠 Phase: ${a.phase}`);
   if (a.cidade) linhas.push(`📍 ${a.cidade}`);
 
-  linhas.push(``, `💰 ${formatBRL(a.preco)}`, ``, `Anunciado no FlawSkins.`);
+  linhas.push(``, `💰 ${formatBRL(a.preco)}`, ``, `Anunciado no Vision Skins.`);
 
   return linhas.join("\n");
 }

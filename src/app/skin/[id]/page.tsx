@@ -19,8 +19,8 @@ type Params = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
   const anuncio = await buscarAnuncio(id);
-  if (!anuncio) return { title: "Skin não encontrada — FlawSkins" };
-  return { title: `${anuncio.titulo} — FlawSkins` };
+  if (!anuncio) return { title: "Skin não encontrada — Vision Skins" };
+  return { title: `${anuncio.titulo} — Vision Skins` };
 }
 
 export default async function SkinPage({ params }: Params) {
@@ -119,7 +119,7 @@ function Field({
       <dd
         className={
           highlight
-            ? "mt-0.5 text-lg font-bold text-orange-400"
+            ? "mt-0.5 text-lg font-bold text-fuchsia-400"
             : "mt-0.5 font-medium text-zinc-100"
         }
       >

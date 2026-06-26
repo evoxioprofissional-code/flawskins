@@ -43,7 +43,7 @@ export function SkinCard({ anuncio }: { anuncio: Anuncio }) {
           {anuncio.titulo}
         </h3>
         <span className="text-[11px] text-zinc-400">{anuncio.exterior}</span>
-        <span className="mt-auto text-base font-bold text-orange-400">
+        <span className="mt-auto text-base font-bold text-fuchsia-400">
           {formatBRL(anuncio.preco)}
         </span>
       </div>

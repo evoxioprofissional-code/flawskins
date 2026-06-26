@@ -22,7 +22,7 @@ export function Participantes({ lista }: { lista: Participante[] }) {
                 href={`/u/${p.user_id}`}
                 className="flex min-w-0 flex-1 items-center gap-2.5"
               >
-                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-orange-500 text-xs font-bold text-white">
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-xs font-bold text-white">
                   {(p.nome ?? "?").charAt(0).toUpperCase()}
                 </span>
                 <span className="truncate text-sm font-medium text-zinc-100 hover:underline">

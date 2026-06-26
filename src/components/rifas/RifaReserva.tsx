@@ -83,7 +83,7 @@ export function RifaReserva({
         <p className="text-sm text-zinc-400">Entre para comprar cotas.</p>
         <Link
           href={`/login?next=/rifas/${rifaId}`}
-          className="mt-3 inline-flex h-10 items-center rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-5 text-sm font-semibold text-white"
+          className="mt-3 inline-flex h-10 items-center rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white"
         >
           Entrar
         </Link>
@@ -139,7 +139,7 @@ export function RifaReserva({
             type="button"
             onClick={aleatorio}
             disabled={busy || restante === 0}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 text-sm font-semibold text-white disabled:opacity-60"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 text-sm font-semibold text-white disabled:opacity-60"
           >
             <Dice5 className="size-4" />
             Comprar {qtd} · {formatBRL(qtd * preco)}
@@ -157,7 +157,7 @@ export function RifaReserva({
                 type="button"
                 onClick={reservarSelecionados}
                 disabled={busy}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-orange-500 px-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 text-sm font-semibold text-white disabled:opacity-60"
               >
                 <Ticket className="size-4" /> Comprar {sel.size} · {formatBRL(sel.size * preco)}
               </button>
@@ -181,7 +181,7 @@ export function RifaReserva({
                       : isTaken
                         ? "cursor-not-allowed bg-zinc-800 text-zinc-600 line-through"
                         : isSel
-                          ? "bg-orange-500 text-white"
+                          ? "bg-fuchsia-500 text-white"
                           : "border border-zinc-800 text-zinc-300 hover:border-violet-500/50"
                   )}
                 >

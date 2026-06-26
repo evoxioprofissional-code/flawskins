@@ -6,7 +6,7 @@ import { getUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/admin";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
 
-export const metadata: Metadata = { title: "Admin — FlawSkins" };
+export const metadata: Metadata = { title: "Admin — Vision Skins" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminLoginPage() {
@@ -18,14 +18,14 @@ export default async function AdminLoginPage() {
     <div className="grid min-h-screen place-items-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-6 flex flex-col items-center text-center">
-          <span className="grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-orange-500 text-white">
+          <span className="grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white">
             <ShieldCheck className="size-7" />
           </span>
           <h1 className="mt-4 text-2xl font-bold tracking-tight text-zinc-100">
             Painel do Admin
           </h1>
           <p className="mt-1 text-sm text-zinc-400">
-            Acesso restrito à administração do FlawSkins.
+            Acesso restrito à administração do Vision Skins.
           </p>
         </div>
         <AdminLoginForm />

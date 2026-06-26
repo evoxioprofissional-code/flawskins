@@ -21,7 +21,7 @@ type Params = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
   const rifa = await buscarRifa(id);
-  return { title: rifa ? `${rifa.titulo} — Rifa FlawSkins` : "Rifa — FlawSkins" };
+  return { title: rifa ? `${rifa.titulo} — Rifa Vision Skins` : "Rifa — Vision Skins" };
 }
 
 export default async function RifaPage({ params }: Params) {
@@ -81,20 +81,20 @@ export default async function RifaPage({ params }: Params) {
       </header>
 
       <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-        <Stat label="Cota" v={formatBRL(rifa.preco_cota)} cor="text-orange-400" />
+        <Stat label="Cota" v={formatBRL(rifa.preco_cota)} cor="text-fuchsia-400" />
         <Stat label="Vendidas" v={`${rifa.vendidos}/${rifa.total_numeros}`} />
         <Stat label="Progresso" v={`${pct}%`} />
       </div>
       <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-800">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-orange-500"
+          className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
           style={{ width: `${pct}%` }}
         />
       </div>
 
       {/* Vencedor */}
       {rifa.status === "finalizada" && rifa.vencedor_numero != null && (
-        <div className="mt-5 rounded-2xl border border-violet-500/40 bg-gradient-to-br from-violet-500/15 to-orange-500/10 p-5 text-center">
+        <div className="mt-5 rounded-2xl border border-violet-500/40 bg-gradient-to-br from-violet-500/15 to-fuchsia-500/10 p-5 text-center">
           <Trophy className="mx-auto size-8 text-yellow-400" />
           <p className="mt-2 text-sm text-zinc-300">Número sorteado</p>
           <p className="text-4xl font-black text-zinc-50">{rifa.vencedor_numero}</p>

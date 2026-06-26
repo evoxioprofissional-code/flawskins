@@ -15,8 +15,8 @@ type Params = { params: Promise<{ game: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { game } = await params;
-  if (!isArenaGame(game)) return { title: "Flaw Arena — FlawSkins" };
-  return { title: `${ARENA_GAMES[game].nome} — Flaw Arena` };
+  if (!isArenaGame(game)) return { title: "Vision Arena — Vision Skins" };
+  return { title: `${ARENA_GAMES[game].nome} — Vision Arena` };
 }
 
 export default async function ArenaGamePage({ params }: Params) {
@@ -46,7 +46,7 @@ export default async function ArenaGamePage({ params }: Params) {
           </p>
           <Link
             href={`/login?next=/arena/${game}`}
-            className="inline-flex h-11 items-center rounded-xl bg-gradient-to-r from-violet-600 to-orange-500 px-6 text-sm font-semibold text-white"
+            className="inline-flex h-11 items-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 text-sm font-semibold text-white"
           >
             Entrar para jogar
           </Link>
