@@ -34,3 +34,19 @@ export async function inventarioSteam(): Promise<ActionResult<ItemInventario[]>>
     };
   }
 }
+
+// Float de uma skin a partir do inspect link (via CSFloat). null se não der.
+export async function floatDaSkin(inspectLink: string): Promise<number | null> {
+  try {
+    const r = await fetch(
+      `https://api.csfloat.com/?url=${encodeURIComponent(inspectLink)}`,
+      { headers: { "User-Agent": "VisionSkins/1.0" }, cache: "no-store" }
+    );
+    if (!r.ok) return null;
+    const j = (await r.json()) as { iteminfo?: { floatvalue?: number } };
+    const f = j.iteminfo?.floatvalue;
+    return typeof f === "number" ? Number(f.toFixed(6)) : null;
+  } catch {
+    return null;
+  }
+}

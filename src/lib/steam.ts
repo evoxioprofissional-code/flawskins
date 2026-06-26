@@ -111,6 +111,7 @@ export type ItemInventario = {
   categoria: Categoria;
   exterior: Exterior;
   image: string;
+  inspectLink: string | null;
 };
 
 type SteamTag = { category: string; localized_tag_name?: string; internal_name?: string };
@@ -122,6 +123,7 @@ type SteamDesc = {
   icon_url?: string;
   marketable?: number;
   tags?: SteamTag[];
+  actions?: { link?: string; name?: string }[];
 };
 type SteamAsset = { classid: string; instanceid: string; assetid: string };
 
@@ -181,6 +183,15 @@ export async function steamInventario(steamId: string): Promise<ItemInventario[]
     const categoria = TIPO_PARA_CATEGORIA[tipo] ??
       ((CATEGORIAS as readonly string[]).includes(tipo) ? (tipo as Categoria) : "Outro");
 
+    // Inspect link da peça (pra resolver o float depois): troca os
+    // placeholders %owner_steamid% e %assetid% pelos valores reais.
+    const acao = d.actions?.find((x) => x.link?.includes("csgo_econ_action_preview"));
+    const inspectLink = acao?.link
+      ? acao.link
+          .replace("%owner_steamid%", steamId)
+          .replace("%assetid%", a.assetid)
+      : null;
+
     itens.push({
       assetId: a.assetid,
       titulo: d.market_hash_name || d.name || "Skin",
@@ -189,6 +200,7 @@ export async function steamInventario(steamId: string): Promise<ItemInventario[]
       image: d.icon_url
         ? `https://community.cloudflare.steamstatic.com/economy/image/${d.icon_url}/360fx360f`
         : "",
+      inspectLink,
     });
   }
   return itens;

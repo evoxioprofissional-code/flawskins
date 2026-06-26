@@ -41,6 +41,7 @@ export function SkinForm({
   defaultTitulo = "",
   defaultCategoria,
   defaultExterior,
+  defaultFloat,
   seedImageUrl,
 }: {
   defaultNome?: string;
@@ -49,6 +50,7 @@ export function SkinForm({
   defaultTitulo?: string;
   defaultCategoria?: AnuncioFormValues["categoria"];
   defaultExterior?: AnuncioFormValues["exterior"];
+  defaultFloat?: number;
   seedImageUrl?: string;
 }) {
   const router = useRouter();
@@ -68,6 +70,7 @@ export function SkinForm({
       titulo: defaultTitulo,
       categoria: defaultCategoria,
       exterior: defaultExterior,
+      float_val: defaultFloat,
       preco: undefined,
       whatsapp: defaultWhatsapp,
       vendedor_nome: defaultNome,
