@@ -20,10 +20,15 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
       {
-        // Ícones de skins importadas do inventário da Steam (CDN público)
+        // Ícones de skins e avatares da Steam (CDN público)
         protocol: "https",
         hostname: "*.steamstatic.com",
-        pathname: "/economy/image/**",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "steamcdn-a.akamaihd.net",
+        pathname: "/**",
       },
     ],
   },
