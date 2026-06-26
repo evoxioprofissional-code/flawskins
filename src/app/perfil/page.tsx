@@ -9,6 +9,7 @@ import { getArenaStats } from "@/actions/arena";
 import { ProfileForm } from "@/components/perfil/ProfileForm";
 import { MySkins } from "@/components/perfil/MySkins";
 import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
+import { DesconectarMP } from "@/components/perfil/DesconectarMP";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = { title: "Meu perfil — Vision Skins" };
@@ -73,6 +74,8 @@ export default async function PerfilPage({
               <a href="/api/mp/oauth/connect" className="text-xs text-zinc-400 hover:underline">
                 reconectar
               </a>
+              <span className="text-xs text-zinc-700">·</span>
+              <DesconectarMP />
             </div>
           ) : (
             <a

@@ -420,6 +420,15 @@ export async function meuPainelRifa(): Promise<{
   };
 }
 
+// Remove a conexão Mercado Pago do criador (apaga o token + baixa a flag).
+export async function desconectarMercadoPago(): Promise<ActionResult<null>> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("mp_desconectar");
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/perfil");
+  return { ok: true, data: null };
+}
+
 export type Participante = {
   user_id: string;
   nome: string | null;
