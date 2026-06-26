@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { getUser } from "@/lib/auth";
 import { buscarPerfil } from "@/actions/perfil";
-import { SkinForm } from "@/components/skins/SkinForm";
+import { NovoAnuncio } from "@/components/skins/NovoAnuncio";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = {
@@ -29,7 +29,7 @@ export default async function NovoAnuncioPage() {
           Preencha os dados, publique em segundos e negocie direto no WhatsApp.
         </p>
       </header>
-      <SkinForm
+      <NovoAnuncio
         defaultNome={nome}
         defaultWhatsapp={perfil?.whatsapp ?? ""}
         defaultCidade={perfil?.regiao ?? ""}

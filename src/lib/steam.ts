@@ -75,3 +75,94 @@ function matchCdata(xml: string, tag: string): string | null {
 export function steamEmail(steamId: string): string {
   return `steam-${steamId}@steam.visionskins.net`;
 }
+
+// ---- Inventário CS2 (appid 730) ----
+import { CATEGORIAS, EXTERIORES } from "@/types/database";
+import type { Categoria, Exterior } from "@/types/database";
+
+export type ItemInventario = {
+  assetId: string;
+  titulo: string;
+  categoria: Categoria;
+  exterior: Exterior;
+  image: string;
+};
+
+type SteamTag = { category: string; localized_tag_name?: string; internal_name?: string };
+type SteamDesc = {
+  classid: string;
+  instanceid: string;
+  market_hash_name?: string;
+  name?: string;
+  icon_url?: string;
+  marketable?: number;
+  tags?: SteamTag[];
+};
+type SteamAsset = { classid: string; instanceid: string; assetid: string };
+
+const TIPO_PARA_CATEGORIA: Record<string, Categoria> = {
+  Knife: "Faca",
+  Gloves: "Luva",
+  Rifle: "Rifle",
+  Pistol: "Pistola",
+  SMG: "SMG",
+  "Sniper Rifle": "Sniper",
+  "Machinegun": "Outro",
+  Shotgun: "Outro",
+};
+
+function tagValor(tags: SteamTag[] | undefined, categoria: string): string | null {
+  const t = tags?.find((x) => x.category === categoria);
+  return t?.localized_tag_name ?? t?.internal_name ?? null;
+}
+
+// Lê o inventário público de CS2 e devolve só skins com desgaste (armas/facas/luvas).
+export async function steamInventario(steamId: string): Promise<ItemInventario[]> {
+  const url = `https://steamcommunity.com/inventory/${steamId}/730/2?l=portuguese&count=500`;
+  const res = await fetch(url, {
+    headers: { "User-Agent": "VisionSkins/1.0" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    // 403/500 normalmente = inventário privado ou vazio.
+    throw new Error("inventario_indisponivel");
+  }
+  const data = (await res.json()) as {
+    assets?: SteamAsset[];
+    descriptions?: SteamDesc[];
+  };
+  if (!data.descriptions || !data.assets) return [];
+
+  const descByKey = new Map<string, SteamDesc>();
+  for (const d of data.descriptions) descByKey.set(`${d.classid}_${d.instanceid}`, d);
+
+  const itens: ItemInventario[] = [];
+  const vistos = new Set<string>();
+  for (const a of data.assets) {
+    const d = descByKey.get(`${a.classid}_${a.instanceid}`);
+    if (!d) continue;
+
+    const ext = tagValor(d.tags, "Exterior");
+    if (!ext || !(EXTERIORES as readonly string[]).includes(ext)) continue; // só skins com desgaste
+
+    // Evita duplicar a mesma skin idêntica (mostra uma de cada).
+    const dedup = `${d.classid}_${d.instanceid}`;
+    if (vistos.has(dedup)) continue;
+    vistos.add(dedup);
+
+    const tipo = tagValor(d.tags, "Type") ?? "";
+    const categoria = TIPO_PARA_CATEGORIA[tipo] ??
+      ((CATEGORIAS as readonly string[]).includes(tipo) ? (tipo as Categoria) : "Outro");
+
+    itens.push({
+      assetId: a.assetid,
+      titulo: d.market_hash_name || d.name || "Skin",
+      categoria,
+      exterior: ext as Exterior,
+      image: d.icon_url
+        ? `https://community.cloudflare.steamstatic.com/economy/image/${d.icon_url}/360fx360f`
+        : "",
+    });
+  }
+  return itens;
+}

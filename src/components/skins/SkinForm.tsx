@@ -38,13 +38,24 @@ export function SkinForm({
   defaultNome = "",
   defaultWhatsapp = "",
   defaultCidade = "",
+  defaultTitulo = "",
+  defaultCategoria,
+  defaultExterior,
+  seedImageUrl,
 }: {
   defaultNome?: string;
   defaultWhatsapp?: string;
   defaultCidade?: string;
+  defaultTitulo?: string;
+  defaultCategoria?: AnuncioFormValues["categoria"];
+  defaultExterior?: AnuncioFormValues["exterior"];
+  seedImageUrl?: string;
 }) {
   const router = useRouter();
-  const [images, setImages] = useState<{ file: File; url: string }[]>([]);
+  // file === null = imagem remota (ex: vinda do inventário da Steam), não sobe.
+  const [images, setImages] = useState<{ file: File | null; url: string }[]>(
+    seedImageUrl ? [{ file: null, url: seedImageUrl }] : []
+  );
   const [imgError, setImgError] = useState<string | null>(null);
   const [created, setCreated] = useState<Created | null>(null);
   const [copied, setCopied] = useState(false);
@@ -54,7 +65,9 @@ export function SkinForm({
     // difere do de saída e o resolver precisa ser alinhado ao output.
     resolver: zodResolver(anuncioSchema) as Resolver<AnuncioFormValues>,
     defaultValues: {
-      titulo: "",
+      titulo: defaultTitulo,
+      categoria: defaultCategoria,
+      exterior: defaultExterior,
       preco: undefined,
       whatsapp: defaultWhatsapp,
       vendedor_nome: defaultNome,
@@ -98,8 +111,9 @@ export function SkinForm({
       // 1) Sobe as imagens direto pro Storage (sem passar pela Server Action,
       //    então não há limite prático de tamanho).
       const imageUrls: string[] = [];
-      for (const { file } of images) {
-        imageUrls.push(await uploadParaBucket("skins", file));
+      for (const { file, url } of images) {
+        // Imagem remota (inventário da Steam) entra direto; arquivo local sobe.
+        imageUrls.push(file ? await uploadParaBucket("skins", file) : url);
       }
 
       // 2) Cria o anúncio só com as URLs (payload pequeno).
