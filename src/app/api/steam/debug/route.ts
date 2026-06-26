@@ -52,7 +52,7 @@ export async function GET() {
   // Inventário CS2
   try {
     const r = await fetch(
-      `https://steamcommunity.com/inventory/${steamId}/730/2?l=portuguese&count=500`,
+      `https://steamcommunity.com/inventory/${steamId}/730/2?l=english&count=500`,
       { headers: { "User-Agent": "VisionSkins/1.0" }, cache: "no-store" }
     );
     const status = r.status;

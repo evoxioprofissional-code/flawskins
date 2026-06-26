@@ -143,7 +143,9 @@ function tagValor(tags: SteamTag[] | undefined, categoria: string): string | nul
 
 // Lê o inventário público de CS2 e devolve só skins com desgaste (armas/facas/luvas).
 export async function steamInventario(steamId: string): Promise<ItemInventario[]> {
-  const url = `https://steamcommunity.com/inventory/${steamId}/730/2?l=portuguese&count=500`;
+  // l=english: as tags de desgaste/tipo voltam em inglês ("Factory New",
+  // "Rifle"…), batendo com nossos enums. O nome da skin é inglês de qualquer jeito.
+  const url = `https://steamcommunity.com/inventory/${steamId}/730/2?l=english&count=500`;
   const res = await fetch(url, {
     headers: { "User-Agent": "VisionSkins/1.0" },
     cache: "no-store",
