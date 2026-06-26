@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { Logo } from "@/components/layout/Logo";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { SteamAuthBlock } from "@/components/auth/SteamAuthBlock";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = { title: "Entrar — Vision Skins" };
@@ -21,6 +22,7 @@ export default function LoginPage() {
         </p>
       </div>
       <Suspense>
+        <SteamAuthBlock />
         <AuthForm mode="login" />
       </Suspense>
     </div>
