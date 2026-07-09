@@ -1,6 +1,9 @@
 import { formatBRL } from "@/lib/format";
 import { sanitizeWhatsapp } from "@/lib/format";
 
+// Comunidade oficial no WhatsApp (grupo/comunidade da Vision Skins).
+export const WHATSAPP_COMUNIDADE = "https://chat.whatsapp.com/GOUwJGVNQpTHD575MNWKgx";
+
 // Garante o DDI 55 (Brasil) na frente do número, se ainda não houver.
 function comDDI(numero: string): string {
   const digits = sanitizeWhatsapp(numero);

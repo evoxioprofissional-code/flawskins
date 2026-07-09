@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import { Logo } from "@/components/layout/Logo";
+import { WhatsAppIcon } from "@/components/layout/WhatsAppIcon";
+import { WHATSAPP_COMUNIDADE } from "@/lib/whatsapp";
 
 export function Footer() {
   return (
@@ -13,6 +15,14 @@ export function Footer() {
               O classificado P2P de skins de CS2 da comunidade. Anuncie em
               segundos e feche direto no WhatsApp.
             </p>
+            <a
+              href={WHATSAPP_COMUNIDADE}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-whatsapp px-3 text-sm font-semibold text-white transition-colors hover:bg-whatsapp-dark"
+            >
+              <WhatsAppIcon className="size-4" /> Entrar na comunidade
+            </a>
           </div>
 
           <nav className="grid grid-cols-2 gap-x-12 gap-y-2 text-sm">

@@ -6,6 +6,7 @@ import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
 import { CategoryBar } from "@/components/home/CategoryBar";
 import { FeatureStrip } from "@/components/home/FeatureStrip";
+import { CommunityBanner } from "@/components/home/CommunityBanner";
 import type { Anuncio } from "@/types/database";
 
 // Feed sempre fresco no MVP.
@@ -79,6 +80,7 @@ export default async function HomePage({
         {grid}
       </div>
 
+      <CommunityBanner />
       <FeatureStrip />
     </>
   );
