@@ -16,7 +16,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getArenaStats } from "@/actions/arena";
 import { ARENA_GAMES, type ArenaGame } from "@/types/arena";
 import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
-import { BackButton } from "@/components/layout/BackButton";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = { title: "Vision Arena — Vision Skins" };
 export const dynamic = "force-dynamic";
@@ -46,28 +46,28 @@ export default async function ArenaPage() {
   ]);
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-6">
-      <BackButton className="mb-4" />
-
-      <header className="mb-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+    <>
+      <PageHeader
+        max="max-w-4xl"
+        title={
+          <>
             Vision{" "}
             <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               Arena
             </span>
-          </h1>
-          {season && (
+          </>
+        }
+        subtitle="Treine a mira, suba no ranking e dispute temporadas com a comunidade."
+        badge={
+          season && (
             <span className="rounded-full border border-violet-500/40 bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-300">
               {season.nome}
             </span>
-          )}
-        </div>
-        <p className="mt-1 text-sm text-zinc-400">
-          Treine a mira, suba no ranking e dispute temporadas com a comunidade.
-        </p>
-      </header>
+          )
+        }
+      />
 
+      <div className="mx-auto w-full max-w-4xl px-4 py-8">
       {/* Jogos */}
       <div className="grid gap-3 sm:grid-cols-3">
         {(Object.values(ARENA_GAMES) as (typeof ARENA_GAMES)[ArenaGame][]).map(
@@ -127,6 +127,7 @@ export default async function ArenaPage() {
           <Trophy className="size-4 text-yellow-400" /> Rankings
         </Link>
       </div>
-    </div>
+      </div>
+    </>
   );
 }

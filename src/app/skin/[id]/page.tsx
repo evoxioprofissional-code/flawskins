@@ -10,6 +10,7 @@ import { SellerBlock } from "@/components/skins/SellerBlock";
 import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
 import { OfferButton } from "@/components/skins/OfferButton";
 import { SkinGallery } from "@/components/skins/SkinGallery";
+import { WearBar } from "@/components/skins/WearBar";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const dynamic = "force-dynamic";
@@ -41,22 +42,50 @@ export default async function SkinPage({ params }: Params) {
         vendido={anuncio.status === "vendido"}
       />
 
-      {/* Título */}
+      {/* Título + badges */}
       <div className="mt-5">
-        <span className="text-xs font-semibold tracking-widest text-zinc-500 uppercase">
-          Details
-        </span>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-zinc-100 uppercase">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-md border border-violet-500/40 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-300">
+            {anuncio.categoria}
+          </span>
+          <span className="rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-0.5 text-[11px] font-medium text-zinc-300">
+            {anuncio.exterior}
+          </span>
+        </div>
+        <h1 className="font-display mt-2 text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
           {anuncio.titulo}
         </h1>
       </div>
 
-      {/* Grid de campos 2x2 */}
-      <dl className="mt-4 grid grid-cols-2 gap-3">
-        <Field label="Float" value={anuncio.float_val != null ? String(anuncio.float_val) : "—"} />
-        <Field label="Phase" value={anuncio.phase ?? "—"} />
-        <Field label="Price" value={formatBRL(anuncio.preco)} highlight />
+      {/* Preço em destaque */}
+      <div className="mt-4 rounded-2xl border border-fuchsia-500/25 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 px-4 py-3">
+        <span className="text-[11px] font-medium tracking-wider text-zinc-400 uppercase">
+          Preço
+        </span>
+        <p className="font-display text-3xl font-bold text-fuchsia-400">
+          {formatBRL(anuncio.preco)}
+        </p>
+      </div>
+
+      {/* Float / desgaste */}
+      {anuncio.float_val != null && (
+        <div className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-3.5">
+          <div className="mb-2 flex items-baseline justify-between">
+            <span className="text-[11px] font-medium tracking-wider text-zinc-400 uppercase">
+              Float
+            </span>
+            <span className="font-mono text-sm font-semibold text-zinc-100">
+              {anuncio.float_val}
+            </span>
+          </div>
+          <WearBar float={Number(anuncio.float_val)} />
+        </div>
+      )}
+
+      {/* Demais campos */}
+      <dl className="mt-3 grid grid-cols-2 gap-3">
         <Field label="Exterior" value={anuncio.exterior} />
+        <Field label="Phase" value={anuncio.phase ?? "—"} />
       </dl>
 
       {/* Vendedor */}

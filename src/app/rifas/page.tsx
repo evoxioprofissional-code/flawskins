@@ -5,7 +5,7 @@ import { Plus, Ticket } from "lucide-react";
 import { getUser } from "@/lib/auth";
 import { listarRifas } from "@/actions/rifas";
 import { RifaCard } from "@/components/rifas/RifaCard";
-import { BackButton } from "@/components/layout/BackButton";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const metadata: Metadata = { title: "Rifas de skins — Vision Skins" };
 export const dynamic = "force-dynamic";
@@ -14,31 +14,30 @@ export default async function RifasPage() {
   const [user, rifas] = await Promise.all([getUser(), listarRifas()]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-6">
-      <BackButton className="mb-4" />
-
-      <header className="mb-6 flex items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+    <>
+      <PageHeader
+        title={
+          <>
             Rifas de{" "}
             <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
               skins
             </span>
-          </h1>
-          <p className="mt-1 text-sm text-zinc-400">
-            Compre cotas, escolha seus números e concorra à skin.
-          </p>
-        </div>
-        {user && (
-          <Link
-            href="/rifas/criar"
-            className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 text-sm font-semibold text-white"
-          >
-            <Plus className="size-4" /> Criar minha rifa
-          </Link>
-        )}
-      </header>
+          </>
+        }
+        subtitle="Compre cotas, escolha seus números e concorra à skin."
+        action={
+          user && (
+            <Link
+              href="/rifas/criar"
+              className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/25 transition-transform hover:-translate-y-0.5"
+            >
+              <Plus className="size-4" /> Criar minha rifa
+            </Link>
+          )
+        }
+      />
 
+      <div className="mx-auto w-full max-w-5xl px-4 py-8">
       {rifas.length === 0 ? (
         <div className="grid place-items-center rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 px-6 py-16 text-center">
           <Ticket className="size-10 text-zinc-600" />
@@ -56,6 +55,7 @@ export default async function RifasPage() {
           ))}
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }
