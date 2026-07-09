@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Inter, Space_Grotesk, Anton } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 
@@ -20,6 +20,13 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["500", "600", "700"],
 });
 
+// Fonte de impacto para os grandes títulos (hero): pesada e condensada.
+const anton = Anton({
+  variable: "--font-impact",
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export const metadata: Metadata = {
   title: "Vision Skins — Classificados P2P de Skins de CS2",
   description:
@@ -38,7 +45,7 @@ export default async function RootLayout({
   return (
     <html
       lang="pt-BR"
-      className={`dark ${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`dark ${inter.variable} ${spaceGrotesk.variable} ${anton.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">
         {isAdmin ? (

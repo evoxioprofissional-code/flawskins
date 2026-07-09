@@ -3,6 +3,7 @@ import { AlertTriangle, X } from "lucide-react";
 
 import { listarAnuncios } from "@/actions/anuncios";
 import { getShowcaseSkins } from "@/lib/skins-showcase";
+import { createClient } from "@/lib/supabase/server";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
 import { CategoryBar } from "@/components/home/CategoryBar";
@@ -63,17 +64,35 @@ export default async function HomePage({
     );
   }
 
-  // Skins pra flutuar no hero: renders limpos (PNG transparente) de skins
+  // Skins pra compor o hero: renders limpos (PNG transparente) de skins
   // icônicas via CS2-API. Se a API falhar, cai nas imagens dos anúncios.
   let heroSkins = await getShowcaseSkins();
   if (heroSkins.length === 0) {
     heroSkins = anuncios.map((a) => a.image_url).filter(Boolean).slice(0, 5);
   }
 
+  // Prova social real: avatares de vendedores da comunidade + nº de usuários.
+  const supabase = await createClient();
+  const [{ data: avatares }, { count: membros }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("avatar_url")
+      .not("avatar_url", "is", null)
+      .limit(5)
+      .returns<{ avatar_url: string }[]>(),
+    supabase.from("profiles").select("id", { count: "exact", head: true }),
+  ]);
+  const heroAvatares = (avatares ?? []).map((a) => a.avatar_url);
+
   // Home: hero + categorias + grade + diferenciais.
   return (
     <>
-      <Hero total={anuncios.length} skins={heroSkins} />
+      <Hero
+        total={anuncios.length}
+        skins={heroSkins}
+        avatares={heroAvatares}
+        membros={membros ?? 0}
+      />
 
       <div id="skins" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-8">
         <CategoryBar ativa={categoria} />

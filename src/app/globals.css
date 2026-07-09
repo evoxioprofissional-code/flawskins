@@ -138,6 +138,9 @@
 .font-display {
   font-family: var(--font-display);
 }
+.font-impact {
+  font-family: var(--font-impact), var(--font-display), sans-serif;
+}
 
 /* Campo de estrelas — camadas de pontos com brilho suave, sem imagem. */
 .starfield {
