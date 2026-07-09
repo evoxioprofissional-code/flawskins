@@ -33,7 +33,7 @@ export function FeatureStrip() {
   return (
     <section className="border-t border-zinc-800/70 bg-zinc-950">
       <div className="mx-auto max-w-7xl px-4 py-12">
-        <h2 className="text-lg font-bold text-zinc-100">
+        <h2 className="font-display text-2xl font-bold text-zinc-100">
           Mais que um classificado
         </h2>
         <p className="mt-1 text-sm text-zinc-400">

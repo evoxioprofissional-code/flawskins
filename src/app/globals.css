@@ -12,7 +12,8 @@
   --color-whatsapp-dark: #1faa52;
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-display: var(--font-display), var(--font-sans);
+  --font-heading: var(--font-display), var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -131,4 +132,41 @@
   html {
     @apply font-sans;
   }
+}
+
+/* ---- Utilitários visuais (hero) ---- */
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Campo de estrelas — camadas de pontos com brilho suave, sem imagem. */
+.starfield {
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1.5px 1.5px at 75% 20%, rgba(196, 181, 253, 0.5), transparent),
+    radial-gradient(1px 1px at 40% 70%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 90% 60%, rgba(244, 114, 182, 0.45), transparent),
+    radial-gradient(1px 1px at 60% 40%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1.5px 1.5px at 10% 80%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 85% 90%, rgba(196, 181, 253, 0.4), transparent);
+  background-size: 480px 480px;
+  animation: twinkle 6s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Skins flutuando no hero (translação + leve rotação/escala). */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(var(--rot, 0deg)); }
+  50% { transform: translateY(-22px) rotate(calc(var(--rot, 0deg) + 2deg)); }
+}
+.animate-floaty {
+  animation: floaty var(--dur, 7s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .starfield, .animate-floaty { animation: none; }
 }

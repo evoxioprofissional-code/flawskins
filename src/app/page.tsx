@@ -2,6 +2,7 @@ import Link from "next/link";
 import { AlertTriangle, X } from "lucide-react";
 
 import { listarAnuncios } from "@/actions/anuncios";
+import { getShowcaseSkins } from "@/lib/skins-showcase";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
 import { CategoryBar } from "@/components/home/CategoryBar";
@@ -62,16 +63,23 @@ export default async function HomePage({
     );
   }
 
+  // Skins pra flutuar no hero: renders limpos (PNG transparente) de skins
+  // icônicas via CS2-API. Se a API falhar, cai nas imagens dos anúncios.
+  let heroSkins = await getShowcaseSkins();
+  if (heroSkins.length === 0) {
+    heroSkins = anuncios.map((a) => a.image_url).filter(Boolean).slice(0, 5);
+  }
+
   // Home: hero + categorias + grade + diferenciais.
   return (
     <>
-      <Hero total={anuncios.length} />
+      <Hero total={anuncios.length} skins={heroSkins} />
 
       <div id="skins" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-8">
         <CategoryBar ativa={categoria} />
         <div className="mt-6 mb-4 flex items-end justify-between">
           <div>
-            <h2 className="text-lg font-bold text-zinc-100">À venda agora</h2>
+            <h2 className="font-display text-xl font-bold text-zinc-100">À venda agora</h2>
             <p className="text-sm text-zinc-400">
               Skins da comunidade, atualizadas em tempo real.
             </p>

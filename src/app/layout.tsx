@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
 import "./globals.css";
 
@@ -11,6 +11,13 @@ import { Toaster } from "@/components/ui/sonner";
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+});
+
+// Fonte de display (títulos): mais caráter que o Inter, look premium.
+const spaceGrotesk = Space_Grotesk({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -29,7 +36,10 @@ export default async function RootLayout({
   const isAdmin = pathname.startsWith("/admin");
 
   return (
-    <html lang="pt-BR" className={`dark ${inter.variable} h-full antialiased`}>
+    <html
+      lang="pt-BR"
+      className={`dark ${inter.variable} ${spaceGrotesk.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">
         {isAdmin ? (
           <main className="flex-1">{children}</main>

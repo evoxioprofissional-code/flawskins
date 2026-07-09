@@ -18,7 +18,7 @@ export function CommunityBanner() {
               <span className="inline-flex items-center gap-2 rounded-full bg-black/25 px-3 py-1 text-xs font-semibold text-white/90">
                 <span className="size-1.5 rounded-full bg-emerald-400" /> Comunidade oficial
               </span>
-              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+              <h2 className="font-display mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
                 Entre no grupo da Vision Skins
               </h2>
               <p className="mt-2 text-sm text-white/90 sm:text-base">
