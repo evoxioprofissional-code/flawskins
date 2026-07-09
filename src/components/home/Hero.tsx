@@ -41,9 +41,10 @@ export function Hero({ total, skins = [], avatares = [], membros = 0 }: Props) {
           </span>
         </div>
 
-        {/* Título */}
-        <h1 className="font-display mx-auto mt-6 max-w-3xl text-4xl font-bold tracking-tight text-zinc-50 uppercase sm:text-5xl lg:text-6xl">
-          Skins de CS2,{" "}
+        {/* Título de impacto (Anton) */}
+        <h1 className="font-impact mx-auto mt-6 max-w-3xl text-5xl leading-[0.95] tracking-tight text-white uppercase sm:text-6xl lg:text-7xl">
+          Skins de CS2,
+          <br />
           <span
             className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-violet-300 bg-clip-text text-transparent"
             style={{ filter: "drop-shadow(0 0 32px rgba(217,70,239,0.55))" }}
