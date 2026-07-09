@@ -14,7 +14,7 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur supports-[backdrop-filter]:bg-zinc-950/60">
-      <div className="mx-auto w-full max-w-6xl px-4">
+      <div className="mx-auto w-full max-w-7xl px-4">
         {/* Linha 1: logo + ações */}
         <div className="flex h-14 items-center justify-between gap-3">
           <Logo />
@@ -61,7 +61,7 @@ export async function Header() {
             className="inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-fuchsia-500 px-3 text-sm font-semibold text-white transition-colors hover:bg-fuchsia-600"
           >
             <Plus className="size-4" />
-            <span className="hidden sm:inline">sell</span>
+            <span className="hidden sm:inline">Vender</span>
           </Link>
         </div>
       </div>
