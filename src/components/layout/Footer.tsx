@@ -19,7 +19,7 @@ export function Footer() {
               href={WHATSAPP_COMUNIDADE}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-whatsapp px-3 text-sm font-semibold text-white transition-colors hover:bg-whatsapp-dark"
+              className="mt-4 inline-flex h-9 items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
             >
               <WhatsAppIcon className="size-4" /> Entrar na comunidade
             </a>
