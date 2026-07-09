@@ -41,10 +41,9 @@ export function Hero({ total, skins = [], avatares = [], membros = 0 }: Props) {
           </span>
         </div>
 
-        {/* Título de impacto */}
-        <h1 className="font-impact mx-auto mt-6 max-w-3xl text-5xl leading-[0.95] tracking-tight text-white uppercase sm:text-6xl lg:text-7xl">
-          Skins de CS2,
-          <br />
+        {/* Título */}
+        <h1 className="font-display mx-auto mt-6 max-w-3xl text-4xl font-bold tracking-tight text-zinc-50 uppercase sm:text-5xl lg:text-6xl">
+          Skins de CS2,{" "}
           <span
             className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-violet-300 bg-clip-text text-transparent"
             style={{ filter: "drop-shadow(0 0 32px rgba(217,70,239,0.55))" }}
@@ -85,20 +84,20 @@ export function Hero({ total, skins = [], avatares = [], membros = 0 }: Props) {
 
         {/* Centerpiece: skin grande no centro + laterais, sobre um pedestal de luz */}
         {centro && (
-          <div className="relative mt-10 flex items-center justify-center gap-3 sm:mt-14 sm:gap-8">
+          <div className="relative mt-10 flex items-center justify-center gap-1 sm:mt-14 sm:gap-8">
             {flancos[0] && (
               <FloatImg
                 src={flancos[0]}
-                className="hidden w-28 -rotate-6 sm:block lg:w-40"
+                className="w-16 -rotate-6 sm:w-28 lg:w-40"
                 dur="8.5s"
                 delay="0.6s"
               />
             )}
             <div className="relative">
-              <div className="absolute -bottom-2 left-1/2 h-14 w-56 -translate-x-1/2 rounded-[100%] bg-fuchsia-500/30 blur-2xl sm:w-72" />
+              <div className="absolute -bottom-2 left-1/2 h-14 w-40 -translate-x-1/2 rounded-[100%] bg-fuchsia-500/30 blur-2xl sm:w-72" />
               <FloatImg
                 src={centro}
-                className="relative w-64 sm:w-80 lg:w-[26rem]"
+                className="relative w-36 sm:w-80 lg:w-[26rem]"
                 dur="7s"
                 delay="0s"
                 strong
@@ -107,7 +106,7 @@ export function Hero({ total, skins = [], avatares = [], membros = 0 }: Props) {
             {flancos[1] && (
               <FloatImg
                 src={flancos[1]}
-                className="hidden w-28 rotate-6 sm:block lg:w-40"
+                className="w-16 rotate-6 sm:w-28 lg:w-40"
                 dur="9s"
                 delay="1.2s"
               />
