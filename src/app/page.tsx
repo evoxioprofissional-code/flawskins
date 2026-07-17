@@ -1,6 +1,5 @@
 import { Suspense } from "react";
-import Link from "next/link";
-import { AlertTriangle, X } from "lucide-react";
+import { AlertTriangle, Search } from "lucide-react";
 
 import { listarAnuncios } from "@/actions/anuncios";
 import { getShowcaseSkins } from "@/lib/skins-showcase";
@@ -89,24 +88,29 @@ export default async function HomePage({
         </aside>
 
         <div className="min-w-0 flex-1">
-          <div className="mb-4 flex items-center gap-3">
-            <span className="text-sm text-zinc-400">
-              {anuncios.length} skin{anuncios.length === 1 ? "" : "s"}
-            </span>
-            {q && (
-              <Link
-                href="/"
-                className="inline-flex items-center gap-1 rounded-full border border-white/10 px-2.5 py-1 text-xs text-zinc-300 hover:bg-white/5"
-              >
-                &quot;{q}&quot; <X className="size-3" />
-              </Link>
-            )}
-            <div className="ml-auto">
-              <Suspense>
-                <SortSelect />
-              </Suspense>
-            </div>
+          <div className="mb-3 flex items-center gap-2">
+            <form action="/" className="relative min-w-0 flex-1">
+              {categoria && (
+                <input type="hidden" name="categoria" value={categoria} />
+              )}
+              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-zinc-500" />
+              <input
+                type="search"
+                name="q"
+                defaultValue={q ?? ""}
+                placeholder="Buscar skins, facas, luvas, vendedor..."
+                aria-label="Buscar skins"
+                className="h-11 w-full rounded-lg border border-white/10 bg-neutral-900 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/40 focus:outline-none"
+              />
+            </form>
+            <Suspense>
+              <SortSelect />
+            </Suspense>
           </div>
+          <p className="mb-3 text-xs text-zinc-500">
+            {anuncios.length} skin{anuncios.length === 1 ? "" : "s"}
+            {q ? ` para "${q}"` : ""}
+          </p>
           {grid}
         </div>
       </div>
