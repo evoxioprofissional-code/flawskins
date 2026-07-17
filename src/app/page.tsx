@@ -5,80 +5,126 @@ import { AlertTriangle, X } from "lucide-react";
 import { listarAnuncios } from "@/actions/anuncios";
 import { getShowcaseSkins } from "@/lib/skins-showcase";
 import { createClient } from "@/lib/supabase/server";
+import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
 import { CategoryBar } from "@/components/home/CategoryBar";
 import { FeatureStrip } from "@/components/home/FeatureStrip";
 import { CommunityBanner } from "@/components/home/CommunityBanner";
 import { SortSelect } from "@/components/home/SortSelect";
+import { FilterSidebar } from "@/components/home/FilterSidebar";
 import type { Anuncio } from "@/types/database";
 
 // Feed sempre fresco no MVP.
 export const dynamic = "force-dynamic";
 
-type Search = { q?: string; categoria?: string; ordem?: string };
+type Search = {
+  q?: string;
+  categoria?: string;
+  ordem?: string;
+  pmin?: string;
+  pmax?: string;
+  fmin?: string;
+  fmax?: string;
+  ext?: string;
+};
+
+const num = (v?: string) => {
+  const n = v ? Number(v.replace(",", ".")) : NaN;
+  return Number.isFinite(n) ? n : undefined;
+};
 
 export default async function HomePage({
   searchParams,
 }: {
   searchParams: Promise<Search>;
 }) {
-  const { q, categoria, ordem } = await searchParams;
-  const temFiltro = Boolean(q || categoria);
+  const sp = await searchParams;
+  const { q, categoria, ordem, pmin, pmax, fmin, fmax, ext } = sp;
+  const temBusca = Boolean(q || categoria || pmin || pmax || fmin || fmax || ext);
+
+  const exteriores = ext
+    ? ext.split(",").map((a) => ABBR_TO_EXT[a]).filter(Boolean)
+    : undefined;
 
   let anuncios: Anuncio[] = [];
   let erro = false;
   try {
-    anuncios = await listarAnuncios({ q, categoria, ordem });
+    anuncios = await listarAnuncios({
+      q,
+      categoria,
+      ordem,
+      precoMin: num(pmin),
+      precoMax: num(pmax),
+      floatMin: num(fmin),
+      floatMax: num(fmax),
+      exteriores,
+    });
   } catch {
     erro = true;
   }
 
+  // Remonta o sidebar (inputs) quando os filtros mudam de fora (ex: Limpar).
+  const sidebarKey = `${pmin ?? ""}|${pmax ?? ""}|${fmin ?? ""}|${fmax ?? ""}|${ext ?? ""}`;
+
   const grid = erro ? (
-    <div className="flex items-center gap-3 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-6 text-sm text-zinc-300">
-      <AlertTriangle className="size-5 text-fuchsia-400" />
+    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-neutral-900 px-4 py-6 text-sm text-zinc-300">
+      <AlertTriangle className="size-5 text-violet-400" />
       Não foi possível carregar o feed agora. Tente novamente em instantes.
     </div>
   ) : (
-    <SkinGrid anuncios={anuncios} busca={temFiltro} />
+    <SkinGrid anuncios={anuncios} busca={temBusca} />
   );
 
-  // Modo busca/filtro: página enxuta, focada no resultado.
-  if (temFiltro) {
-    return (
-      <div className="mx-auto w-full max-w-7xl px-4 py-6">
-        <CategoryBar ativa={categoria} />
-        <div className="mt-5 mb-4 flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-zinc-300">
-            {anuncios.length} resultado{anuncios.length === 1 ? "" : "s"}
-          </span>
-          {q && <FilterChip label={`"${q}"`} />}
-          {categoria && <FilterChip label={categoria} />}
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1 rounded-full border border-zinc-700 px-2.5 py-1 text-xs text-zinc-300 hover:bg-zinc-800"
-          >
-            <X className="size-3" /> limpar
-          </Link>
-          <div className="ml-auto">
+  const marketplace = (
+    <div className="mx-auto w-full max-w-7xl px-4">
+      <CategoryBar ativa={categoria} />
+      <div className="mt-5 flex gap-6">
+        <aside className="hidden w-64 shrink-0 lg:block">
+          <div className="sticky top-20">
             <Suspense>
-              <SortSelect />
+              <FilterSidebar key={sidebarKey} />
             </Suspense>
           </div>
+        </aside>
+
+        <div className="min-w-0 flex-1">
+          <div className="mb-4 flex items-center gap-3">
+            <span className="text-sm text-zinc-400">
+              {anuncios.length} skin{anuncios.length === 1 ? "" : "s"}
+            </span>
+            {q && (
+              <Link
+                href="/"
+                className="inline-flex items-center gap-1 rounded-full border border-white/10 px-2.5 py-1 text-xs text-zinc-300 hover:bg-white/5"
+              >
+                &quot;{q}&quot; <X className="size-3" />
+              </Link>
+            )}
+            <div className="ml-auto">
+              <Suspense>
+                <SortSelect />
+              </Suspense>
+            </div>
+          </div>
+          {grid}
         </div>
-        {grid}
       </div>
-    );
+    </div>
+  );
+
+  // Modo busca/filtro: só o marketplace.
+  if (temBusca) {
+    return <div className="py-6">{marketplace}</div>;
   }
 
-  // Skins pra compor o hero: renders limpos (PNG transparente) de skins
-  // icônicas via CS2-API. Se a API falhar, cai nas imagens dos anúncios.
+  // Skins pra compor o hero (PNG transparente de skins icônicas).
   let heroSkins = await getShowcaseSkins();
   if (heroSkins.length === 0) {
     heroSkins = anuncios.map((a) => a.image_url).filter(Boolean).slice(0, 5);
   }
 
-  // Prova social real: avatares de vendedores da comunidade + nº de usuários.
+  // Prova social real: avatares de vendedores + nº de usuários.
   const supabase = await createClient();
   const [{ data: avatares }, { count: membros }] = await Promise.all([
     supabase
@@ -91,7 +137,6 @@ export default async function HomePage({
   ]);
   const heroAvatares = (avatares ?? []).map((a) => a.avatar_url);
 
-  // Home: hero + categorias + grade + diferenciais.
   return (
     <>
       <Hero
@@ -100,33 +145,11 @@ export default async function HomePage({
         avatares={heroAvatares}
         membros={membros ?? 0}
       />
-
-      <div id="skins" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-8">
-        <CategoryBar ativa={categoria} />
-        <div className="mt-6 mb-4 flex items-end justify-between gap-3">
-          <div>
-            <h2 className="font-display text-xl font-bold text-zinc-100">À venda agora</h2>
-            <p className="text-sm text-zinc-400">
-              Skins da comunidade, atualizadas em tempo real.
-            </p>
-          </div>
-          <Suspense>
-            <SortSelect />
-          </Suspense>
-        </div>
-        {grid}
+      <div id="skins" className="scroll-mt-20 py-10">
+        {marketplace}
       </div>
-
       <CommunityBanner />
       <FeatureStrip />
     </>
-  );
-}
-
-function FilterChip({ label }: { label: string }) {
-  return (
-    <span className="rounded-full border border-violet-500/40 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-300">
-      {label}
-    </span>
   );
 }

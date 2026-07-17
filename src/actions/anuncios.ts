@@ -108,6 +108,11 @@ export async function listarAnuncios(filtros?: {
   q?: string;
   categoria?: string;
   ordem?: string;
+  precoMin?: number;
+  precoMax?: number;
+  floatMin?: number;
+  floatMax?: number;
+  exteriores?: string[];
 }): Promise<Anuncio[]> {
   const supabase = await createClient();
   let query = supabase.from("anuncios").select("*").eq("status", "ativo");
@@ -125,6 +130,17 @@ export async function listarAnuncios(filtros?: {
   if (categoria && (CATEGORIAS as readonly string[]).includes(categoria)) {
     query = query.eq("categoria", categoria as Categoria);
   }
+
+  // Preço (R$)
+  if (filtros?.precoMin != null) query = query.gte("preco", filtros.precoMin);
+  if (filtros?.precoMax != null) query = query.lte("preco", filtros.precoMax);
+
+  // Float
+  if (filtros?.floatMin != null) query = query.gte("float_val", filtros.floatMin);
+  if (filtros?.floatMax != null) query = query.lte("float_val", filtros.floatMax);
+
+  // Desgaste (exteriores)
+  if (filtros?.exteriores?.length) query = query.in("exterior", filtros.exteriores);
 
   const { data, error } = await query.returns<Anuncio[]>();
   if (error) throw new Error(error.message);
