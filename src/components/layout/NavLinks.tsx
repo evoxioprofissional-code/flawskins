@@ -24,8 +24,10 @@ export function NavLinks() {
             key={l.href}
             href={l.href}
             className={cn(
-              "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-              active ? "text-white" : "text-zinc-400 hover:text-white"
+              "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+              active
+                ? "bg-white/[0.06] text-white ring-1 ring-white/10"
+                : "text-zinc-400 hover:bg-white/[0.06] hover:text-white"
             )}
           >
             {l.label}
