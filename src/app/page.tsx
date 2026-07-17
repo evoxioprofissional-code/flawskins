@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
-import { CategoryBar } from "@/components/home/CategoryBar";
+import { TopCategoryNav } from "@/components/home/TopCategoryNav";
 import { FeatureStrip } from "@/components/home/FeatureStrip";
 import { CommunityBanner } from "@/components/home/CommunityBanner";
 import { SortSelect } from "@/components/home/SortSelect";
@@ -78,7 +78,9 @@ export default async function HomePage({
 
   const marketplace = (
     <div className="mx-auto w-full max-w-7xl px-4">
-      <CategoryBar ativa={categoria} />
+      <Suspense>
+        <TopCategoryNav />
+      </Suspense>
       <div className="mt-5 flex gap-6">
         <aside className="hidden w-64 shrink-0 lg:block">
           <div className="sticky top-20">

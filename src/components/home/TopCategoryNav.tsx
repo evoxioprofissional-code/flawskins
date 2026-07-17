@@ -1,0 +1,107 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { ChevronDown } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+// Categorias + modelos de arma de CS2 (clicar num modelo filtra por nome).
+const CATS = [
+  {
+    label: "Facas",
+    categoria: "Faca",
+    itens: ["Bayonet", "Bowie Knife", "Butterfly Knife", "Classic Knife", "Falchion Knife", "Flip Knife", "Gut Knife", "Huntsman Knife", "Karambit", "Kukri Knife", "M9 Bayonet", "Navaja Knife", "Nomad Knife", "Paracord Knife", "Shadow Daggers", "Skeleton Knife", "Stiletto Knife", "Survival Knife", "Talon Knife", "Ursus Knife"],
+  },
+  {
+    label: "Luvas",
+    categoria: "Luva",
+    itens: ["Bloodhound Gloves", "Broken Fang Gloves", "Driver Gloves", "Hand Wraps", "Hydra Gloves", "Moto Gloves", "Specialist Gloves", "Sport Gloves"],
+  },
+  {
+    label: "Rifles",
+    categoria: "Rifle",
+    itens: ["AK-47", "AUG", "FAMAS", "Galil AR", "M4A1-S", "M4A4", "SG 553"],
+  },
+  {
+    label: "Pistolas",
+    categoria: "Pistola",
+    itens: ["CZ75-Auto", "Desert Eagle", "Dual Berettas", "Five-SeveN", "Glock-18", "P2000", "P250", "R8 Revolver", "Tec-9", "USP-S"],
+  },
+  {
+    label: "SMG",
+    categoria: "SMG",
+    itens: ["MAC-10", "MP5-SD", "MP7", "MP9", "P90", "PP-Bizon", "UMP-45"],
+  },
+  {
+    label: "Snipers",
+    categoria: "Sniper",
+    itens: ["AWP", "SSG 08", "G3SG1", "SCAR-20"],
+  },
+  {
+    label: "Outros",
+    categoria: "Outro",
+    itens: ["MAG-7", "Nova", "Sawed-Off", "XM1014", "M249", "Negev", "Zeus x27"],
+  },
+] as const;
+
+export function TopCategoryNav() {
+  const params = useSearchParams();
+  const catAtiva = params.get("categoria");
+  const [aberto, setAberto] = useState<string | null>(null);
+
+  const atual = CATS.find((c) => c.label === aberto);
+  const hideScroll = "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
+
+  return (
+    <div className="rounded-xl border border-white/10 bg-neutral-900">
+      {/* Categorias */}
+      <div className={cn("flex items-center gap-0.5 overflow-x-auto px-1.5", hideScroll)}>
+        {CATS.map((c) => {
+          const aberta = aberto === c.label;
+          const ativa = aberta || catAtiva === c.categoria;
+          return (
+            <button
+              key={c.label}
+              type="button"
+              onClick={() => setAberto(aberta ? null : c.label)}
+              className={cn(
+                "inline-flex shrink-0 items-center gap-1 rounded-lg px-3.5 py-3 text-sm font-semibold transition-colors",
+                ativa ? "text-white" : "text-zinc-400 hover:text-white"
+              )}
+            >
+              {c.label}
+              <ChevronDown className={cn("size-3.5 transition-transform", aberta && "rotate-180")} />
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Modelos da categoria aberta */}
+      {atual && (
+        <div className="border-t border-white/10 p-3">
+          <div className={cn("flex gap-2 overflow-x-auto pb-1", hideScroll)}>
+            <Link
+              href={`/?categoria=${encodeURIComponent(atual.categoria)}`}
+              onClick={() => setAberto(null)}
+              className="grid min-w-[6rem] shrink-0 place-items-center rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-4 text-center text-xs font-semibold text-violet-200"
+            >
+              Todas as {atual.label.toLowerCase()}
+            </Link>
+            {atual.itens.map((w) => (
+              <Link
+                key={w}
+                href={`/?q=${encodeURIComponent(w)}`}
+                onClick={() => setAberto(null)}
+                className="grid min-w-[6rem] shrink-0 place-items-center rounded-lg border border-white/10 bg-neutral-950 px-3 py-4 text-center text-xs font-medium text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
+              >
+                {w}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
