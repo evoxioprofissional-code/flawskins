@@ -43,7 +43,7 @@ export function CommunityBanner() {
                 href={WHATSAPP_COMUNIDADE}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group inline-flex h-12 shrink-0 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-bold text-violet-300 shadow-lg shadow-fuchsia-500/30 transition-all hover:-translate-y-0.5 hover:shadow-fuchsia-500/50"
+                className="group inline-flex h-12 shrink-0 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-bold text-violet-300 transition-all hover:-translate-y-0.5"
               >
                 <WhatsAppIcon className="size-5" />
                 Entrar na comunidade
