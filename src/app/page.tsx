@@ -75,7 +75,7 @@ export default async function HomePage({
   );
 
   const marketplace = (
-    <div className="mx-auto w-full max-w-7xl px-4">
+    <div className="w-full px-4 sm:px-6">
       <Suspense>
         <TopCategoryNav />
       </Suspense>

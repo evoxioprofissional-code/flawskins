@@ -142,16 +142,16 @@
   font-family: var(--font-impact), var(--font-display), sans-serif;
 }
 
-/* Grade de skins: auto-fit faz os cards esticarem pra preencher a largura
-   toda quando há poucos; com muitos, quebra em várias linhas densas. */
+/* Grade de skins: cards de tamanho fixo que enchem pro lado e quebram
+   pra linha de baixo (auto-fill, não estica os cards). */
 .skin-grid {
   display: grid;
   gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 }
 @media (min-width: 640px) {
   .skin-grid {
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
   }
 }
 
