@@ -187,7 +187,7 @@ export function SkinForm({
           <button
             type="button"
             onClick={copyText}
-            className="mt-3 inline-flex h-10 items-center gap-2 rounded-lg bg-violet-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-violet-700"
+            className="mt-3 inline-flex h-10 items-center gap-2 rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-violet-300 transition-colors hover:bg-neutral-700"
           >
             {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
             {copied ? "Copiado!" : "Copiar texto"}
@@ -196,7 +196,7 @@ export function SkinForm({
         <div className="flex gap-3">
           <Link
             href={`/skin/${created.id}`}
-            className="inline-flex h-10 items-center rounded-lg bg-fuchsia-500 px-4 text-sm font-semibold text-white transition-colors hover:bg-fuchsia-600"
+            className="inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-violet-300 transition-colors hover:bg-neutral-700"
           >
             Ver anúncio
           </Link>
@@ -336,7 +336,7 @@ export function SkinForm({
                     unoptimized
                   />
                   {i === 0 && (
-                    <span className="absolute top-1 left-1 rounded bg-violet-600/90 px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                    <span className="absolute top-1 left-1 rounded bg-neutral-800 ring-1 ring-white/10/90 px-1.5 py-0.5 text-[10px] font-semibold text-violet-300">
                       Capa
                     </span>
                   )}
@@ -467,7 +467,7 @@ export function SkinForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-base font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-base font-semibold text-violet-300 transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting && <Loader2 className="size-5 animate-spin" />}
           {isSubmitting ? "Publicando..." : "Publicar anúncio"}

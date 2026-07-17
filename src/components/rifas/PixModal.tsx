@@ -72,7 +72,7 @@ export function PixModal({ pix, onClose }: { pix: PixPagamento; onClose: () => v
             <button
               type="button"
               onClick={onClose}
-              className="mt-2 inline-flex h-10 items-center rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white"
+              className="mt-2 inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300"
             >
               Concluir
             </button>
@@ -107,7 +107,7 @@ export function PixModal({ pix, onClose }: { pix: PixPagamento; onClose: () => v
             <button
               type="button"
               onClick={copiar}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3 text-sm font-semibold text-white"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 py-3 text-sm font-semibold text-violet-300"
             >
               {copiado ? <Check className="size-4" /> : <Copy className="size-4" />}
               {copiado ? "Copiado!" : "Copiar código Pix"}

@@ -46,7 +46,7 @@ export default async function ArenaGamePage({ params }: Params) {
           </p>
           <Link
             href={`/login?next=/arena/${game}`}
-            className="inline-flex h-11 items-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 text-sm font-semibold text-white"
+            className="inline-flex h-11 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-violet-300"
           >
             Entrar para jogar
           </Link>

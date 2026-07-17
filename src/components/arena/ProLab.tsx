@@ -204,7 +204,7 @@ function ProCard({
         <button
           type="button"
           onClick={onTest}
-          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 text-sm font-semibold text-white"
+          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-sm font-semibold text-violet-300"
         >
           <Play className="size-4" /> Testar agora
         </button>
@@ -424,7 +424,7 @@ function CommunityItem({
             <button
               type="button"
               onClick={() => onTest(c, cfg)}
-              className="rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-2.5 py-1 text-xs font-semibold text-white"
+              className="rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-2.5 py-1 text-xs font-semibold text-violet-300"
             >
               Testar
             </button>
@@ -513,7 +513,7 @@ function CrosshairEditor() {
               type="button"
               onClick={salvar}
               disabled={salvando}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 text-sm font-semibold text-white disabled:opacity-60"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-4 text-sm font-semibold text-violet-300 disabled:opacity-60"
             >
               <Save className="size-4" /> {salvando ? "Salvando…" : "Compartilhar"}
             </button>

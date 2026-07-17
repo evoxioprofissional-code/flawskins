@@ -33,7 +33,7 @@ export function ArenaStatsPanel({ stats }: { stats: ArenaStats | null }) {
           <p className="text-sm text-zinc-400">Ainda não jogou na Arena.</p>
           <Link
             href="/arena"
-            className="mt-3 inline-flex h-9 items-center rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-4 text-sm font-semibold text-white"
+            className="mt-3 inline-flex h-9 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-4 text-sm font-semibold text-violet-300"
           >
             Entrar na Arena
           </Link>

@@ -29,7 +29,7 @@ export default async function RifasPage() {
           user && (
             <Link
               href="/rifas/criar"
-              className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/25 transition-transform hover:-translate-y-0.5"
+              className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300 shadow-lg shadow-fuchsia-500/25 transition-transform hover:-translate-y-0.5"
             >
               <Plus className="size-4" /> Criar minha rifa
             </Link>

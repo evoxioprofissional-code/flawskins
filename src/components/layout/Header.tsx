@@ -47,7 +47,7 @@ export async function Header() {
         {/* Ações à direita */}
         <Link
           href="/novo"
-          className="hidden h-10 shrink-0 items-center gap-1.5 rounded-lg bg-violet-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-violet-500 sm:inline-flex"
+          className="hidden h-10 shrink-0 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-violet-300 transition-colors hover:bg-neutral-700 sm:inline-flex"
         >
           <Plus className="size-4" />
           Vender

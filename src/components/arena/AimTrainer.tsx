@@ -571,7 +571,7 @@ export function AimTrainer({
               sfx.start();
               setPhase("play");
             }}
-            className="inline-flex h-12 items-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-8 text-base font-bold text-white shadow-[0_0_30px_-6px] shadow-violet-500/60"
+            className="inline-flex h-12 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-8 text-base font-bold text-violet-300 shadow-[0_0_30px_-6px] shadow-violet-500/60"
           >
             Iniciar treino
           </button>

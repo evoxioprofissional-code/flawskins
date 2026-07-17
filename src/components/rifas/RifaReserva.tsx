@@ -83,7 +83,7 @@ export function RifaReserva({
         <p className="text-sm text-zinc-400">Entre para comprar cotas.</p>
         <Link
           href={`/login?next=/rifas/${rifaId}`}
-          className="mt-3 inline-flex h-10 items-center rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white"
+          className="mt-3 inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300"
         >
           Entrar
         </Link>
@@ -139,7 +139,7 @@ export function RifaReserva({
             type="button"
             onClick={aleatorio}
             disabled={busy || restante === 0}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 text-sm font-semibold text-white disabled:opacity-60"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-sm font-semibold text-violet-300 disabled:opacity-60"
           >
             <Dice5 className="size-4" />
             Comprar {qtd} · {formatBRL(qtd * preco)}
@@ -157,7 +157,7 @@ export function RifaReserva({
                 type="button"
                 onClick={reservarSelecionados}
                 disabled={busy}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-violet-300 disabled:opacity-60"
               >
                 <Ticket className="size-4" /> Comprar {sel.size} · {formatBRL(sel.size * preco)}
               </button>
@@ -177,11 +177,11 @@ export function RifaReserva({
                   className={cn(
                     "grid h-8 place-items-center rounded-md text-xs font-semibold tabular-nums transition-colors",
                     isMine
-                      ? "bg-violet-600 text-white"
+                      ? "bg-neutral-800 ring-1 ring-white/10 text-violet-300"
                       : isTaken
                         ? "cursor-not-allowed bg-zinc-800 text-zinc-600 line-through"
                         : isSel
-                          ? "bg-fuchsia-500 text-white"
+                          ? "bg-neutral-800 ring-1 ring-white/10 text-violet-300"
                           : "border border-zinc-800 text-zinc-300 hover:border-violet-500/50"
                   )}
                 >

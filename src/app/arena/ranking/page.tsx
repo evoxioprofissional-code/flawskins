@@ -76,7 +76,7 @@ export default async function RankingPage({
             className={cn(
               "rounded-full px-3 py-1 text-xs font-medium transition-colors",
               p === period
-                ? "bg-fuchsia-500 text-white"
+                ? "bg-neutral-800 ring-1 ring-white/10 text-violet-300"
                 : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
             )}
           >

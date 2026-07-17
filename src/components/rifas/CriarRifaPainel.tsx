@@ -66,7 +66,7 @@ export function CriarRifaPainel({
             type="button"
             onClick={pagarTaxa}
             disabled={busy}
-            className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 text-sm font-semibold text-white disabled:opacity-60"
+            className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300 disabled:opacity-60"
           >
             {busy ? <Loader2 className="size-4 animate-spin" /> : <Ticket className="size-4" />}
             Pagar taxa e liberar criação
