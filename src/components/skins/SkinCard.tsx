@@ -5,17 +5,21 @@ import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { SkinImage } from "@/components/skins/SkinImage";
 import { WearBar } from "@/components/skins/WearBar";
+import { SKIN_RARITY } from "@/lib/skin-rarity";
 
-// Faixa de "raridade" no topo do card (usamos a categoria como proxy).
-const STRIP: Record<Categoria, string> = {
-  Faca: "bg-amber-400",
-  Luva: "bg-amber-400",
-  Rifle: "bg-rose-500",
-  Sniper: "bg-violet-500",
-  Pistola: "bg-sky-500",
-  SMG: "bg-emerald-500",
-  Outro: "bg-zinc-500",
-};
+// Cor da faixa = cor de raridade real da skin (Mil-Spec azul, Restricted roxo,
+// Classified rosa, Covert vermelho). Faca/Luva = dourado. Fallback neutro.
+function corRaridade(titulo: string, categoria: Categoria): string {
+  if (categoria === "Faca" || categoria === "Luva") return "#e4ae39";
+  const base = titulo
+    .replace(/^★\s*/, "")
+    .replace(/^StatTrak™\s*/i, "")
+    .replace(/^Souvenir\s*/i, "")
+    .replace(/\s*\([^)]*\)\s*$/, "")
+    .trim()
+    .toLowerCase();
+  return SKIN_RARITY[base] ?? "#52525b"; // zinc-600 se não achar
+}
 
 const EXT_ABBR: Record<Exterior, string> = {
   "Factory New": "FN",
@@ -47,8 +51,11 @@ export function SkinCard({ anuncio }: { anuncio: Anuncio }) {
         "hover:-translate-y-0.5 hover:border-white/25 hover:shadow-xl hover:shadow-black/40"
       )}
     >
-      {/* Faixa de raridade */}
-      <div className={cn("h-1 w-full", STRIP[anuncio.categoria])} />
+      {/* Faixa de raridade (cor real da skin) */}
+      <div
+        className="h-1 w-full"
+        style={{ backgroundColor: corRaridade(anuncio.titulo, anuncio.categoria) }}
+      />
 
       {/* Imagem */}
       <div className="relative aspect-[4/3] overflow-hidden bg-neutral-950">

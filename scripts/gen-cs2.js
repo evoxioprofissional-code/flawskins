@@ -93,5 +93,17 @@ const norm = (s) => (s || "").replace(/^★\s*/, "").trim().toLowerCase();
     `}\n`;
   fs.writeFileSync("src/lib/skins-showcase.ts", arquivoShowcase);
 
+  // ---- Cor de raridade por skin (nome normalizado -> hex) ----
+  const rar = {};
+  for (const s of all) {
+    if (s.name && s.rarity && s.rarity.color) rar[norm(s.name)] = s.rarity.color;
+  }
+  const arquivoRar =
+    `// Cor de raridade por skin (nome normalizado -> hex da raridade CS2).\n` +
+    `// GERADO uma vez a partir da CS2-API do ByMykel. Rode scripts/gen-cs2.\n` +
+    `export const SKIN_RARITY: Record<string, string> = ${JSON.stringify(rar)};\n`;
+  fs.writeFileSync("src/lib/skin-rarity.ts", arquivoRar);
+  console.log("raridades:", Object.keys(rar).length, "skins");
+
   console.log("OK — arquivos escritos");
 })();
