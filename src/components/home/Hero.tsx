@@ -9,8 +9,9 @@ type Props = {
 };
 
 export function Hero({ skins = [] }: Props) {
-  const centro = skins[0];
-  const flancos = skins.slice(1, 3);
+  // Duas skins compactas flutuando ao lado do título (desktop).
+  const esquerda = skins[1] ?? skins[0];
+  const direita = skins[2] ?? skins[3];
 
   return (
     <section className="relative overflow-hidden border-b border-zinc-800/70">
@@ -18,9 +19,28 @@ export function Hero({ skins = [] }: Props) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-20%,rgba(124,58,237,0.32),transparent_62%),radial-gradient(60%_90%_at_85%_10%,rgba(217,70,239,0.20),transparent_55%)]" />
       <div className="starfield pointer-events-none absolute inset-0 opacity-70" />
 
-      <div className="relative mx-auto max-w-4xl px-4 pt-16 pb-4 text-center sm:pt-24">
-        {/* Título de impacto (Anton) */}
-        <h1 className="font-impact mx-auto max-w-3xl text-5xl leading-[0.95] tracking-tight text-white uppercase sm:text-6xl lg:text-7xl">
+      {/* Skins flutuando nas laterais do título (só desktop) */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 hidden md:block">
+        {esquerda && (
+          <FloatImg
+            src={esquerda}
+            className="absolute top-1/2 left-[7%] w-32 -translate-y-1/2 -rotate-6 lg:w-40"
+            dur="7s"
+            delay="0s"
+          />
+        )}
+        {direita && (
+          <FloatImg
+            src={direita}
+            className="absolute top-1/2 right-[7%] w-32 -translate-y-1/2 rotate-6 lg:w-40"
+            dur="8.5s"
+            delay="0.8s"
+          />
+        )}
+      </div>
+
+      <div className="relative mx-auto max-w-3xl px-4 py-14 text-center sm:py-16">
+        <h1 className="font-impact mx-auto max-w-3xl text-4xl leading-[0.95] tracking-tight text-white uppercase sm:text-5xl lg:text-6xl">
           Skins de CS2,
           <br />
           <span
@@ -31,27 +51,27 @@ export function Hero({ skins = [] }: Props) {
           </span>
         </h1>
 
-        <p className="mx-auto mt-5 max-w-xl text-base text-zinc-300 sm:text-lg">
+        <p className="mx-auto mt-4 max-w-xl text-sm text-zinc-300 sm:text-base">
           Importe seu inventário da Steam, publique em segundos e feche no
           WhatsApp. Sem taxa pra comprar, sem intermediário travando o negócio.
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="#skins"
-            className="inline-flex h-12 items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-7 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 transition-all hover:-translate-y-0.5 hover:shadow-fuchsia-500/50"
+            className="inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 transition-all hover:-translate-y-0.5 hover:shadow-fuchsia-500/50"
           >
             Ver skins <ArrowRight className="size-4" />
           </Link>
           <Link
             href="/novo"
-            className="inline-flex h-12 items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/60 px-7 text-sm font-semibold text-zinc-100 backdrop-blur transition-colors hover:bg-zinc-800"
+            className="inline-flex h-11 items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/60 px-6 text-sm font-semibold text-zinc-100 backdrop-blur transition-colors hover:bg-zinc-800"
           >
             Vender minha skin
           </Link>
         </div>
 
-        <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-zinc-400">
+        <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-zinc-400">
           {["Sem taxa para comprar", "Importe da Steam em 1 clique", "Negocie no WhatsApp"].map(
             (t) => (
               <li key={t} className="inline-flex items-center gap-1.5">
@@ -60,38 +80,6 @@ export function Hero({ skins = [] }: Props) {
             )
           )}
         </ul>
-
-        {/* Centerpiece: skin grande no centro + laterais, sobre um pedestal de luz */}
-        {centro && (
-          <div className="relative mt-10 flex items-center justify-center gap-1 sm:mt-14 sm:gap-8">
-            {flancos[0] && (
-              <FloatImg
-                src={flancos[0]}
-                className="w-16 -rotate-6 sm:w-28 lg:w-40"
-                dur="8.5s"
-                delay="0.6s"
-              />
-            )}
-            <div className="relative">
-              <div className="absolute -bottom-2 left-1/2 h-14 w-40 -translate-x-1/2 rounded-[100%] bg-fuchsia-500/30 blur-2xl sm:w-72" />
-              <FloatImg
-                src={centro}
-                className="relative w-36 sm:w-80 lg:w-[26rem]"
-                dur="7s"
-                delay="0s"
-                strong
-              />
-            </div>
-            {flancos[1] && (
-              <FloatImg
-                src={flancos[1]}
-                className="w-16 rotate-6 sm:w-28 lg:w-40"
-                dur="9s"
-                delay="1.2s"
-              />
-            )}
-          </div>
-        )}
       </div>
     </section>
   );
@@ -102,13 +90,11 @@ function FloatImg({
   className,
   dur,
   delay,
-  strong,
 }: {
   src: string;
   className: string;
   dur: string;
   delay: string;
-  strong?: boolean;
 }) {
   return (
     <div
@@ -119,11 +105,7 @@ function FloatImg({
       <img
         src={src}
         alt=""
-        className={
-          strong
-            ? "w-full drop-shadow-[0_30px_50px_rgba(124,58,237,0.55)]"
-            : "w-full opacity-90 drop-shadow-[0_18px_30px_rgba(124,58,237,0.4)]"
-        }
+        className="w-full opacity-90 drop-shadow-[0_18px_30px_rgba(124,58,237,0.4)]"
       />
     </div>
   );
