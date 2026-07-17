@@ -7,10 +7,9 @@ import { SkinImage } from "@/components/skins/SkinImage";
 import { WearBar } from "@/components/skins/WearBar";
 import { SKIN_RARITY } from "@/lib/skin-rarity";
 
-// Cor da faixa = cor de raridade real da skin (Mil-Spec azul, Restricted roxo,
-// Classified rosa, Covert vermelho). Faca/Luva = dourado. Fallback neutro.
+// Cor da faixa = cor de raridade REAL da skin (Mil-Spec azul, Restricted roxo,
+// Classified rosa, Covert vermelho — e faca/luva também são vermelho no CS2).
 function corRaridade(titulo: string, categoria: Categoria): string {
-  if (categoria === "Faca" || categoria === "Luva") return "#e4ae39";
   const base = titulo
     .replace(/^★\s*/, "")
     .replace(/^StatTrak™\s*/i, "")
@@ -18,7 +17,11 @@ function corRaridade(titulo: string, categoria: Categoria): string {
     .replace(/\s*\([^)]*\)\s*$/, "")
     .trim()
     .toLowerCase();
-  return SKIN_RARITY[base] ?? "#52525b"; // zinc-600 se não achar
+  const cor = SKIN_RARITY[base];
+  if (cor) return cor;
+  // Não achou pelo nome: faca/luva são no mínimo Covert (vermelho); resto neutro.
+  if (categoria === "Faca" || categoria === "Luva") return "#eb4b4b";
+  return "#52525b"; // zinc-600
 }
 
 const EXT_ABBR: Record<Exterior, string> = {
