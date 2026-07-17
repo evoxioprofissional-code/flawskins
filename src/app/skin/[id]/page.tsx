@@ -6,6 +6,8 @@ import { Lock, Box, Layers, Palette, SlidersHorizontal, ShieldCheck, ChevronRigh
 
 import { buscarAnuncio } from "@/actions/anuncios";
 import { getUser } from "@/lib/auth";
+import { isAdminEmail } from "@/lib/admin";
+import { AdminDeleteButton } from "@/components/skins/AdminDeleteButton";
 import { createClient } from "@/lib/supabase/server";
 import { formatBRL } from "@/lib/format";
 import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
@@ -136,6 +138,12 @@ export default async function SkinPage({ params }: Params) {
                 </div>
               )}
             </div>
+
+            {isAdminEmail(user?.email) && (
+              <div className="mt-4 border-t border-white/5 pt-4">
+                <AdminDeleteButton id={anuncio.id} />
+              </div>
+            )}
           </div>
 
           {/* Vendedor */}

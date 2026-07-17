@@ -176,6 +176,15 @@ export async function excluirAnuncio(id: string): Promise<ActionResult<null>> {
   return { ok: true, data: null };
 }
 
+// Exclui QUALQUER anúncio — só admin (validado na RPC via is_admin()).
+export async function excluirAnuncioAdmin(id: string): Promise<ActionResult<null>> {
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("admin_excluir_anuncio", { p_id: id });
+  if (error) return { ok: false, error: error.message };
+  revalidatePath("/");
+  return { ok: true, data: null };
+}
+
 // Alterna o status entre ativo/vendido (RLS garante a posse).
 export async function alternarVendido(
   id: string,
