@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { steamInventario, type ItemInventario } from "@/lib/steam";
+import { steamInventario, SteamInvError, type ItemInventario } from "@/lib/steam";
 import type { ActionResult } from "@/actions/anuncios";
 
 // Inventário CS2 do usuário logado (precisa ter entrado com a Steam).
@@ -26,11 +26,28 @@ export async function inventarioSteam(): Promise<ActionResult<ItemInventario[]>>
   try {
     const itens = await steamInventario(steamId);
     return { ok: true, data: itens };
-  } catch {
+  } catch (e) {
+    const status = e instanceof SteamInvError ? e.status : 0;
+
+    // 403 = inventário realmente privado. 429 = a Steam limitou NOSSO servidor
+    // (nada a ver com o usuário) — não adianta mandar mexer na privacidade.
+    if (status === 403) {
+      return {
+        ok: false,
+        error:
+          "Seu inventário está privado. Na Steam: Perfil → Editar perfil → Privacidade → deixe 'Inventário' como Público e tente de novo.",
+      };
+    }
+    if (status === 429) {
+      return {
+        ok: false,
+        error:
+          "A Steam está limitando nossas consultas no momento (muita gente importando). Espere ~1 minuto e clique em Atualizar.",
+      };
+    }
     return {
       ok: false,
-      error:
-        "Não consegui ler seu inventário. Deixe-o público nas configurações de privacidade da Steam e tente de novo.",
+      error: `Não consegui falar com a Steam agora${status ? ` (erro ${status})` : ""}. Tente de novo em instantes.`,
     };
   }
 }

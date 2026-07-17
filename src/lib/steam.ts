@@ -114,6 +114,15 @@ export type ItemInventario = {
   inspectLink: string | null;
 };
 
+// Carrega o status HTTP da Steam pra sabermos a causa real (privado x limite).
+export class SteamInvError extends Error {
+  status: number;
+  constructor(status: number) {
+    super(`steam_inventario_${status}`);
+    this.status = status;
+  }
+}
+
 type SteamTag = { category: string; localized_tag_name?: string; internal_name?: string };
 type SteamDesc = {
   classid: string;
@@ -148,14 +157,25 @@ export async function steamInventario(steamId: string): Promise<ItemInventario[]
   // l=english: as tags de desgaste/tipo voltam em inglês ("Factory New",
   // "Rifle"…), batendo com nossos enums. O nome da skin é inglês de qualquer jeito.
   const url = `https://steamcommunity.com/inventory/${steamId}/730/2?l=english&count=500`;
-  const res = await fetch(url, {
-    headers: { "User-Agent": "VisionSkins/1.0" },
-    cache: "no-store",
-  });
-  if (!res.ok) {
-    // 403/500 normalmente = inventário privado ou vazio.
-    throw new Error("inventario_indisponivel");
+  const opts = {
+    headers: {
+      // Sem um UA de navegador a Steam bloqueia bem mais fácil.
+      "User-Agent":
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+      Accept: "application/json, text/plain, */*",
+      "Accept-Language": "en-US,en;q=0.9",
+      Referer: `https://steamcommunity.com/profiles/${steamId}/inventory/`,
+    },
+    cache: "no-store" as const,
+  };
+
+  let res = await fetch(url, opts);
+  // A Steam limita muito IP de datacenter (429). Tenta de novo antes de desistir.
+  for (let i = 0; i < 2 && (res.status === 429 || res.status >= 500); i++) {
+    await new Promise((r) => setTimeout(r, 800 * (i + 1)));
+    res = await fetch(url, opts);
   }
+  if (!res.ok) throw new SteamInvError(res.status);
   const data = (await res.json()) as {
     assets?: SteamAsset[];
     descriptions?: SteamDesc[];
