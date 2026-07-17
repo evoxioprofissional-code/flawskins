@@ -4,6 +4,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { WEAR_ABBRS } from "@/lib/exterior";
+import { FloatSlider } from "@/components/home/FloatSlider";
+
+const num = (v: string | null): number | undefined => {
+  const n = v ? Number(v.replace(",", ".")) : NaN;
+  return Number.isFinite(n) ? n : undefined;
+};
 
 // Sidebar de filtros (estilo CSFloat): preço, desgaste e float.
 // Inputs são não-controlados; o pai remonta via `key` quando os params mudam.
@@ -98,37 +104,18 @@ export function FilterSidebar() {
 
       {/* FLOAT */}
       <Secao titulo="Float">
-        <div className="mb-3 h-1.5 rounded-full bg-[linear-gradient(90deg,#22c55e_0%,#84cc16_14%,#eab308_28%,#f97316_45%,#ef4444_100%)]" />
-        <div className="grid grid-cols-2 gap-2">
-          <label className="text-[10px] font-medium tracking-wide text-zinc-500 uppercase">
-            Mínimo
-            <input
-              type="number"
-              min={0}
-              max={1}
-              step="0.01"
-              placeholder="0"
-              defaultValue={params.get("fmin") ?? ""}
-              onBlur={(e) => setNum("fmin", e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && setNum("fmin", e.currentTarget.value)}
-              className={cn(numInput, "mt-1")}
-            />
-          </label>
-          <label className="text-[10px] font-medium tracking-wide text-zinc-500 uppercase">
-            Máximo
-            <input
-              type="number"
-              min={0}
-              max={1}
-              step="0.01"
-              placeholder="1"
-              defaultValue={params.get("fmax") ?? ""}
-              onBlur={(e) => setNum("fmax", e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && setNum("fmax", e.currentTarget.value)}
-              className={cn(numInput, "mt-1")}
-            />
-          </label>
-        </div>
+        <FloatSlider
+          min={num(params.get("fmin")) ?? 0}
+          max={num(params.get("fmax")) ?? 1}
+          onCommit={(mn, mx) =>
+            push((p) => {
+              if (mn > 0) p.set("fmin", String(mn));
+              else p.delete("fmin");
+              if (mx < 1) p.set("fmax", String(mx));
+              else p.delete("fmax");
+            })
+          }
+        />
         <div className="mt-3 flex gap-1.5">
           {WEAR_ABBRS.map((abbr) => {
             const ativo = extAtivos.has(abbr);
