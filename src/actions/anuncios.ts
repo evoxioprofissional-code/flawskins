@@ -102,16 +102,21 @@ export async function criarAnuncio(
 }
 
 // Lista os anúncios ativos para o feed, com busca e filtro opcionais.
+export type OrdemAnuncio = "recentes" | "preco_asc" | "preco_desc";
+
 export async function listarAnuncios(filtros?: {
   q?: string;
   categoria?: string;
+  ordem?: string;
 }): Promise<Anuncio[]> {
   const supabase = await createClient();
-  let query = supabase
-    .from("anuncios")
-    .select("*")
-    .eq("status", "ativo")
-    .order("created_at", { ascending: false });
+  let query = supabase.from("anuncios").select("*").eq("status", "ativo");
+
+  // Ordenação (padrão: mais recentes).
+  const ordem = filtros?.ordem;
+  if (ordem === "preco_asc") query = query.order("preco", { ascending: true });
+  else if (ordem === "preco_desc") query = query.order("preco", { ascending: false });
+  else query = query.order("created_at", { ascending: false });
 
   const q = filtros?.q?.trim();
   if (q) query = query.ilike("titulo", `%${q}%`);

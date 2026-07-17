@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { AlertTriangle, X } from "lucide-react";
 
@@ -9,25 +10,26 @@ import { Hero } from "@/components/home/Hero";
 import { CategoryBar } from "@/components/home/CategoryBar";
 import { FeatureStrip } from "@/components/home/FeatureStrip";
 import { CommunityBanner } from "@/components/home/CommunityBanner";
+import { SortSelect } from "@/components/home/SortSelect";
 import type { Anuncio } from "@/types/database";
 
 // Feed sempre fresco no MVP.
 export const dynamic = "force-dynamic";
 
-type Search = { q?: string; categoria?: string };
+type Search = { q?: string; categoria?: string; ordem?: string };
 
 export default async function HomePage({
   searchParams,
 }: {
   searchParams: Promise<Search>;
 }) {
-  const { q, categoria } = await searchParams;
+  const { q, categoria, ordem } = await searchParams;
   const temFiltro = Boolean(q || categoria);
 
   let anuncios: Anuncio[] = [];
   let erro = false;
   try {
-    anuncios = await listarAnuncios({ q, categoria });
+    anuncios = await listarAnuncios({ q, categoria, ordem });
   } catch {
     erro = true;
   }
@@ -58,6 +60,11 @@ export default async function HomePage({
           >
             <X className="size-3" /> limpar
           </Link>
+          <div className="ml-auto">
+            <Suspense>
+              <SortSelect />
+            </Suspense>
+          </div>
         </div>
         {grid}
       </div>
@@ -96,13 +103,16 @@ export default async function HomePage({
 
       <div id="skins" className="mx-auto w-full max-w-7xl scroll-mt-24 px-4 py-8">
         <CategoryBar ativa={categoria} />
-        <div className="mt-6 mb-4 flex items-end justify-between">
+        <div className="mt-6 mb-4 flex items-end justify-between gap-3">
           <div>
             <h2 className="font-display text-xl font-bold text-zinc-100">À venda agora</h2>
             <p className="text-sm text-zinc-400">
               Skins da comunidade, atualizadas em tempo real.
             </p>
           </div>
+          <Suspense>
+            <SortSelect />
+          </Suspense>
         </div>
         {grid}
       </div>
