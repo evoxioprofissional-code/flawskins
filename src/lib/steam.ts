@@ -203,13 +203,16 @@ export async function steamInventario(steamId: string): Promise<ItemInventario[]
     const categoria = TIPO_PARA_CATEGORIA[tipo] ??
       ((CATEGORIAS as readonly string[]).includes(tipo) ? (tipo as Categoria) : "Outro");
 
-    // Inspect link da peça (pra resolver o float depois): troca os
-    // placeholders %owner_steamid% e %assetid% pelos valores reais.
+    // Inspect link da peça. ATENÇÃO: hoje a Steam devolve
+    // "steam://run/730//+csgo_econ_action_preview %propid:6%" — um marcador
+    // que só o cliente resolve; o valor "D" (necessário pra inspecionar, e
+    // portanto pro float) não vem mais no inventário público. Só montamos o
+    // link no formato antigo (S/A/D); caso contrário fica null.
     const acao = d.actions?.find((x) => x.link?.includes("csgo_econ_action_preview"));
-    const inspectLink = acao?.link
-      ? acao.link
-          .replace("%owner_steamid%", steamId)
-          .replace("%assetid%", a.assetid)
+    const temPlaceholders =
+      !!acao?.link?.includes("%owner_steamid%") && !!acao?.link?.includes("%assetid%");
+    const inspectLink = temPlaceholders
+      ? acao!.link!.replace("%owner_steamid%", steamId).replace("%assetid%", a.assetid)
       : null;
 
     itens.push({
