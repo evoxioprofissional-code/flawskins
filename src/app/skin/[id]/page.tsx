@@ -1,16 +1,16 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Lock } from "lucide-react";
+import { Lock, Box, Layers, Palette, SlidersHorizontal, ShieldCheck, ChevronRight, Store } from "lucide-react";
 
 import { buscarAnuncio } from "@/actions/anuncios";
 import { getUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { formatBRL } from "@/lib/format";
-import { SellerBlock } from "@/components/skins/SellerBlock";
 import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
 import { OfferButton } from "@/components/skins/OfferButton";
-import { SkinGallery } from "@/components/skins/SkinGallery";
-import { WearBar } from "@/components/skins/WearBar";
+import { SkinShowcase } from "@/components/skins/SkinShowcase";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const dynamic = "force-dynamic";
@@ -27,133 +27,206 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function SkinPage({ params }: Params) {
   const { id } = await params;
   const [anuncio, user] = await Promise.all([buscarAnuncio(id), getUser()]);
-
   if (!anuncio) notFound();
 
+  // Perfil do vendedor (avatar) — se o anúncio tiver dono.
+  let sellerAvatar: string | null = null;
+  if (anuncio.user_id) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("profiles")
+      .select("avatar_url")
+      .eq("id", anuncio.user_id)
+      .maybeSingle<{ avatar_url: string | null }>();
+    sellerAvatar = data?.avatar_url ?? null;
+  }
+
+  const imagens = anuncio.image_urls?.length ? anuncio.image_urls : [anuncio.image_url];
+  const arma = anuncio.titulo.split("|")[0].trim();
+  const inicial = (anuncio.vendedor_nome || "?").trim().charAt(0).toUpperCase();
+
   return (
-    <div className="mx-auto w-full max-w-2xl px-4 py-5">
+    <div className="mx-auto w-full max-w-6xl px-4 py-6">
       <BackButton className="mb-4" fallback="/" />
-      {/* Galeria de imagens */}
-      <SkinGallery
-        imagens={
-          anuncio.image_urls?.length ? anuncio.image_urls : [anuncio.image_url]
-        }
-        titulo={anuncio.titulo}
-        vendido={anuncio.status === "vendido"}
-      />
 
-      {/* Título + badges */}
-      <div className="mt-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-md border border-violet-500/40 bg-violet-500/10 px-2 py-0.5 text-[11px] font-semibold text-violet-300">
-            {anuncio.categoria}
-          </span>
-          <span className="rounded-md border border-zinc-700 bg-zinc-800/60 px-2 py-0.5 text-[11px] font-medium text-zinc-300">
-            {anuncio.exterior}
-          </span>
+      {/* Breadcrumb */}
+      <nav className="mb-4 flex items-center gap-1.5 text-xs text-zinc-500">
+        <Link href="/" className="hover:text-zinc-300">Home</Link>
+        <ChevronRight className="size-3.5" />
+        <span className="text-zinc-400">{arma || anuncio.categoria}</span>
+        <ChevronRight className="size-3.5" />
+        <span className="truncate text-zinc-300">{anuncio.titulo}</span>
+      </nav>
+
+      {/* grid: mobile empilha (imagem → preço → vendedor → histórico) */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Imagem */}
+        <div className="lg:col-span-2 lg:col-start-1 lg:row-start-1">
+          <SkinShowcase
+            imagens={imagens}
+            titulo={anuncio.titulo}
+            categoria={anuncio.categoria}
+            float={anuncio.float_val}
+            vendido={anuncio.status === "vendido"}
+          />
         </div>
-        <h1 className="font-display mt-2 text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
-          {anuncio.titulo}
-        </h1>
-      </div>
 
-      {/* Preço em destaque */}
-      <div className="mt-4 rounded-2xl border border-fuchsia-500/25 bg-gradient-to-br from-violet-500/10 to-fuchsia-500/10 px-4 py-3">
-        <span className="text-[11px] font-medium tracking-wider text-zinc-400 uppercase">
-          Preço
-        </span>
-        <p className="font-display text-3xl font-bold text-fuchsia-400">
-          {formatBRL(anuncio.preco)}
-        </p>
-      </div>
+        {/* Preço + detalhes + vendedor (coluna direita no desktop) */}
+        <div className="space-y-6 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1">
+          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
+            <h1 className="font-display text-xl font-bold tracking-tight text-zinc-50">
+              {anuncio.titulo}
+            </h1>
+            <p className="mt-0.5 text-sm text-zinc-400">{anuncio.exterior}</p>
 
-      {/* Float / desgaste */}
-      {anuncio.float_val != null && (
-        <div className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-900 px-4 py-3.5">
-          <div className="mb-2 flex items-baseline justify-between">
-            <span className="text-[11px] font-medium tracking-wider text-zinc-400 uppercase">
-              Float
-            </span>
-            <span className="font-mono text-sm font-semibold text-zinc-100">
-              {anuncio.float_val}
-            </span>
-          </div>
-          <WearBar float={Number(anuncio.float_val)} />
-        </div>
-      )}
-
-      {/* Demais campos */}
-      <dl className="mt-3 grid grid-cols-2 gap-3">
-        <Field label="Exterior" value={anuncio.exterior} />
-        <Field label="Phase" value={anuncio.phase ?? "—"} />
-      </dl>
-
-      {/* Vendedor */}
-      <div className="mt-5">
-        <SellerBlock
-          nome={anuncio.vendedor_nome}
-          cidade={anuncio.cidade}
-          userId={anuncio.user_id}
-        />
-      </div>
-
-      {/* CTA — número do vendedor só é exposto para usuários logados */}
-      <div className="mt-6">
-        {user ? (
-          <div className="space-y-3">
-            <WhatsAppButton
-              whatsapp={anuncio.whatsapp}
-              titulo={anuncio.titulo}
-              preco={anuncio.preco}
-            />
-            <OfferButton
-              whatsapp={anuncio.whatsapp}
-              titulo={anuncio.titulo}
-              preco={anuncio.preco}
-            />
-          </div>
-        ) : (
-          <div className="space-y-1.5">
-            <Link
-              href={`/cadastro?next=/skin/${anuncio.id}`}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-4 text-base font-bold text-white shadow-[0_0_24px_-6px] shadow-whatsapp/60 transition-colors hover:bg-whatsapp-dark"
-            >
-              <Lock className="size-5" />
-              CADASTRE-SE PARA FALAR COM O VENDEDOR
-            </Link>
-            <p className="text-center text-xs text-zinc-500">
-              É rápido e grátis — leva menos de 1 minuto.
+            <p className="mt-4 text-[11px] font-medium tracking-wider text-zinc-500 uppercase">
+              Preço
             </p>
+            <p className="font-display text-3xl font-bold text-white">
+              {formatBRL(anuncio.preco)}
+            </p>
+
+            {/* Detalhes */}
+            <dl className="mt-4 divide-y divide-white/5 border-t border-white/5 text-sm">
+              {anuncio.float_val != null && (
+                <Row icon={SlidersHorizontal} label="Float">
+                  <span className="font-mono text-zinc-100">{anuncio.float_val}</span>
+                </Row>
+              )}
+              <Row icon={Box} label="Tipo">
+                <span className="text-zinc-100">{anuncio.categoria}</span>
+              </Row>
+              <Row icon={Layers} label="Desgaste">
+                <span className="text-zinc-100">{anuncio.exterior}</span>
+              </Row>
+              {anuncio.phase && (
+                <Row icon={Palette} label="Phase">
+                  <span className="text-zinc-100">{anuncio.phase}</span>
+                </Row>
+              )}
+            </dl>
+
+            {/* CTA */}
+            <div className="mt-5">
+              {user ? (
+                <div className="space-y-3">
+                  <WhatsAppButton
+                    whatsapp={anuncio.whatsapp}
+                    titulo={anuncio.titulo}
+                    preco={anuncio.preco}
+                  />
+                  <OfferButton
+                    whatsapp={anuncio.whatsapp}
+                    titulo={anuncio.titulo}
+                    preco={anuncio.preco}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <Link
+                    href={`/cadastro?next=/skin/${anuncio.id}`}
+                    className="flex w-full items-center justify-center gap-2 rounded-xl bg-whatsapp px-4 py-4 text-base font-bold text-white transition-colors hover:bg-whatsapp-dark"
+                  >
+                    <Lock className="size-5" />
+                    Cadastre-se para falar com o vendedor
+                  </Link>
+                  <p className="text-center text-xs text-zinc-500">
+                    É rápido e grátis — leva menos de 1 minuto.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+
+          {/* Vendedor */}
+          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
+            <div className="flex items-center gap-3">
+              <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-base font-bold text-white">
+                {sellerAvatar ? (
+                  <Image
+                    src={sellerAvatar}
+                    alt={anuncio.vendedor_nome}
+                    width={44}
+                    height={44}
+                    className="size-11 object-cover"
+                  />
+                ) : (
+                  inicial
+                )}
+              </span>
+              <div className="min-w-0">
+                <p className="text-[10px] font-medium tracking-wider text-zinc-500 uppercase">
+                  Vendedor
+                </p>
+                <p className="truncate font-semibold text-zinc-100">
+                  {anuncio.vendedor_nome}
+                </p>
+              </div>
+            </div>
+
+            <dl className="mt-4 divide-y divide-white/5 border-t border-white/5 text-sm">
+              {anuncio.cidade && (
+                <Row icon={Store} label="Local">
+                  <span className="text-zinc-100">{anuncio.cidade}</span>
+                </Row>
+              )}
+              <Row icon={ShieldCheck} label="Negociação">
+                <span className="text-zinc-100">Direto no WhatsApp</span>
+              </Row>
+            </dl>
+
+            {anuncio.user_id && (
+              <Link
+                href={`/u/${anuncio.user_id}`}
+                className="mt-4 flex h-10 w-full items-center justify-center gap-1.5 rounded-lg border border-white/10 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/5"
+              >
+                Ver itens do vendedor <ChevronRight className="size-4" />
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Histórico de vendas */}
+        <div className="lg:col-span-2 lg:col-start-1 lg:row-start-2">
+          <div className="rounded-2xl border border-white/10 bg-neutral-900">
+            <h2 className="border-b border-white/10 px-5 py-3.5 text-sm font-semibold text-zinc-100">
+              Histórico de vendas
+            </h2>
+            <div className="grid place-items-center px-4 py-16 text-center">
+              <svg className="size-8 text-zinc-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" strokeLinecap="round" />
+              </svg>
+              <p className="mt-3 text-sm font-medium text-zinc-300">
+                Nenhuma venda registrada
+              </p>
+              <p className="mt-1 text-sm text-zinc-500">
+                Este item ainda não possui histórico de vendas.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function Field({
+function Row({
+  icon: Icon,
   label,
-  value,
-  highlight,
+  children,
 }: {
+  icon: React.ComponentType<{ className?: string }>;
   label: string;
-  value: string;
-  highlight?: boolean;
+  children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-3 py-2.5">
-      <dt className="text-[11px] font-medium tracking-wider text-zinc-500 uppercase">
+    <div className="flex items-center justify-between gap-3 py-2.5">
+      <span className="inline-flex items-center gap-2 text-zinc-400">
+        <Icon className="size-4 text-zinc-500" />
         {label}
-      </dt>
-      <dd
-        className={
-          highlight
-            ? "mt-0.5 text-lg font-bold text-fuchsia-400"
-            : "mt-0.5 font-medium text-zinc-100"
-        }
-      >
-        {value}
-      </dd>
+      </span>
+      <span className="font-medium">{children}</span>
     </div>
   );
 }
