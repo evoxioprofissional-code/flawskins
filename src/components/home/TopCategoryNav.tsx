@@ -9,7 +9,10 @@ import { cn } from "@/lib/utils";
 import { WEAPON_IMG } from "@/lib/cs2-weapons";
 
 // Categorias + modelos de arma de CS2 (clicar num modelo filtra por nome).
-const CATS = [
+// `categoria` filtra pelo tipo; `q` filtra por termo (agentes/adesivos).
+type Cat = { label: string; categoria?: string; q?: string; itens: string[] };
+
+const CATS: Cat[] = [
   {
     label: "Facas",
     categoria: "Faca",
@@ -23,7 +26,7 @@ const CATS = [
   {
     label: "Rifles",
     categoria: "Rifle",
-    itens: ["AK-47", "AUG", "FAMAS", "Galil AR", "M4A1-S", "M4A4", "SG 553"],
+    itens: ["AK-47", "AUG", "FAMAS", "Galil AR", "M4A1-S", "M4A4", "SG 553", "AWP", "SSG 08", "G3SG1", "SCAR-20"],
   },
   {
     label: "Pistolas",
@@ -36,16 +39,14 @@ const CATS = [
     itens: ["MAC-10", "MP5-SD", "MP7", "MP9", "P90", "PP-Bizon", "UMP-45"],
   },
   {
-    label: "Snipers",
-    categoria: "Sniper",
-    itens: ["AWP", "SSG 08", "G3SG1", "SCAR-20"],
-  },
-  {
-    label: "Outros",
+    label: "Pesadas",
     categoria: "Outro",
-    itens: ["MAG-7", "Nova", "Sawed-Off", "XM1014", "M249", "Negev", "Zeus x27"],
+    itens: ["MAG-7", "Nova", "Sawed-Off", "XM1014", "M249", "Negev"],
   },
-] as const;
+  { label: "Agentes", q: "Agent", itens: [] },
+  { label: "Adesivos", q: "Sticker", itens: [] },
+  { label: "Diversos", categoria: "Outro", itens: ["Zeus x27", "Music Kit", "Graffiti", "Pin", "Patch"] },
+];
 
 export function TopCategoryNav() {
   const params = useSearchParams();
@@ -84,11 +85,15 @@ export function TopCategoryNav() {
         <div className="border-t border-white/10 p-3">
           <div className={cn("flex gap-2 overflow-x-auto pb-1", hideScroll)}>
             <Link
-              href={`/?categoria=${encodeURIComponent(atual.categoria)}`}
+              href={
+                atual.categoria
+                  ? `/?categoria=${encodeURIComponent(atual.categoria)}`
+                  : `/?q=${encodeURIComponent(atual.q ?? "")}`
+              }
               onClick={() => setAberto(null)}
               className="grid min-w-[6rem] shrink-0 place-items-center rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-4 text-center text-xs font-semibold text-violet-200"
             >
-              Todas as {atual.label.toLowerCase()}
+              Ver {atual.label.toLowerCase()}
             </Link>
             {atual.itens.map((w) => (
               <Link
