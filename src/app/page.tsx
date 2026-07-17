@@ -120,8 +120,8 @@ export default async function HomePage({
     return <div className="py-6">{marketplace}</div>;
   }
 
-  // Skins pra compor o hero (PNG transparente de skins icônicas).
-  let heroSkins = await getShowcaseSkins();
+  // Skins pra compor o hero (PNG transparente de skins icônicas, URLs fixas).
+  let heroSkins = getShowcaseSkins();
   if (heroSkins.length === 0) {
     heroSkins = anuncios.map((a) => a.image_url).filter(Boolean).slice(0, 5);
   }

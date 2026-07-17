@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { WEAPON_IMG } from "@/lib/cs2-weapons";
 
 // Categorias + modelos de arma de CS2 (clicar num modelo filtra por nome).
 const CATS = [
@@ -94,9 +95,20 @@ export function TopCategoryNav() {
                 key={w}
                 href={`/?q=${encodeURIComponent(w)}`}
                 onClick={() => setAberto(null)}
-                className="grid min-w-[6rem] shrink-0 place-items-center rounded-lg border border-white/10 bg-neutral-950 px-3 py-4 text-center text-xs font-medium text-zinc-300 transition-colors hover:border-white/25 hover:text-white"
+                className="flex w-28 shrink-0 flex-col items-center gap-1 rounded-lg border border-white/10 bg-neutral-950 px-2 py-3 transition-colors hover:border-white/25"
               >
-                {w}
+                <span className="text-center text-xs font-semibold text-zinc-200">
+                  {w}
+                </span>
+                {WEAPON_IMG[w] && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={WEAPON_IMG[w]}
+                    alt=""
+                    loading="lazy"
+                    className="h-12 w-full object-contain"
+                  />
+                )}
               </Link>
             ))}
           </div>
