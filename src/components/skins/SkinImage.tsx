@@ -28,7 +28,7 @@ export function SkinImage({ src, alt, sizes, priority, imgClassName, fit = "cove
       {steam && (
         <span
           aria-hidden
-          className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_4%,#241a38_0%,#171320_45%,#0c0a12_82%)]"
+          className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_6%,#26262b_0%,#18181b_48%,#0e0e11_85%)]"
         />
       )}
       <Image
