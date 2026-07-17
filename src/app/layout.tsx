@@ -52,12 +52,6 @@ export default async function RootLayout({
           <main className="flex-1">{children}</main>
         ) : (
           <>
-            {/* Fundo ambiente do site: brilho de marca + estrelas fixos,
-                pra telas largas não ficarem com preto morto nas laterais. */}
-            <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
-              <div className="absolute inset-0 bg-[radial-gradient(60%_45%_at_50%_0%,rgba(124,58,237,0.14),transparent_60%),radial-gradient(45%_40%_at_100%_100%,rgba(217,70,239,0.08),transparent_60%),radial-gradient(40%_35%_at_0%_80%,rgba(124,58,237,0.06),transparent_60%)]" />
-              <div className="starfield absolute inset-0 opacity-25" />
-            </div>
             <Header />
             {/* pb-20 reserva espaço para a navbar inferior fixa no mobile */}
             <main className="flex-1 pb-20 md:pb-0">{children}</main>
