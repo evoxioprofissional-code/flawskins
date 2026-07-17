@@ -8,7 +8,7 @@ type Props = {
   membros?: number;
 };
 
-export function Hero({ total, skins = [], avatares = [], membros = 0 }: Props) {
+export function Hero({ skins = [] }: Props) {
   const centro = skins[0];
   const flancos = skins.slice(1, 3);
 
@@ -18,31 +18,9 @@ export function Hero({ total, skins = [], avatares = [], membros = 0 }: Props) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-20%,rgba(124,58,237,0.32),transparent_62%),radial-gradient(60%_90%_at_85%_10%,rgba(217,70,239,0.20),transparent_55%)]" />
       <div className="starfield pointer-events-none absolute inset-0 opacity-70" />
 
-      <div className="relative mx-auto max-w-4xl px-4 pt-14 pb-4 text-center sm:pt-20">
-        {/* Prova social */}
-        <div className="mx-auto inline-flex items-center gap-2.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 backdrop-blur">
-          {avatares.length > 0 && (
-            <div className="flex -space-x-2">
-              {avatares.slice(0, 4).map((src, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={i}
-                  src={src}
-                  alt=""
-                  className="size-6 rounded-full object-cover ring-2 ring-zinc-950"
-                />
-              ))}
-            </div>
-          )}
-          <span className="text-xs font-medium text-zinc-200">
-            <span className="text-emerald-400">●</span>{" "}
-            {total > 0 ? `${total} skins à venda` : "Comunidade de CS2"}
-            {membros >= 10 ? ` · ${membros} na comunidade` : ""}
-          </span>
-        </div>
-
+      <div className="relative mx-auto max-w-4xl px-4 pt-16 pb-4 text-center sm:pt-24">
         {/* Título de impacto (Anton) */}
-        <h1 className="font-impact mx-auto mt-6 max-w-3xl text-5xl leading-[0.95] tracking-tight text-white uppercase sm:text-6xl lg:text-7xl">
+        <h1 className="font-impact mx-auto max-w-3xl text-5xl leading-[0.95] tracking-tight text-white uppercase sm:text-6xl lg:text-7xl">
           Skins de CS2,
           <br />
           <span
