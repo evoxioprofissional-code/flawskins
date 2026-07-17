@@ -5,6 +5,7 @@ import { Logo } from "@/components/layout/Logo";
 import { NavLinks } from "@/components/layout/NavLinks";
 import { AccountButton } from "@/components/layout/AccountButton";
 import { getUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
 export async function Header() {
   const user = await getUser();
@@ -12,6 +13,18 @@ export async function Header() {
     (user?.user_metadata?.nome as string | undefined) ??
     user?.email?.split("@")[0] ??
     null;
+
+  // Avatar (foto da Steam ou enviada) pra mostrar no botão de conta.
+  let avatar: string | null = null;
+  if (user) {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("profiles")
+      .select("avatar_url")
+      .eq("id", user.id)
+      .maybeSingle<{ avatar_url: string | null }>();
+    avatar = data?.avatar_url ?? null;
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-neutral-950/85 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/70">
@@ -39,7 +52,7 @@ export async function Header() {
           <Plus className="size-4" />
           Vender
         </Link>
-        <AccountButton nome={nome} />
+        <AccountButton nome={nome} avatar={avatar} />
       </div>
     </header>
   );

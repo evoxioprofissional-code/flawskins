@@ -9,7 +9,13 @@ import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 // Área de conta no header. Recebe o estado inicial do servidor para não piscar.
-export function AccountButton({ nome }: { nome: string | null }) {
+export function AccountButton({
+  nome,
+  avatar,
+}: {
+  nome: string | null;
+  avatar?: string | null;
+}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [saindo, setSaindo] = useState(false);
@@ -41,9 +47,14 @@ export function AccountButton({ nome }: { nome: string | null }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Conta"
-        className="grid size-9 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold text-white"
+        className="grid size-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold text-white ring-1 ring-white/15"
       >
-        {inicial}
+        {avatar ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={avatar} alt="" className="size-full object-cover" />
+        ) : (
+          inicial
+        )}
       </button>
       {open && (
         <>
