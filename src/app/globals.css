@@ -142,6 +142,19 @@
   font-family: var(--font-impact), var(--font-display), sans-serif;
 }
 
+/* Grade de skins: auto-fit faz os cards esticarem pra preencher a largura
+   toda quando há poucos; com muitos, quebra em várias linhas densas. */
+.skin-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+@media (min-width: 640px) {
+  .skin-grid {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  }
+}
+
 /* Campo de estrelas — camadas de pontos com brilho suave, sem imagem. */
 .starfield {
   background-image:
