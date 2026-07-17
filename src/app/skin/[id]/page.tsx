@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Lock, Box, Layers, Palette, SlidersHorizontal, ShieldCheck, ChevronRight, Store } from "lucide-react";
+import { Lock, Box, Layers, Palette, SlidersHorizontal, ShieldCheck, ChevronRight, Store, PackageOpen } from "lucide-react";
 
 import { buscarAnuncio } from "@/actions/anuncios";
 import { getUser } from "@/lib/auth";
@@ -29,7 +28,31 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 export default async function SkinPage({ params }: Params) {
   const { id } = await params;
   const [anuncio, user] = await Promise.all([buscarAnuncio(id), getUser()]);
-  if (!anuncio) notFound();
+
+  // Skin removida / inexistente: tela amigável em vez de 404 seco.
+  if (!anuncio) {
+    return (
+      <div className="mx-auto grid min-h-[60vh] max-w-md place-items-center px-4 text-center">
+        <div>
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl border border-white/10 bg-neutral-900">
+            <PackageOpen className="size-7 text-zinc-500" />
+          </div>
+          <h1 className="mt-4 font-display text-xl font-bold text-zinc-100">
+            Anúncio indisponível
+          </h1>
+          <p className="mt-1 text-sm text-zinc-400">
+            Esta skin foi removida ou não está mais à venda.
+          </p>
+          <Link
+            href="/"
+            className="mt-5 inline-flex h-11 items-center rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          >
+            Ver outras skins
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   // Perfil do vendedor (avatar) — se o anúncio tiver dono.
   let sellerAvatar: string | null = null;
