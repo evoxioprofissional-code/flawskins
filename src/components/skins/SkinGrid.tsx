@@ -45,7 +45,7 @@ export function SkinGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 sm:[grid-template-columns:repeat(auto-fit,minmax(210px,1fr))]">
       {anuncios.map((anuncio) => (
         <SkinCard key={anuncio.id} anuncio={anuncio} />
       ))}
