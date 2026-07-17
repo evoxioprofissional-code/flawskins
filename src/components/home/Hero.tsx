@@ -56,18 +56,12 @@ export function Hero({ skins = [] }: Props) {
           WhatsApp. Sem taxa pra comprar, sem intermediário travando o negócio.
         </p>
 
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 flex items-center justify-center">
           <Link
             href="#skins"
             className="inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 text-sm font-semibold text-white shadow-lg shadow-fuchsia-500/30 transition-all hover:-translate-y-0.5 hover:shadow-fuchsia-500/50"
           >
             Ver skins <ArrowRight className="size-4" />
-          </Link>
-          <Link
-            href="/novo"
-            className="inline-flex h-11 items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900/60 px-6 text-sm font-semibold text-zinc-100 backdrop-blur transition-colors hover:bg-zinc-800"
-          >
-            Vender minha skin
           </Link>
         </div>
 
