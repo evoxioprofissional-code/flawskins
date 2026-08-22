@@ -12,6 +12,8 @@ import { formatBRL } from "@/lib/format";
 import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
 import { OfferButton } from "@/components/skins/OfferButton";
 import { SkinShowcase } from "@/components/skins/SkinShowcase";
+import { PrecoBuff } from "@/components/skins/PrecoBuff";
+import { getPrecoRef } from "@/lib/precos";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const dynamic = "force-dynamic";
@@ -66,6 +68,8 @@ export default async function SkinPage({ params }: Params) {
     sellerAvatar = data?.avatar_url ?? null;
   }
 
+  const precoRef = await getPrecoRef(anuncio.titulo);
+
   const imagens = anuncio.image_urls?.length ? anuncio.image_urls : [anuncio.image_url];
   const arma = anuncio.titulo.split("|")[0].trim();
   const inicial = (anuncio.vendedor_nome || "?").trim().charAt(0).toUpperCase();
@@ -110,6 +114,8 @@ export default async function SkinPage({ params }: Params) {
             <p className="font-display text-3xl font-bold text-white">
               {formatBRL(anuncio.preco)}
             </p>
+
+            <PrecoBuff preco={anuncio.preco} ref={precoRef} />
 
             {/* Detalhes */}
             <dl className="mt-4 divide-y divide-white/5 border-t border-white/5 text-sm">
