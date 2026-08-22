@@ -115,7 +115,7 @@ export default async function SkinPage({ params }: Params) {
               {formatBRL(anuncio.preco)}
             </p>
 
-            <PrecoBuff preco={anuncio.preco} ref={precoRef} />
+            <PrecoBuff preco={anuncio.preco} dados={precoRef} />
 
             {/* Detalhes */}
             <dl className="mt-4 divide-y divide-white/5 border-t border-white/5 text-sm">
