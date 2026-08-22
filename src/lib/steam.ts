@@ -102,7 +102,6 @@ export function steamEmail(steamId: string): string {
 }
 
 // ---- Inventário CS2 (appid 730) ----
-import { CATEGORIAS, EXTERIORES } from "@/types/database";
 import type { Categoria, Exterior } from "@/types/database";
 
 export type ItemInventario = {
@@ -123,107 +122,90 @@ export class SteamInvError extends Error {
   }
 }
 
-type SteamTag = { category: string; localized_tag_name?: string; internal_name?: string };
-type SteamDesc = {
-  classid: string;
-  instanceid: string;
-  market_hash_name?: string;
-  name?: string;
-  icon_url?: string;
-  marketable?: number;
-  tags?: SteamTag[];
-  actions?: { link?: string; name?: string }[];
-};
-type SteamAsset = { classid: string; instanceid: string; assetid: string };
-
-const TIPO_PARA_CATEGORIA: Record<string, Categoria> = {
-  Knife: "Faca",
-  Gloves: "Luva",
-  Rifle: "Rifle",
-  Pistol: "Pistola",
-  SMG: "SMG",
-  "Sniper Rifle": "Sniper",
-  "Machinegun": "Outro",
-  Shotgun: "Outro",
+// Desgaste (campo `wear` da SteamWebAPI) → nome completo do nosso enum.
+const WEAR_TO_EXT: Record<string, Exterior> = {
+  fn: "Factory New",
+  mw: "Minimal Wear",
+  ft: "Field-Tested",
+  ww: "Well-Worn",
+  bs: "Battle-Scarred",
 };
 
-function tagValor(tags: SteamTag[] | undefined, categoria: string): string | null {
-  const t = tags?.find((x) => x.category === categoria);
-  return t?.localized_tag_name ?? t?.internal_name ?? null;
-}
+// Tipo interno da Steam (tag) → nossa categoria.
+const TIPO_INTERNO_PARA_CATEGORIA: Record<string, Categoria> = {
+  CSGO_Type_Knife: "Faca",
+  CSGO_Type_Hands: "Luva",
+  CSGO_Type_Rifle: "Rifle",
+  CSGO_Type_Pistol: "Pistola",
+  CSGO_Type_SMG: "SMG",
+  CSGO_Type_SniperRifle: "Sniper",
+  CSGO_Type_Machinegun: "Outro",
+  CSGO_Type_Shotgun: "Outro",
+};
 
-// Lê o inventário público de CS2 e devolve só skins com desgaste (armas/facas/luvas).
+type SwaInvTag = { category?: string; internal_name?: string };
+type SwaInvItem = {
+  markethashname?: string;
+  assetid?: string;
+  image?: string;
+  wear?: string;
+  tags?: SwaInvTag[];
+  inspectlinkparsed?: string;
+  inspectlink?: string;
+};
+
+// Lê o inventário CS2 via SteamWebAPI (os servidores deles puxam da Steam e
+// cacheiam — evita o 429 que a Steam dá direto pro nosso IP). Só skins com
+// desgaste (armas/facas/luvas). Requer STEAMWEBAPI_KEY.
 export async function steamInventario(steamId: string): Promise<ItemInventario[]> {
-  // l=english: as tags de desgaste/tipo voltam em inglês ("Factory New",
-  // "Rifle"…), batendo com nossos enums. O nome da skin é inglês de qualquer jeito.
-  const url = `https://steamcommunity.com/inventory/${steamId}/730/2?l=english&count=500`;
-  const opts = {
-    headers: {
-      // Sem um UA de navegador a Steam bloqueia bem mais fácil.
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36",
-      Accept: "application/json, text/plain, */*",
-      "Accept-Language": "en-US,en;q=0.9",
-      Referer: `https://steamcommunity.com/profiles/${steamId}/inventory/`,
-    },
-    cache: "no-store" as const,
-  };
+  const key = process.env.STEAMWEBAPI_KEY;
+  if (!key) throw new SteamInvError(0);
 
-  let res = await fetch(url, opts);
-  // A Steam limita muito IP de datacenter (429). Tenta de novo antes de desistir.
-  for (let i = 0; i < 2 && (res.status === 429 || res.status >= 500); i++) {
-    await new Promise((r) => setTimeout(r, 800 * (i + 1)));
-    res = await fetch(url, opts);
-  }
+  const url =
+    `https://www.steamwebapi.com/steam/api/inventory?key=${key}` +
+    `&steam_id=${steamId}&game=cs2&parse=1`;
+  const res = await fetch(url, {
+    headers: { "User-Agent": "CloudSkins/1.0" },
+    cache: "no-store",
+  });
   if (!res.ok) throw new SteamInvError(res.status);
-  const data = (await res.json()) as {
-    assets?: SteamAsset[];
-    descriptions?: SteamDesc[];
-  };
-  if (!data.descriptions || !data.assets) return [];
 
-  const descByKey = new Map<string, SteamDesc>();
-  for (const d of data.descriptions) descByKey.set(`${d.classid}_${d.instanceid}`, d);
+  const raw = (await res.json()) as unknown;
+  // Erro (rate limit / privado): não vem array.
+  if (!Array.isArray(raw)) {
+    const msg = String((raw as { error?: string })?.error ?? "").toLowerCase();
+    if (/private|privado/.test(msg)) throw new SteamInvError(403);
+    if (/limit|rate|too many|requests/.test(msg)) throw new SteamInvError(429);
+    throw new SteamInvError(500);
+  }
 
   const itens: ItemInventario[] = [];
   const vistos = new Set<string>();
-  for (const a of data.assets) {
-    const d = descByKey.get(`${a.classid}_${a.instanceid}`);
-    if (!d) continue;
+  for (const it of raw as SwaInvItem[]) {
+    const ext = it.wear ? WEAR_TO_EXT[it.wear.toLowerCase()] : undefined;
+    if (!ext) continue; // sem desgaste = não é skin (agente/adesivo/caixa)
+    if (!it.assetid || !it.markethashname) continue;
 
-    const ext = tagValor(d.tags, "Exterior");
-    if (!ext || !(EXTERIORES as readonly string[]).includes(ext)) continue; // só skins com desgaste
-
-    // Evita duplicar a mesma skin idêntica (mostra uma de cada).
-    const dedup = `${d.classid}_${d.instanceid}`;
+    // Evita listar duas skins idênticas.
+    const dedup = it.markethashname;
     if (vistos.has(dedup)) continue;
     vistos.add(dedup);
 
-    const tipo = tagValor(d.tags, "Type") ?? "";
-    const categoria = TIPO_PARA_CATEGORIA[tipo] ??
-      ((CATEGORIAS as readonly string[]).includes(tipo) ? (tipo as Categoria) : "Outro");
-
-    // Inspect link da peça. ATENÇÃO: hoje a Steam devolve
-    // "steam://run/730//+csgo_econ_action_preview %propid:6%" — um marcador
-    // que só o cliente resolve; o valor "D" (necessário pra inspecionar, e
-    // portanto pro float) não vem mais no inventário público. Só montamos o
-    // link no formato antigo (S/A/D); caso contrário fica null.
-    const acao = d.actions?.find((x) => x.link?.includes("csgo_econ_action_preview"));
-    const temPlaceholders =
-      !!acao?.link?.includes("%owner_steamid%") && !!acao?.link?.includes("%assetid%");
-    const inspectLink = temPlaceholders
-      ? acao!.link!.replace("%owner_steamid%", steamId).replace("%assetid%", a.assetid)
-      : null;
+    const tipoInterno =
+      it.tags?.find((t) => t.category === "Type")?.internal_name ?? "";
+    let categoria = TIPO_INTERNO_PARA_CATEGORIA[tipoInterno] ?? "Outro";
+    // Fallback: luvas às vezes não vêm com o tipo padrão.
+    if (categoria === "Outro" && /\bgloves\b|hand wraps/i.test(it.markethashname)) {
+      categoria = "Luva";
+    }
 
     itens.push({
-      assetId: a.assetid,
-      titulo: d.market_hash_name || d.name || "Skin",
+      assetId: it.assetid,
+      titulo: it.markethashname,
       categoria,
-      exterior: ext as Exterior,
-      image: d.icon_url
-        ? `https://community.cloudflare.steamstatic.com/economy/image/${d.icon_url}/360fx360f`
-        : "",
-      inspectLink,
+      exterior: ext,
+      image: it.image ?? "",
+      inspectLink: it.inspectlinkparsed || it.inspectlink || null,
     });
   }
   return itens;
