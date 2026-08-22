@@ -5,10 +5,8 @@ import { BadgeCheck, Wallet } from "lucide-react";
 import { getUser } from "@/lib/auth";
 import { buscarPerfil } from "@/actions/perfil";
 import { meusAnuncios } from "@/actions/anuncios";
-import { getArenaStats } from "@/actions/arena";
 import { ProfileForm } from "@/components/perfil/ProfileForm";
 import { MySkins } from "@/components/perfil/MySkins";
-import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
 import { DesconectarMP } from "@/components/perfil/DesconectarMP";
 import { BackButton } from "@/components/layout/BackButton";
 
@@ -24,10 +22,9 @@ export default async function PerfilPage({
   if (!user) redirect("/login?next=/perfil");
 
   const { mp, motivo } = await searchParams;
-  const [perfil, anuncios, arenaStats] = await Promise.all([
+  const [perfil, anuncios] = await Promise.all([
     buscarPerfil(user.id),
     meusAnuncios(),
-    getArenaStats(user.id),
   ]);
 
   return (
@@ -87,10 +84,6 @@ export default async function PerfilPage({
           )}
         </div>
       </section>
-
-      <div className="mt-8">
-        <ArenaStatsPanel stats={arenaStats} />
-      </div>
 
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold text-zinc-100">

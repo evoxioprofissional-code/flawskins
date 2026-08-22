@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 const LINKS = [
   { href: "/", label: "Comprar" },
   { href: "/rifas", label: "Rifas" },
-  { href: "/arena", label: "Arena" },
 ];
 
 // Links de navegação do header (desktop), com destaque da rota ativa.

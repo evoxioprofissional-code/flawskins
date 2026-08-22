@@ -5,9 +5,7 @@ import { MapPin } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
 import { buscarPerfil } from "@/actions/perfil";
-import { getArenaStats } from "@/actions/arena";
 import type { Anuncio } from "@/types/database";
-import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { BackButton } from "@/components/layout/BackButton";
 
@@ -25,9 +23,8 @@ export default async function PublicProfilePage({ params }: Params) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const [perfil, stats, { data: anuncios }] = await Promise.all([
+  const [perfil, { data: anuncios }] = await Promise.all([
     buscarPerfil(id),
-    getArenaStats(id),
     supabase
       .from("anuncios")
       .select("*")
@@ -69,8 +66,6 @@ export default async function PublicProfilePage({ params }: Params) {
           )}
         </div>
       </header>
-
-      <ArenaStatsPanel stats={stats} />
 
       <section className="mt-8">
         <h2 className="mb-3 text-lg font-semibold text-zinc-100">

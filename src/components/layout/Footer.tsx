@@ -29,7 +29,6 @@ export function Footer() {
             <FooterLink href="/">Comprar skins</FooterLink>
             <FooterLink href="/novo">Vender skin</FooterLink>
             <FooterLink href="/rifas">Rifas</FooterLink>
-            <FooterLink href="/arena">Arena</FooterLink>
             <FooterLink href="/categorias">Categorias</FooterLink>
             <FooterLink href="/perfil">Meu perfil</FooterLink>
           </nav>
