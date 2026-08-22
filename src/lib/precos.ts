@@ -131,3 +131,21 @@ export async function getPrecosCache(
   for (const r of data ?? []) if (r.buff != null) mapa.set(r.nome, Number(r.buff));
   return mapa;
 }
+
+// Preços pros cards: lê o cache e, pras skins que faltam, busca algumas na API
+// (limitado por render por causa do rate limit). Assim a grade se preenche
+// sozinha ao longo de poucos carregamentos.
+export async function getPrecosGrade(
+  nomes: string[],
+  limiteBusca = 3
+): Promise<Map<string, number>> {
+  const mapa = await getPrecosCache(nomes);
+  const faltando = [...new Set(nomes)]
+    .filter((n) => n && !mapa.has(n))
+    .slice(0, limiteBusca);
+  for (const nome of faltando) {
+    const ref = await getPrecoRef(nome);
+    if (ref?.buff != null) mapa.set(nome, ref.buff);
+  }
+  return mapa;
+}

@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { AlertTriangle, Search } from "lucide-react";
 
 import { listarAnuncios } from "@/actions/anuncios";
-import { getPrecosCache } from "@/lib/precos";
+import { getPrecosGrade } from "@/lib/precos";
 import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
@@ -65,7 +65,7 @@ export default async function HomePage({
   const sidebarKey = `${pmin ?? ""}|${pmax ?? ""}|${fmin ?? ""}|${fmax ?? ""}|${ext ?? ""}`;
 
   // Preços Buff cacheados (leitura em lote, sem chamar a API) pro selo nos cards.
-  const precos = erro ? undefined : await getPrecosCache(anuncios.map((a) => a.titulo));
+  const precos = erro ? undefined : await getPrecosGrade(anuncios.map((a) => a.titulo));
 
   const grid = erro ? (
     <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-neutral-900 px-4 py-6 text-sm text-zinc-300">
