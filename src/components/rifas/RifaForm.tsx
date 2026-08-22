@@ -131,7 +131,7 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
       </div>
 
       <Campo label="Imagem da rifa">
-        <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-900 px-4 py-6 text-center transition-colors hover:border-violet-500/60">
+        <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-900 px-4 py-6 text-center transition-colors hover:border-blue-500/60">
           {preview ? (
             <div className="relative h-36 w-full">
               <Image src={preview} alt="Prévia" fill className="rounded-lg object-contain" unoptimized />
@@ -149,7 +149,7 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
       <button
         type="submit"
         disabled={busy}
-        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-base font-semibold text-violet-300 disabled:opacity-60"
+        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-base font-semibold text-blue-300 disabled:opacity-60"
       >
         {busy && <Loader2 className="size-5 animate-spin" />}
         {busy ? "Salvando…" : edicao ? "Salvar alterações" : "Criar rifa"}
@@ -159,7 +159,7 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
 }
 
 const inputCls =
-  "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-violet-500/60 focus:outline-none";
+  "w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500/60 focus:outline-none";
 
 function Campo({ label, children }: { label: string; children: React.ReactNode }) {
   return (

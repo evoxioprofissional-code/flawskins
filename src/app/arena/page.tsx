@@ -18,7 +18,7 @@ import { ARENA_GAMES, type ArenaGame } from "@/types/arena";
 import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
 import { PageHeader } from "@/components/layout/PageHeader";
 
-export const metadata: Metadata = { title: "Vision Arena — Vision Skins" };
+export const metadata: Metadata = { title: "Cloud Arena — Cloud Skins" };
 export const dynamic = "force-dynamic";
 
 const ICONS: Record<ArenaGame, LucideIcon> = {
@@ -51,8 +51,8 @@ export default async function ArenaPage() {
         max="max-w-4xl"
         title={
           <>
-            Vision{" "}
-            <span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">
+            Cloud{" "}
+            <span className="bg-gradient-to-r from-blue-400 to-sky-400 bg-clip-text text-transparent">
               Arena
             </span>
           </>
@@ -60,7 +60,7 @@ export default async function ArenaPage() {
         subtitle="Treine a mira, suba no ranking e dispute temporadas com a comunidade."
         badge={
           season && (
-            <span className="rounded-full border border-violet-500/40 bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-300">
+            <span className="rounded-full border border-blue-500/40 bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-300">
               {season.nome}
             </span>
           )
@@ -77,9 +77,9 @@ export default async function ArenaPage() {
               <Link
                 key={g.slug}
                 href={`/arena/${g.slug}`}
-                className="group flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 transition-all hover:border-violet-500/50 hover:shadow-[0_0_24px_-8px] hover:shadow-violet-500/40"
+                className="group flex flex-col gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 transition-all hover:border-blue-500/50 hover:shadow-[0_0_24px_-8px] hover:shadow-blue-500/40"
               >
-                <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-violet-500/20 to-fuchsia-500/20 text-violet-300">
+                <span className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-blue-500/20 to-sky-500/20 text-blue-300">
                   <Icon className="size-6" />
                 </span>
                 <span className="text-base font-semibold text-zinc-100">
@@ -105,7 +105,7 @@ export default async function ArenaPage() {
             </p>
             <Link
               href="/login?next=/arena"
-              className="mt-3 inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300"
+              className="mt-3 inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-blue-300"
             >
               Entrar
             </Link>
@@ -116,7 +116,7 @@ export default async function ArenaPage() {
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <Link
           href="/arena/pro-lab"
-          className="flex items-center justify-center gap-2 rounded-xl border border-violet-500/40 bg-violet-500/10 py-3 text-sm font-semibold text-violet-200 transition-colors hover:bg-violet-500/20"
+          className="flex items-center justify-center gap-2 rounded-xl border border-blue-500/40 bg-blue-500/10 py-3 text-sm font-semibold text-blue-200 transition-colors hover:bg-blue-500/20"
         >
           <Crosshair className="size-4" /> Pro Player Lab
         </Link>

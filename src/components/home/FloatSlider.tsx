@@ -126,7 +126,7 @@ export function FloatSlider({
             onChange={(e) => setMin(Math.min(Number(e.target.value) || 0, max))}
             onBlur={(e) => editar("min", e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && editar("min", e.currentTarget.value)}
-            className="mt-1 h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 focus:border-violet-500/60 focus:outline-none"
+            className="mt-1 h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 focus:border-blue-500/60 focus:outline-none"
           />
         </label>
         <label className="text-[10px] font-medium tracking-wide text-zinc-500 uppercase">
@@ -140,7 +140,7 @@ export function FloatSlider({
             onChange={(e) => setMax(Math.max(Number(e.target.value) || 0, min))}
             onBlur={(e) => editar("max", e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && editar("max", e.currentTarget.value)}
-            className="mt-1 h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 focus:border-violet-500/60 focus:outline-none"
+            className="mt-1 h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 focus:border-blue-500/60 focus:outline-none"
           />
         </label>
       </div>

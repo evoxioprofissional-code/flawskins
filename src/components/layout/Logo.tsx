@@ -3,17 +3,17 @@ import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
-// Marca Vision Skins (coruja + wordmark), imagem oficial em public/logo.png.
+// Marca Cloud Skins (coruja + wordmark), imagem oficial em public/logo.png.
 export function Logo({ className }: { className?: string }) {
   return (
     <Link
       href="/"
-      aria-label="Vision Skins — início"
+      aria-label="Cloud Skins — início"
       className={cn("flex items-center", className)}
     >
       <Image
         src="/logo.png"
-        alt="Vision Skins"
+        alt="Cloud Skins"
         width={286}
         height={100}
         priority

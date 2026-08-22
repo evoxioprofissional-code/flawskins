@@ -110,7 +110,7 @@ export function ImportarSteam({
                 key={it.assetId}
                 type="button"
                 onClick={() => onPick(it)}
-                className="group flex flex-col rounded-xl border border-zinc-800 bg-zinc-950 p-2 text-left transition-colors hover:border-violet-500/60 hover:bg-zinc-900"
+                className="group flex flex-col rounded-xl border border-zinc-800 bg-zinc-950 p-2 text-left transition-colors hover:border-blue-500/60 hover:bg-zinc-900"
               >
                 <div className="relative aspect-[4/3] w-full">
                   {it.image ? (

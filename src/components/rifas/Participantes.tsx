@@ -7,7 +7,7 @@ export function Participantes({ lista }: { lista: Participante[] }) {
   return (
     <section className="mt-8">
       <h2 className="mb-3 flex items-center gap-2 text-lg font-semibold text-zinc-100">
-        <Users className="size-5 text-violet-400" /> Quem comprou{" "}
+        <Users className="size-5 text-blue-400" /> Quem comprou{" "}
         <span className="text-sm font-normal text-zinc-500">({lista.length})</span>
       </h2>
       {lista.length === 0 ? (
@@ -22,7 +22,7 @@ export function Participantes({ lista }: { lista: Participante[] }) {
                 href={`/u/${p.user_id}`}
                 className="flex min-w-0 flex-1 items-center gap-2.5"
               >
-                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-xs font-bold text-white">
+                <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-xs font-bold text-white">
                   {(p.nome ?? "?").charAt(0).toUpperCase()}
                 </span>
                 <span className="truncate text-sm font-medium text-zinc-100 hover:underline">

@@ -91,7 +91,7 @@ export function TopCategoryNav() {
                   : `/?q=${encodeURIComponent(atual.q ?? "")}`
               }
               onClick={() => setAberto(null)}
-              className="grid min-w-[6rem] shrink-0 place-items-center rounded-lg border border-violet-500/40 bg-violet-500/10 px-3 py-4 text-center text-xs font-semibold text-violet-200"
+              className="grid min-w-[6rem] shrink-0 place-items-center rounded-lg border border-blue-500/40 bg-blue-500/10 px-3 py-4 text-center text-xs font-semibold text-blue-200"
             >
               Ver {atual.label.toLowerCase()}
             </Link>

@@ -38,8 +38,8 @@ export function RifaAdmin({
   }
 
   return (
-    <div className="rounded-2xl border border-violet-500/30 bg-violet-500/5 p-4">
-      <p className="mb-3 flex items-center gap-2 text-sm font-bold text-violet-200">
+    <div className="rounded-2xl border border-blue-500/30 bg-blue-500/5 p-4">
+      <p className="mb-3 flex items-center gap-2 text-sm font-bold text-blue-200">
         <ShieldCheck className="size-4" /> {souAdmin ? "Controles do admin" : "Gerenciar minha rifa"}
       </p>
       <div className="mb-3 grid grid-cols-2 gap-2 text-center text-sm">
@@ -83,7 +83,7 @@ export function RifaAdmin({
                 return r;
               }, "Vencedor sorteado!")
             }
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-violet-300 disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-blue-300 disabled:opacity-50"
           >
             <Dice5 className="size-4" /> Sortear vencedor
           </button>

@@ -1,4 +1,4 @@
-// Tipos e metadados da Vision Arena.
+// Tipos e metadados da Cloud Arena.
 
 export const ARENA_GAME_SLUGS = [
   "gridshot",
@@ -180,9 +180,9 @@ export const TIER_META: Record<
   Bronze: { emoji: "🥉", cor: "text-amber-600", anel: "ring-amber-600/40" },
   Prata: { emoji: "⚪", cor: "text-zinc-300", anel: "ring-zinc-300/40" },
   Ouro: { emoji: "🥇", cor: "text-yellow-400", anel: "ring-yellow-400/40" },
-  AK: { emoji: "🔫", cor: "text-fuchsia-400", anel: "ring-fuchsia-400/40" },
+  AK: { emoji: "🔫", cor: "text-sky-400", anel: "ring-sky-400/40" },
   Águia: { emoji: "🦅", cor: "text-sky-400", anel: "ring-sky-400/40" },
-  Global: { emoji: "🌍", cor: "text-fuchsia-400", anel: "ring-fuchsia-400/40" },
+  Global: { emoji: "🌍", cor: "text-sky-400", anel: "ring-sky-400/40" },
 };
 
 // ---- Conquistas ----

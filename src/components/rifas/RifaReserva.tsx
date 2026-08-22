@@ -83,7 +83,7 @@ export function RifaReserva({
         <p className="text-sm text-zinc-400">Entre para comprar cotas.</p>
         <Link
           href={`/login?next=/rifas/${rifaId}`}
-          className="mt-3 inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300"
+          className="mt-3 inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-blue-300"
         >
           Entrar
         </Link>
@@ -95,8 +95,8 @@ export function RifaReserva({
     <div className="space-y-4">
       {/* Seus números */}
       {meus.length > 0 && (
-        <div className="rounded-xl border border-violet-500/30 bg-violet-500/5 p-3">
-          <p className="mb-1.5 text-xs font-semibold tracking-widest text-violet-300 uppercase">
+        <div className="rounded-xl border border-blue-500/30 bg-blue-500/5 p-3">
+          <p className="mb-1.5 text-xs font-semibold tracking-widest text-blue-300 uppercase">
             Seus números
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -133,13 +133,13 @@ export function RifaReserva({
             onChange={(e) =>
               setQtd(Math.max(1, Math.min(50, restante, Number(e.target.value) || 1)))
             }
-            className="h-11 w-20 rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-center text-sm text-zinc-100 focus:border-violet-500/60 focus:outline-none"
+            className="h-11 w-20 rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-center text-sm text-zinc-100 focus:border-blue-500/60 focus:outline-none"
           />
           <button
             type="button"
             onClick={aleatorio}
             disabled={busy || restante === 0}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-sm font-semibold text-violet-300 disabled:opacity-60"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-sm font-semibold text-blue-300 disabled:opacity-60"
           >
             <Dice5 className="size-4" />
             Comprar {qtd} · {formatBRL(qtd * preco)}
@@ -157,7 +157,7 @@ export function RifaReserva({
                 type="button"
                 onClick={reservarSelecionados}
                 disabled={busy}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-violet-300 disabled:opacity-60"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-blue-300 disabled:opacity-60"
               >
                 <Ticket className="size-4" /> Comprar {sel.size} · {formatBRL(sel.size * preco)}
               </button>
@@ -177,12 +177,12 @@ export function RifaReserva({
                   className={cn(
                     "grid h-8 place-items-center rounded-md text-xs font-semibold tabular-nums transition-colors",
                     isMine
-                      ? "bg-neutral-800 ring-1 ring-white/10 text-violet-300"
+                      ? "bg-neutral-800 ring-1 ring-white/10 text-blue-300"
                       : isTaken
                         ? "cursor-not-allowed bg-zinc-800 text-zinc-600 line-through"
                         : isSel
-                          ? "bg-neutral-800 ring-1 ring-white/10 text-violet-300"
-                          : "border border-zinc-800 text-zinc-300 hover:border-violet-500/50"
+                          ? "bg-neutral-800 ring-1 ring-white/10 text-blue-300"
+                          : "border border-zinc-800 text-zinc-300 hover:border-blue-500/50"
                   )}
                 >
                   {n}

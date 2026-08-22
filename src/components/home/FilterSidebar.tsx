@@ -51,7 +51,7 @@ export function FilterSidebar() {
     params.has("ext");
 
   const numInput =
-    "h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-violet-500/60 focus:outline-none";
+    "h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500/60 focus:outline-none";
 
   return (
     <div className="rounded-xl border border-white/10 bg-neutral-900 p-4">
@@ -63,7 +63,7 @@ export function FilterSidebar() {
           <button
             type="button"
             onClick={() => router.push("/", { scroll: false })}
-            className="text-xs font-medium text-violet-400 hover:underline"
+            className="text-xs font-medium text-blue-400 hover:underline"
           >
             Limpar
           </button>
@@ -127,7 +127,7 @@ export function FilterSidebar() {
                 className={cn(
                   "flex-1 rounded-md border py-1.5 text-xs font-bold transition-colors",
                   ativo
-                    ? "border-violet-500 bg-violet-500/15 text-violet-200"
+                    ? "border-blue-500 bg-blue-500/15 text-blue-200"
                     : "border-white/10 text-zinc-400 hover:border-white/20 hover:text-zinc-200"
                 )}
               >

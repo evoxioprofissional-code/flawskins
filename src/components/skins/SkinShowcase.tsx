@@ -29,7 +29,7 @@ export function SkinShowcase({
       {/* Barra superior */}
       <div className="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
         <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider text-zinc-300 uppercase">
-          <span className="size-2 rounded-full bg-violet-400" />
+          <span className="size-2 rounded-full bg-blue-400" />
           {categoria}
         </span>
         {imagens.length > 1 && (
@@ -42,7 +42,7 @@ export function SkinShowcase({
                 aria-label={`Imagem ${i + 1}`}
                 className={cn(
                   "relative size-9 overflow-hidden rounded-md border bg-neutral-950",
-                  i === ativa ? "border-violet-500" : "border-white/10 hover:border-white/25"
+                  i === ativa ? "border-blue-500" : "border-white/10 hover:border-white/25"
                 )}
               >
                 <SkinImage src={url} alt="" sizes="36px" fit="contain" />
@@ -53,7 +53,7 @@ export function SkinShowcase({
       </div>
 
       {/* Imagem */}
-      <div className="relative aspect-[16/10] bg-[radial-gradient(60%_60%_at_50%_42%,rgba(124,58,237,0.12),transparent_70%)]">
+      <div className="relative aspect-[16/10] bg-[radial-gradient(60%_60%_at_50%_42%,rgba(37,99,235,0.12),transparent_70%)]">
         <SkinImage
           src={principal}
           alt={titulo}

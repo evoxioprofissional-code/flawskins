@@ -49,7 +49,7 @@ export function SkinGallery({
               className={cn(
                 "relative aspect-square overflow-hidden rounded-lg border bg-zinc-950 transition-all",
                 i === ativa
-                  ? "border-violet-500 ring-1 ring-violet-500/60"
+                  ? "border-blue-500 ring-1 ring-blue-500/60"
                   : "border-zinc-800 hover:border-zinc-600"
               )}
             >

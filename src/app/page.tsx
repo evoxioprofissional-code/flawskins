@@ -3,6 +3,7 @@ import { AlertTriangle, Search } from "lucide-react";
 
 import { listarAnuncios } from "@/actions/anuncios";
 import { getShowcaseSkins } from "@/lib/skins-showcase";
+import { getPrecosCache } from "@/lib/precos";
 import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
@@ -64,13 +65,16 @@ export default async function HomePage({
   // Remonta o sidebar (inputs) quando os filtros mudam de fora (ex: Limpar).
   const sidebarKey = `${pmin ?? ""}|${pmax ?? ""}|${fmin ?? ""}|${fmax ?? ""}|${ext ?? ""}`;
 
+  // Preços Buff cacheados (leitura em lote, sem chamar a API) pro selo nos cards.
+  const precos = erro ? undefined : await getPrecosCache(anuncios.map((a) => a.titulo));
+
   const grid = erro ? (
     <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-neutral-900 px-4 py-6 text-sm text-zinc-300">
-      <AlertTriangle className="size-5 text-violet-400" />
+      <AlertTriangle className="size-5 text-blue-400" />
       Não foi possível carregar o feed agora. Tente novamente em instantes.
     </div>
   ) : (
-    <SkinGrid anuncios={anuncios} busca={temBusca} />
+    <SkinGrid anuncios={anuncios} busca={temBusca} precos={precos} />
   );
 
   const marketplace = (
@@ -100,7 +104,7 @@ export default async function HomePage({
                 defaultValue={q ?? ""}
                 placeholder="Buscar skins, facas, luvas, vendedor..."
                 aria-label="Buscar skins"
-                className="h-11 w-full rounded-lg border border-white/10 bg-neutral-900 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-violet-500/60 focus:ring-1 focus:ring-violet-500/40 focus:outline-none"
+                className="h-11 w-full rounded-lg border border-white/10 bg-neutral-900 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/40 focus:outline-none"
               />
             </form>
             <Suspense>

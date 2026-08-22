@@ -16,7 +16,7 @@ export function Hero({ skins = [] }: Props) {
   return (
     <section className="relative overflow-hidden border-b border-zinc-800/70">
       {/* Fundo: gradientes de marca + estrelas */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-20%,rgba(124,58,237,0.32),transparent_62%),radial-gradient(60%_90%_at_85%_10%,rgba(217,70,239,0.20),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-20%,rgba(37,99,235,0.32),transparent_62%),radial-gradient(60%_90%_at_85%_10%,rgba(56,189,248,0.20),transparent_55%)]" />
       <div className="starfield pointer-events-none absolute inset-0 opacity-70" />
 
       {/* Skins flutuando nas laterais do título (só desktop) */}
@@ -44,8 +44,8 @@ export function Hero({ skins = [] }: Props) {
           Skins de CS2,
           <br />
           <span
-            className="bg-gradient-to-r from-violet-400 via-fuchsia-400 to-violet-300 bg-clip-text text-transparent"
-            style={{ filter: "drop-shadow(0 0 32px rgba(217,70,239,0.55))" }}
+            className="bg-gradient-to-r from-blue-400 via-sky-400 to-blue-300 bg-clip-text text-transparent"
+            style={{ filter: "drop-shadow(0 0 32px rgba(56,189,248,0.55))" }}
           >
             direto com o vendedor
           </span>
@@ -59,7 +59,7 @@ export function Hero({ skins = [] }: Props) {
         <div className="mt-6 flex items-center justify-center">
           <Link
             href="#skins"
-            className="inline-flex h-11 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-violet-300 transition-all hover:-translate-y-0.5"
+            className="inline-flex h-11 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-blue-300 transition-all hover:-translate-y-0.5"
           >
             Ver skins <ArrowRight className="size-4" />
           </Link>
@@ -99,7 +99,7 @@ function FloatImg({
       <img
         src={src}
         alt=""
-        className="w-full opacity-90 drop-shadow-[0_18px_30px_rgba(124,58,237,0.4)]"
+        className="w-full opacity-90 drop-shadow-[0_18px_30px_rgba(37,99,235,0.4)]"
       />
     </div>
   );

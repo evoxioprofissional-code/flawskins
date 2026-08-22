@@ -7,9 +7,11 @@ import { SkinCard } from "@/components/skins/SkinCard";
 export function SkinGrid({
   anuncios,
   busca = false,
+  precos,
 }: {
   anuncios: Anuncio[];
   busca?: boolean;
+  precos?: Map<string, number>;
 }) {
   if (anuncios.length === 0) {
     return (
@@ -34,7 +36,7 @@ export function SkinGrid({
             </p>
             <Link
               href="/novo"
-              className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-violet-300 transition-colors hover:bg-neutral-700"
+              className="mt-4 inline-flex h-10 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-blue-300 transition-colors hover:bg-neutral-700"
             >
               Anunciar uma skin
             </Link>
@@ -47,7 +49,11 @@ export function SkinGrid({
   return (
     <div className="skin-grid">
       {anuncios.map((anuncio) => (
-        <SkinCard key={anuncio.id} anuncio={anuncio} />
+        <SkinCard
+          key={anuncio.id}
+          anuncio={anuncio}
+          buff={precos?.get(anuncio.titulo) ?? null}
+        />
       ))}
     </div>
   );

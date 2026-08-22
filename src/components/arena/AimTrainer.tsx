@@ -539,16 +539,16 @@ export function AimTrainer({
       {phase === "play" && (
         <div className="pointer-events-none absolute inset-x-0 top-0 flex flex-wrap items-center gap-x-4 gap-y-1 bg-gradient-to-b from-zinc-950/90 to-transparent px-4 py-2.5 text-sm">
           <HudItem label="Tempo" valor={`${hud.restante.toFixed(1)}s`} destaque />
-          <HudItem label="Score" valor={hud.score.toLocaleString("pt-BR")} cor="text-fuchsia-400" />
+          <HudItem label="Score" valor={hud.score.toLocaleString("pt-BR")} cor="text-sky-400" />
           {game === "tracking" ? (
             <>
-              <HudItem label="Tracking" valor={`${hud.acc}%`} cor="text-violet-300" />
+              <HudItem label="Tracking" valor={`${hud.acc}%`} cor="text-blue-300" />
               <HudItem label="" valor={hud.extra} />
             </>
           ) : (
             <>
               <HudItem label="Acc" valor={`${hud.acc}%`} cor="text-emerald-400" />
-              <HudItem label="Combo" valor={`${hud.combo}`} cor="text-violet-300" />
+              <HudItem label="Combo" valor={`${hud.combo}`} cor="text-blue-300" />
               <HudItem label="Recorde combo" valor={`${hud.best}`} />
               <HudItem label="Hits" valor={`${hud.hits}`} />
               <HudItem label="Miss" valor={`${hud.misses}`} cor="text-red-400" />
@@ -571,7 +571,7 @@ export function AimTrainer({
               sfx.start();
               setPhase("play");
             }}
-            className="inline-flex h-12 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-8 text-base font-bold text-violet-300 shadow-[0_0_30px_-6px] shadow-violet-500/60"
+            className="inline-flex h-12 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-8 text-base font-bold text-blue-300 shadow-[0_0_30px_-6px] shadow-blue-500/60"
           >
             Iniciar treino
           </button>

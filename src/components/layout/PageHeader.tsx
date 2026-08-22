@@ -20,7 +20,7 @@ export function PageHeader({
 }) {
   return (
     <section className="relative overflow-hidden border-b border-zinc-800/70">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_130%_at_12%_-30%,rgba(124,58,237,0.28),transparent_60%),radial-gradient(70%_110%_at_100%_-10%,rgba(217,70,239,0.18),transparent_55%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_130%_at_12%_-30%,rgba(37,99,235,0.28),transparent_60%),radial-gradient(70%_110%_at_100%_-10%,rgba(56,189,248,0.18),transparent_55%)]" />
       <div className="starfield pointer-events-none absolute inset-0 opacity-60" />
 
       <div className={cn("relative mx-auto px-4 py-7 sm:py-9", max)}>

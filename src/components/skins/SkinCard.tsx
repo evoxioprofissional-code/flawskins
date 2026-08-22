@@ -41,10 +41,11 @@ function parseTitulo(titulo: string): { arma: string; nome: string } {
   return { arma, nome };
 }
 
-export function SkinCard({ anuncio }: { anuncio: Anuncio }) {
+export function SkinCard({ anuncio, buff }: { anuncio: Anuncio; buff?: number | null }) {
   const vendido = anuncio.status === "vendido";
   const { arma, nome } = parseTitulo(anuncio.titulo);
   const float = anuncio.float_val;
+  const diffBuff = buff && buff > 0 ? ((anuncio.preco - buff) / buff) * 100 : null;
 
   return (
     <Link
@@ -103,13 +104,30 @@ export function SkinCard({ anuncio }: { anuncio: Anuncio }) {
         )}
 
         <div className="mt-auto flex items-center justify-between gap-2 pt-0.5">
-          <span className="font-display text-lg font-bold text-fuchsia-400">
+          <span className="font-display text-lg font-bold text-sky-400">
             {formatBRL(anuncio.preco)}
           </span>
-          {float == null && (
-            <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-400">
-              {anuncio.exterior}
+          {diffBuff != null ? (
+            <span
+              title="Comparado ao preço do Buff163"
+              className={cn(
+                "rounded px-1.5 py-0.5 text-[10px] font-bold",
+                diffBuff <= -2
+                  ? "bg-emerald-500/15 text-emerald-300"
+                  : diffBuff >= 2
+                    ? "bg-red-500/15 text-red-300"
+                    : "bg-white/5 text-zinc-300"
+              )}
+            >
+              {diffBuff > 0 ? "+" : ""}
+              {diffBuff.toFixed(0)}% Buff
             </span>
+          ) : (
+            float == null && (
+              <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-400">
+                {anuncio.exterior}
+              </span>
+            )
           )}
         </div>
       </div>

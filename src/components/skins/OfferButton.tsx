@@ -33,7 +33,7 @@ export function OfferButton({
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-violet-500/50 bg-violet-500/10 px-4 py-3.5 text-base font-semibold text-violet-200 transition-colors hover:bg-violet-500/20"
+        className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue-500/50 bg-blue-500/10 px-4 py-3.5 text-base font-semibold text-blue-200 transition-colors hover:bg-blue-500/20"
       >
         <HandCoins className="size-5" />
         Dar um lance
@@ -42,7 +42,7 @@ export function OfferButton({
   }
 
   return (
-    <div className="rounded-xl border border-violet-500/40 bg-zinc-900 p-3">
+    <div className="rounded-xl border border-blue-500/40 bg-zinc-900 p-3">
       <label className="text-sm font-medium text-zinc-200">
         Seu lance (anunciada por {formatBRL(preco)})
       </label>
@@ -61,7 +61,7 @@ export function OfferButton({
             onChange={(e) => setValor(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && enviar()}
             placeholder="1000"
-            className="h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-violet-500/60 focus:outline-none"
+            className="h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500/60 focus:outline-none"
           />
         </div>
         <button

@@ -7,7 +7,7 @@ import { NovoAnuncio } from "@/components/skins/NovoAnuncio";
 import { BackButton } from "@/components/layout/BackButton";
 
 export const metadata: Metadata = {
-  title: "Anunciar skin — Vision Skins",
+  title: "Anunciar skin — Cloud Skins",
 };
 
 export default async function NovoAnuncioPage() {

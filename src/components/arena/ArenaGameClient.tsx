@@ -137,7 +137,7 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
             className={cn(
               "rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors",
               d === diff
-                ? "border-fuchsia-500 bg-fuchsia-500/15 text-fuchsia-300"
+                ? "border-sky-500 bg-sky-500/15 text-sky-300"
                 : "border-zinc-800 text-zinc-300 hover:bg-zinc-800"
             )}
           >
@@ -168,7 +168,7 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
               className={cn(
                 "grid size-10 place-items-center rounded-lg border bg-zinc-950 transition-colors",
                 p.id === applied.preset
-                  ? "border-violet-500 ring-1 ring-violet-500/50"
+                  ? "border-blue-500 ring-1 ring-blue-500/50"
                   : "border-zinc-800 hover:bg-zinc-800"
               )}
             >
@@ -176,14 +176,14 @@ export function ArenaGameClient({ game }: { game: ArenaGame }) {
             </button>
           ))}
           {!ehPreset && (
-            <span className="inline-flex items-center gap-2 rounded-lg border border-violet-500/40 bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-200">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-blue-500/40 bg-blue-500/10 px-2.5 py-1 text-xs font-medium text-blue-200">
               <CrosshairCanvas cfg={applied.cfg} size={22} />
               {applied.nome}
             </span>
           )}
           <Link
             href="/arena/pro-lab"
-            className="ml-auto text-xs text-violet-400 hover:underline"
+            className="ml-auto text-xs text-blue-400 hover:underline"
           >
             Pro Lab →
           </Link>
@@ -233,7 +233,7 @@ function RichResult({
       {enviando ? (
         <p className="mt-2 text-sm text-zinc-400">Salvando…</p>
       ) : posicao ? (
-        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-violet-500/40 bg-violet-500/10 px-3 py-1 text-sm font-semibold text-violet-200">
+        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-blue-500/40 bg-blue-500/10 px-3 py-1 text-sm font-semibold text-blue-200">
           <Trophy className="size-4" /> {posicao}º no ranking geral
         </p>
       ) : null}
@@ -250,7 +250,7 @@ function RichResult({
         <button
           type="button"
           onClick={onReplay}
-          className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300"
+          className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-blue-300"
         >
           <RotateCcw className="size-4" /> Jogar de novo
         </button>

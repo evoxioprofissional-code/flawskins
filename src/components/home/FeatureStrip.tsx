@@ -3,7 +3,7 @@ import { Crosshair, Ticket, ArrowRight } from "lucide-react";
 
 import { SteamIcon } from "@/components/auth/SteamIcon";
 
-// Faixa de diferenciais: o que separa a Vision de um grupo de WhatsApp.
+// Faixa de diferenciais: o que separa a Cloud de um grupo de WhatsApp.
 // Ícones em tiles com gradiente (cheios, com presença) em vez de linha fina.
 const FEATURES = [
   {
@@ -17,18 +17,18 @@ const FEATURES = [
   {
     href: "/arena",
     icon: Crosshair,
-    titulo: "Vision Arena",
+    titulo: "Cloud Arena",
     desc: "Treine a mira, suba de patente e apareça no ranking da comunidade.",
-    grad: "from-violet-500 to-fuchsia-600",
-    glow: "shadow-violet-500/30 group-hover:shadow-violet-500/50",
+    grad: "from-blue-500 to-sky-600",
+    glow: "shadow-blue-500/30 group-hover:shadow-blue-500/50",
   },
   {
     href: "/rifas",
     icon: Ticket,
     titulo: "Rifas de skins",
     desc: "Concorra a skins na sorte — ou crie a sua própria rifa e divulgue.",
-    grad: "from-fuchsia-500 to-rose-500",
-    glow: "shadow-fuchsia-500/30 group-hover:shadow-fuchsia-500/50",
+    grad: "from-sky-500 to-rose-500",
+    glow: "shadow-sky-500/30 group-hover:shadow-sky-500/50",
   },
 ] as const;
 

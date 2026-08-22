@@ -37,7 +37,7 @@ export function BottomNav() {
           <Link
             href="/novo"
             aria-label="Criar anúncio"
-            className="-mt-6 grid size-14 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white shadow-[0_0_22px_-4px] shadow-violet-500/60 ring-4 ring-zinc-950"
+            className="-mt-6 grid size-14 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-white shadow-[0_0_22px_-4px] shadow-blue-500/60 ring-4 ring-zinc-950"
           >
             <Plus className="size-6" />
           </Link>
@@ -57,7 +57,7 @@ function NavLink({ item, active }: { item: Item; active: boolean }) {
       href={item.href}
       className={cn(
         "flex flex-col items-center gap-1 py-2.5 text-[11px] transition-colors",
-        active ? "text-violet-400" : "text-zinc-400 hover:text-zinc-200"
+        active ? "text-blue-400" : "text-zinc-400 hover:text-zinc-200"
       )}
     >
       <Icon className="size-5" />

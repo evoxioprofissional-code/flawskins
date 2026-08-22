@@ -73,7 +73,7 @@ export async function steamPerfil(steamId: string): Promise<SteamPerfil> {
   try {
     const res = await fetch(
       `https://steamcommunity.com/profiles/${steamId}?xml=1`,
-      { headers: { "User-Agent": "VisionSkins/1.0" } }
+      { headers: { "User-Agent": "CloudSkins/1.0" } }
     );
     const xml = await res.text();
     const nome = matchCdata(xml, "steamID");

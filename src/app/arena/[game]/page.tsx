@@ -15,8 +15,8 @@ type Params = { params: Promise<{ game: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { game } = await params;
-  if (!isArenaGame(game)) return { title: "Vision Arena — Vision Skins" };
-  return { title: `${ARENA_GAMES[game].nome} — Vision Arena` };
+  if (!isArenaGame(game)) return { title: "Cloud Arena — Cloud Skins" };
+  return { title: `${ARENA_GAMES[game].nome} — Cloud Arena` };
 }
 
 export default async function ArenaGamePage({ params }: Params) {
@@ -46,7 +46,7 @@ export default async function ArenaGamePage({ params }: Params) {
           </p>
           <Link
             href={`/login?next=/arena/${game}`}
-            className="inline-flex h-11 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-violet-300"
+            className="inline-flex h-11 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-blue-300"
           >
             Entrar para jogar
           </Link>
@@ -58,7 +58,7 @@ export default async function ArenaGamePage({ params }: Params) {
           <h2 className="text-sm font-semibold text-zinc-200">Top jogadores</h2>
           <Link
             href={`/arena/ranking?game=${game}`}
-            className="text-xs text-violet-400 hover:underline"
+            className="text-xs text-blue-400 hover:underline"
           >
             ver todos
           </Link>

@@ -1,7 +1,7 @@
 import { formatBRL } from "@/lib/format";
 import { sanitizeWhatsapp } from "@/lib/format";
 
-// Comunidade oficial no WhatsApp (grupo/comunidade da Vision Skins).
+// Comunidade oficial no WhatsApp (grupo/comunidade da Cloud Skins).
 export const WHATSAPP_COMUNIDADE = "https://chat.whatsapp.com/GOUwJGVNQpTHD575MNWKgx";
 
 // Garante o DDI 55 (Brasil) na frente do número, se ainda não houver.
@@ -19,7 +19,7 @@ export function buildWhatsappLink(
   const numero = comDDI(whatsapp);
   const mensagem = `Olá! Tenho interesse na skin "${titulo}" (${formatBRL(
     preco
-  )}) que você anunciou no Vision Skins. Ainda está disponível?`;
+  )}) que você anunciou no Cloud Skins. Ainda está disponível?`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
 }
 
@@ -33,7 +33,7 @@ export function buildLanceLink(
   const numero = comDDI(whatsapp);
   const mensagem = `Olá! Vi sua skin "${titulo}" anunciada por ${formatBRL(
     preco
-  )} no Vision Skins. Quero fazer um lance de ${formatBRL(
+  )} no Cloud Skins. Quero fazer um lance de ${formatBRL(
     lance
   )}. Podemos negociar?`;
   return `https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`;
@@ -62,7 +62,7 @@ export function buildAnuncioText(a: AnuncioTextInput): string {
   if (a.phase) linhas.push(`💠 Phase: ${a.phase}`);
   if (a.cidade) linhas.push(`📍 ${a.cidade}`);
 
-  linhas.push(``, `💰 ${formatBRL(a.preco)}`, ``, `Anunciado no Vision Skins.`);
+  linhas.push(``, `💰 ${formatBRL(a.preco)}`, ``, `Anunciado no Cloud Skins.`);
 
   return linhas.join("\n");
 }

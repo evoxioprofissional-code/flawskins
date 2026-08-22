@@ -66,7 +66,7 @@ export function CriarRifaPainel({
             type="button"
             onClick={pagarTaxa}
             disabled={busy}
-            className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-violet-300 disabled:opacity-60"
+            className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-blue-300 disabled:opacity-60"
           >
             {busy ? <Loader2 className="size-4 animate-spin" /> : <Ticket className="size-4" />}
             Pagar taxa e liberar criação
@@ -110,7 +110,7 @@ function Passo({
 }) {
   return (
     <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-      <span className="mb-3 inline-grid size-8 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold text-white">
+      <span className="mb-3 inline-grid size-8 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-sm font-bold text-white">
         {n}
       </span>
       <h2 className="text-lg font-bold text-zinc-100">{titulo}</h2>

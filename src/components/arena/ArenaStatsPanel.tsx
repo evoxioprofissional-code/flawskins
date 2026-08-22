@@ -22,8 +22,8 @@ export function ArenaStatsPanel({ stats }: { stats: ArenaStats | null }) {
     <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-bold tracking-wide text-zinc-100">
-          <Swords className="size-4 text-violet-400" />
-          Vision Arena Stats
+          <Swords className="size-4 text-blue-400" />
+          Cloud Arena Stats
         </h2>
         {stats && <RankBadge tier={stats.tier} />}
       </div>
@@ -33,7 +33,7 @@ export function ArenaStatsPanel({ stats }: { stats: ArenaStats | null }) {
           <p className="text-sm text-zinc-400">Ainda não jogou na Arena.</p>
           <Link
             href="/arena"
-            className="mt-3 inline-flex h-9 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-4 text-sm font-semibold text-violet-300"
+            className="mt-3 inline-flex h-9 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-4 text-sm font-semibold text-blue-300"
           >
             Entrar na Arena
           </Link>
@@ -55,7 +55,7 @@ export function ArenaStatsPanel({ stats }: { stats: ArenaStats | null }) {
                   <p className="mt-1 text-sm font-bold text-zinc-50">
                     {formatScore(g, j?.best ?? null)}
                   </p>
-                  <p className="text-xs text-violet-300">{pos(j?.pos)}</p>
+                  <p className="text-xs text-blue-300">{pos(j?.pos)}</p>
                 </div>
               );
             })}

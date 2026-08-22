@@ -47,7 +47,7 @@ export function AccountButton({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Conta"
-        className="grid size-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold text-white ring-1 ring-white/15"
+        className="grid size-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-sm font-bold text-white ring-1 ring-white/15"
       >
         {avatar ? (
           // eslint-disable-next-line @next/next/no-img-element

@@ -23,8 +23,8 @@ type Params = { params: Promise<{ id: string }> };
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { id } = await params;
   const anuncio = await buscarAnuncio(id);
-  if (!anuncio) return { title: "Skin não encontrada — Vision Skins" };
-  return { title: `${anuncio.titulo} — Vision Skins` };
+  if (!anuncio) return { title: "Skin não encontrada — Cloud Skins" };
+  return { title: `${anuncio.titulo} — Cloud Skins` };
 }
 
 export default async function SkinPage({ params }: Params) {
@@ -47,7 +47,7 @@ export default async function SkinPage({ params }: Params) {
           </p>
           <Link
             href="/"
-            className="mt-5 inline-flex h-11 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-violet-300 transition-opacity hover:opacity-90"
+            className="mt-5 inline-flex h-11 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-blue-300 transition-opacity hover:opacity-90"
           >
             Ver outras skins
           </Link>
@@ -178,7 +178,7 @@ export default async function SkinPage({ params }: Params) {
           {/* Vendedor */}
           <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
             <div className="flex items-center gap-3">
-              <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-base font-bold text-white">
+              <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-base font-bold text-white">
                 {sellerAvatar ? (
                   <Image
                     src={sellerAvatar}

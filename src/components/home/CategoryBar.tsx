@@ -19,7 +19,7 @@ export function CategoryBar({ ativa }: { ativa?: string }) {
             className={cn(
               "shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium transition-colors",
               isActive
-                ? "border-transparent bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-violet-300"
+                ? "border-transparent bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-blue-300"
                 : "border-zinc-800 bg-zinc-900 text-zinc-300 hover:border-zinc-700 hover:text-zinc-100"
             )}
           >

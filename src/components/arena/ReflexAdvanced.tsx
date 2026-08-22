@@ -125,7 +125,7 @@ export function ReflexAdvanced({
           <button
             type="button"
             onClick={comecar}
-            className="inline-flex h-11 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-violet-300"
+            className="inline-flex h-11 items-center rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-6 text-sm font-semibold text-blue-300"
           >
             Começar
           </button>

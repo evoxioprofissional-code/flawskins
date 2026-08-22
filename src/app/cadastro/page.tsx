@@ -6,7 +6,7 @@ import { AuthForm } from "@/components/auth/AuthForm";
 import { SteamAuthBlock } from "@/components/auth/SteamAuthBlock";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Criar conta — Vision Skins" };
+export const metadata: Metadata = { title: "Criar conta — Cloud Skins" };
 
 export default function CadastroPage() {
   return (

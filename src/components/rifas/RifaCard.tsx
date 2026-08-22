@@ -11,7 +11,7 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
   return (
     <Link
       href={`/rifas/${rifa.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 transition-all hover:border-violet-500/50 hover:shadow-[0_0_24px_-8px] hover:shadow-violet-500/40"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900 transition-all hover:border-blue-500/50 hover:shadow-[0_0_24px_-8px] hover:shadow-blue-500/40"
     >
       <div className="relative aspect-video w-full overflow-hidden bg-zinc-950">
         {rifa.image_url ? (
@@ -33,7 +33,7 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
             rifa.status === "aberta"
               ? "bg-emerald-500/90 text-white"
               : rifa.status === "finalizada"
-                ? "bg-violet-500/90 text-white"
+                ? "bg-blue-500/90 text-white"
                 : "bg-zinc-700 text-zinc-200"
           )}
         >
@@ -52,13 +52,13 @@ export function RifaCard({ rifa }: { rifa: Rifa }) {
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
+              className="h-full rounded-full bg-gradient-to-r from-blue-500 to-sky-500"
               style={{ width: `${pct}%` }}
             />
           </div>
         </div>
 
-        <div className="mt-3 flex items-center gap-1.5 text-sm font-bold text-fuchsia-400">
+        <div className="mt-3 flex items-center gap-1.5 text-sm font-bold text-sky-400">
           <Ticket className="size-4" />
           {formatBRL(rifa.preco_cota)}{" "}
           <span className="text-xs font-normal text-zinc-500">/ cota</span>

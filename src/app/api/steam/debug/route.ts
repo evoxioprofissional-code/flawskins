@@ -36,7 +36,7 @@ export async function GET() {
   // Perfil XML (avatar/nome)
   try {
     const r = await fetch(`https://steamcommunity.com/profiles/${steamId}?xml=1`, {
-      headers: { "User-Agent": "VisionSkins/1.0" },
+      headers: { "User-Agent": "CloudSkins/1.0" },
       cache: "no-store",
     });
     const txt = await r.text();
@@ -53,7 +53,7 @@ export async function GET() {
   try {
     const r = await fetch(
       `https://steamcommunity.com/inventory/${steamId}/730/2?l=english&count=500`,
-      { headers: { "User-Agent": "VisionSkins/1.0" }, cache: "no-store" }
+      { headers: { "User-Agent": "CloudSkins/1.0" }, cache: "no-store" }
     );
     const status = r.status;
     let descricoes = 0;

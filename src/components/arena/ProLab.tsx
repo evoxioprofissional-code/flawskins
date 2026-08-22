@@ -128,7 +128,7 @@ function Tab({
       className={cn(
         "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors",
         ativo
-          ? "border-violet-500 bg-violet-500/15 text-violet-200"
+          ? "border-blue-500 bg-blue-500/15 text-blue-200"
           : "border-zinc-800 text-zinc-300 hover:bg-zinc-800"
       )}
     >
@@ -182,12 +182,12 @@ function ProCard({
         </span>
         <span className="text-zinc-700">·</span>
         <span>
-          Gridshot ref. <b className="text-fuchsia-400">{p.ref.gridshot} pts</b>
+          Gridshot ref. <b className="text-sky-400">{p.ref.gridshot} pts</b>
         </span>
       </div>
 
       {meu && (
-        <p className="mt-2 text-xs text-violet-300">
+        <p className="mt-2 text-xs text-blue-300">
           Seu melhor com esta mira: {meu.best} pts
           {meu.media_acc != null ? ` · ${meu.media_acc}% acc` : ""}
         </p>
@@ -197,14 +197,14 @@ function ProCard({
         <button
           type="button"
           onClick={onApply}
-          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg border border-violet-500/50 bg-violet-500/10 text-sm font-semibold text-violet-200 hover:bg-violet-500/20"
+          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg border border-blue-500/50 bg-blue-500/10 text-sm font-semibold text-blue-200 hover:bg-blue-500/20"
         >
           <Crosshair className="size-4" /> Aplicar
         </button>
         <button
           type="button"
           onClick={onTest}
-          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-sm font-semibold text-violet-300"
+          className="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-sm font-semibold text-blue-300"
         >
           <Play className="size-4" /> Testar agora
         </button>
@@ -227,7 +227,7 @@ function PresetRankingBox({ ranking, top }: { ranking: PresetUso[]; top: TopPres
     <section className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
       <h2 className="mb-1 text-sm font-bold text-zinc-100">Ranking de presets</h2>
       {top.preset && top.total >= 3 && top.pct != null && (
-        <p className="mb-3 rounded-lg bg-violet-500/10 px-3 py-2 text-sm text-violet-200">
+        <p className="mb-3 rounded-lg bg-blue-500/10 px-3 py-2 text-sm text-blue-200">
           🔥 <b>{top.pct}%</b> dos melhores jogadores usam{" "}
           <b>{presetLabel(top.preset)}</b>.
         </p>
@@ -246,7 +246,7 @@ function PresetRankingBox({ ranking, top }: { ranking: PresetUso[]; top: TopPres
               </span>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-800">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                  className="h-full rounded-full bg-gradient-to-r from-blue-500 to-sky-500"
                   style={{ width: `${r.pct}%` }}
                 />
               </div>
@@ -294,7 +294,7 @@ function MelhorSetup({ myStats }: { myStats: PresetMeu[] }) {
           >
             <span className="text-zinc-200">{presetLabel(m.preset)}</span>
             <span className="text-zinc-400">
-              <b className="text-fuchsia-400">{m.best} pts</b>
+              <b className="text-sky-400">{m.best} pts</b>
               {m.media_acc != null ? ` · ${m.media_acc}% acc` : ""} · {m.partidas}x
             </span>
           </li>
@@ -424,7 +424,7 @@ function CommunityItem({
             <button
               type="button"
               onClick={() => onTest(c, cfg)}
-              className="rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-2.5 py-1 text-xs font-semibold text-violet-300"
+              className="rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-2.5 py-1 text-xs font-semibold text-blue-300"
             >
               Testar
             </button>
@@ -493,7 +493,7 @@ function CrosshairEditor() {
               onChange={(e) => setNome(e.target.value)}
               maxLength={40}
               placeholder="Nome da mira (ex: Fast Flick)"
-              className="h-9 flex-1 rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-violet-500/60 focus:outline-none"
+              className="h-9 flex-1 rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500/60 focus:outline-none"
             />
           </div>
 
@@ -513,7 +513,7 @@ function CrosshairEditor() {
               type="button"
               onClick={salvar}
               disabled={salvando}
-              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-4 text-sm font-semibold text-violet-300 disabled:opacity-60"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-4 text-sm font-semibold text-blue-300 disabled:opacity-60"
             >
               <Save className="size-4" /> {salvando ? "Salvando…" : "Compartilhar"}
             </button>
@@ -559,7 +559,7 @@ function Slider({
         step={step}
         value={val}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="flex-1 accent-violet-500"
+        className="flex-1 accent-blue-500"
       />
       <span className="w-10 text-right text-xs tabular-nums text-zinc-300">{val}</span>
     </label>
@@ -582,7 +582,7 @@ function Toggle({
       className={cn(
         "inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors",
         on
-          ? "border-violet-500 bg-violet-500/15 text-violet-200"
+          ? "border-blue-500 bg-blue-500/15 text-blue-200"
           : "border-zinc-800 text-zinc-400 hover:bg-zinc-800"
       )}
     >

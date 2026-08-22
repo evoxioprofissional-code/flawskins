@@ -40,14 +40,14 @@ export async function Header() {
             name="q"
             placeholder="Buscar skins..."
             aria-label="Buscar skins"
-            className="h-10 w-full rounded-lg border border-white/10 bg-white/5 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-violet-500/60 focus:bg-white/[0.07] focus:ring-1 focus:ring-violet-500/40 focus:outline-none"
+            className="h-10 w-full rounded-lg border border-white/10 bg-white/5 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-blue-500/60 focus:bg-white/[0.07] focus:ring-1 focus:ring-blue-500/40 focus:outline-none"
           />
         </form>
 
         {/* Ações à direita */}
         <Link
           href="/novo"
-          className="hidden h-10 shrink-0 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-violet-300 transition-colors hover:bg-neutral-700 sm:inline-flex"
+          className="hidden h-10 shrink-0 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-blue-300 transition-colors hover:bg-neutral-700 sm:inline-flex"
         >
           <Plus className="size-4" />
           Vender

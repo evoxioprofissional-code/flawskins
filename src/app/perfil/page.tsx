@@ -12,7 +12,7 @@ import { ArenaStatsPanel } from "@/components/arena/ArenaStatsPanel";
 import { DesconectarMP } from "@/components/perfil/DesconectarMP";
 import { BackButton } from "@/components/layout/BackButton";
 
-export const metadata: Metadata = { title: "Meu perfil — Vision Skins" };
+export const metadata: Metadata = { title: "Meu perfil — Cloud Skins" };
 export const dynamic = "force-dynamic";
 
 export default async function PerfilPage({

@@ -23,7 +23,7 @@ import { Logo } from "@/components/layout/Logo";
 import { AdminSignOut } from "@/components/admin/AdminSignOut";
 import { AdminRifaRow } from "@/components/rifas/AdminRifaRow";
 
-export const metadata: Metadata = { title: "Painel — Vision Skins" };
+export const metadata: Metadata = { title: "Painel — Cloud Skins" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
@@ -55,7 +55,7 @@ export default async function AdminPage() {
       <header className="mb-6 flex items-center justify-between gap-3 border-b border-zinc-800 pb-4">
         <div className="flex items-center gap-3">
           <Logo />
-          <span className="rounded-md bg-violet-500/15 px-2 py-0.5 text-xs font-semibold text-violet-300">
+          <span className="rounded-md bg-blue-500/15 px-2 py-0.5 text-xs font-semibold text-blue-300">
             ADMIN
           </span>
         </div>
@@ -97,7 +97,7 @@ export default async function AdminPage() {
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-zinc-800">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500"
+                      className="h-full rounded-full bg-gradient-to-r from-blue-500 to-sky-500"
                       style={{ width: `${(n / maxCat) * 100}%` }}
                     />
                   </div>
@@ -130,7 +130,7 @@ export default async function AdminPage() {
                   <tr key={u.id} className="border-b border-zinc-800/60 last:border-0">
                     <td className="px-4 py-2.5">
                       <div className="flex items-center gap-2.5">
-                        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-xs font-bold text-white">
+                        <span className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-xs font-bold text-white">
                           {(u.nome || u.email).charAt(0).toUpperCase()}
                         </span>
                         <div className="min-w-0">
@@ -161,11 +161,11 @@ export default async function AdminPage() {
       <section className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
         <div className="mb-3 flex items-center justify-between gap-3">
           <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
-            <Ticket className="size-4 text-fuchsia-400" /> Rifas ({rifas.length})
+            <Ticket className="size-4 text-sky-400" /> Rifas ({rifas.length})
           </h2>
           <Link
             href="/rifas/nova"
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-violet-300"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-blue-300"
           >
             <Plus className="size-4" /> Nova rifa
           </Link>

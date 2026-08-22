@@ -16,7 +16,7 @@ import { RankingList } from "@/components/arena/RankingList";
 import { BackButton } from "@/components/layout/BackButton";
 import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = { title: "Rankings — Vision Arena" };
+export const metadata: Metadata = { title: "Rankings — Cloud Arena" };
 export const dynamic = "force-dynamic";
 
 type Search = { game?: string; period?: string };
@@ -45,7 +45,7 @@ export default async function RankingPage({
           Rankings da Arena
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
-          Os melhores jogadores da comunidade Vision Skins.
+          Os melhores jogadores da comunidade Cloud Skins.
         </p>
       </header>
 
@@ -58,7 +58,7 @@ export default async function RankingPage({
             className={cn(
               "rounded-lg border px-3 py-1.5 text-sm font-medium transition-colors",
               g === game
-                ? "border-violet-500 bg-violet-500/15 text-violet-200"
+                ? "border-blue-500 bg-blue-500/15 text-blue-200"
                 : "border-zinc-800 text-zinc-300 hover:bg-zinc-800"
             )}
           >
@@ -76,7 +76,7 @@ export default async function RankingPage({
             className={cn(
               "rounded-full px-3 py-1 text-xs font-medium transition-colors",
               p === period
-                ? "bg-neutral-800 ring-1 ring-white/10 text-violet-300"
+                ? "bg-neutral-800 ring-1 ring-white/10 text-blue-300"
                 : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
             )}
           >

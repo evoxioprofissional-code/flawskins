@@ -1,4 +1,5 @@
 import { serviceClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 // Preço de referência (Buff163 + Steam) via SteamWebAPI, com cache no banco.
 // Plano grátis = 2 req/min, então buscamos sob demanda e guardamos.
@@ -68,4 +69,21 @@ export async function getPrecoRef(nome: string): Promise<PrecoRef> {
 
   // Falhou (rate limit / sem chave): devolve o cache antigo se existir.
   return data ? { buff: data.buff, steam: data.steam } : null;
+}
+
+// Leitura em lote do cache (sem chamar a API) — pra selo nos cards da grade.
+export async function getPrecosCache(
+  nomes: string[]
+): Promise<Map<string, number>> {
+  const uniq = [...new Set(nomes)].filter(Boolean);
+  const mapa = new Map<string, number>();
+  if (uniq.length === 0) return mapa;
+  const sb = await createClient();
+  const { data } = await sb
+    .from("skin_precos")
+    .select("nome, buff")
+    .in("nome", uniq)
+    .returns<{ nome: string; buff: number | null }[]>();
+  for (const r of data ?? []) if (r.buff != null) mapa.set(r.nome, Number(r.buff));
+  return mapa;
 }
