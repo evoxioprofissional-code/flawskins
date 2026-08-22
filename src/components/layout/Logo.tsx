@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
-// Marca Cloud Skins (coruja + wordmark), imagem oficial em public/logo.png.
+// Marca Cloud Skins (wordmark "CLOUD" branca), em public/logo.png.
 export function Logo({ className }: { className?: string }) {
   return (
     <Link
@@ -14,10 +14,10 @@ export function Logo({ className }: { className?: string }) {
       <Image
         src="/logo.png"
         alt="Cloud Skins"
-        width={286}
-        height={100}
+        width={417}
+        height={91}
         priority
-        className="h-8 w-auto sm:h-9"
+        className="h-7 w-auto sm:h-8"
       />
     </Link>
   );

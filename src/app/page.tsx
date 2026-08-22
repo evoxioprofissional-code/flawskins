@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { AlertTriangle, Search } from "lucide-react";
 
 import { listarAnuncios } from "@/actions/anuncios";
-import { getShowcaseSkins } from "@/lib/skins-showcase";
 import { getPrecosCache } from "@/lib/precos";
 import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
@@ -126,16 +125,10 @@ export default async function HomePage({
     return <div className="py-6">{marketplace}</div>;
   }
 
-  // Skins pra compor o hero (PNG transparente de skins icônicas, URLs fixas).
-  let heroSkins = getShowcaseSkins();
-  if (heroSkins.length === 0) {
-    heroSkins = anuncios.map((a) => a.image_url).filter(Boolean).slice(0, 5);
-  }
-
   return (
     <>
-      <Hero total={anuncios.length} skins={heroSkins} />
-      <div id="skins" className="scroll-mt-20 py-10">
+      <Hero />
+      <div id="skins" className="scroll-mt-20 pt-6 pb-10">
         {marketplace}
       </div>
       <FeatureStrip />
