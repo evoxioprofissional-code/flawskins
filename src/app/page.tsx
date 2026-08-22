@@ -7,7 +7,6 @@ import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
 import { Hero } from "@/components/home/Hero";
 import { TopCategoryNav } from "@/components/home/TopCategoryNav";
-import { FeatureStrip } from "@/components/home/FeatureStrip";
 import { SortSelect } from "@/components/home/SortSelect";
 import { FilterSidebar } from "@/components/home/FilterSidebar";
 import type { Anuncio } from "@/types/database";
@@ -131,7 +130,6 @@ export default async function HomePage({
       <div id="skins" className="scroll-mt-20 pt-6 pb-10">
         {marketplace}
       </div>
-      <FeatureStrip />
     </>
   );
 }
