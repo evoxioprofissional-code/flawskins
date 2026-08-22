@@ -13,6 +13,7 @@ import { WhatsAppButton } from "@/components/skins/WhatsAppButton";
 import { OfferButton } from "@/components/skins/OfferButton";
 import { SkinShowcase } from "@/components/skins/SkinShowcase";
 import { PrecoBuff } from "@/components/skins/PrecoBuff";
+import { MercadosComparacao } from "@/components/skins/MercadosComparacao";
 import { getPrecoRef } from "@/lib/precos";
 import { BackButton } from "@/components/layout/BackButton";
 
@@ -116,6 +117,7 @@ export default async function SkinPage({ params }: Params) {
             </p>
 
             <PrecoBuff preco={anuncio.preco} dados={precoRef} />
+            <MercadosComparacao mercados={precoRef?.mercados ?? []} />
 
             {/* Detalhes */}
             <dl className="mt-4 divide-y divide-white/5 border-t border-white/5 text-sm">
