@@ -2,7 +2,7 @@ import { formatBRL } from "@/lib/format";
 import { sanitizeWhatsapp } from "@/lib/format";
 
 // Comunidade oficial no WhatsApp (grupo/comunidade da Cloud Skins).
-export const WHATSAPP_COMUNIDADE = "https://chat.whatsapp.com/GOUwJGVNQpTHD575MNWKgx";
+export const WHATSAPP_COMUNIDADE = "https://chat.whatsapp.com/IU4ixKIU0RS7XgKtl6QK91?s=cl&p=a&ilr=1";
 
 // Garante o DDI 55 (Brasil) na frente do número, se ainda não houver.
 function comDDI(numero: string): string {
