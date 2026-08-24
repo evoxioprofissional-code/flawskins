@@ -24,6 +24,7 @@ export async function criarPagamentoPix(params: {
   notificationUrl?: string;
   expiraEmMin?: number;
   accessToken?: string; // token do criador (split); default = plataforma
+  applicationFee?: number; // comissão da plataforma (só com accessToken do criador)
 }): Promise<PixResult> {
   const exp = new Date(Date.now() + (params.expiraEmMin ?? 30) * 60_000);
 
@@ -36,6 +37,11 @@ export async function criarPagamentoPix(params: {
     date_of_expiration: isoComOffset(exp),
   };
   if (params.notificationUrl) body.notification_url = params.notificationUrl;
+  // Comissão do marketplace: só faz sentido quando o pagamento é criado com o
+  // token do criador (o dinheiro cai na conta dele e a % vem pra plataforma).
+  if (params.accessToken && params.applicationFee && params.applicationFee > 0) {
+    body.application_fee = Number(params.applicationFee.toFixed(2));
+  }
 
   const res = await fetch(`${BASE}/v1/payments`, {
     method: "POST",

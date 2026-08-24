@@ -39,6 +39,8 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
     if (titulo.trim().length < 3) return toast.error("Título muito curto.");
     if (!premio.trim()) return toast.error("Informe o prêmio.");
     if (!(precoN >= 0)) return toast.error("Preço inválido.");
+    if (usuario && precoN < 5)
+      return toast.error("A cota mínima é R$ 5,00.");
     if (!(totalN >= 1 && totalN <= 100000))
       return toast.error("Total de números de 1 a 100000.");
 

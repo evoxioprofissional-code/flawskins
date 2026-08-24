@@ -1,121 +1,47 @@
-"use client";
+import { BadgeCheck, Wallet } from "lucide-react";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { BadgeCheck, Loader2, Ticket, Wallet } from "lucide-react";
-
-import { iniciarTaxa } from "@/actions/rifas";
-import { PixModal } from "@/components/rifas/PixModal";
 import { RifaForm } from "@/components/rifas/RifaForm";
-import { formatBRL } from "@/lib/format";
-import type { PixPagamento } from "@/actions/rifas";
 
+// 2 passos: conectar Mercado Pago → formulário. A plataforma ganha % de cada
+// cota (via application_fee), então não há taxa pra criar.
 export function CriarRifaPainel({
   conectado,
-  creditos,
-  taxa,
+  percentual,
 }: {
   conectado: boolean;
-  creditos: number;
-  taxa: number;
+  percentual: number;
 }) {
-  const router = useRouter();
-  const [pix, setPix] = useState<PixPagamento | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  async function pagarTaxa() {
-    setBusy(true);
-    const res = await iniciarTaxa();
-    setBusy(false);
-    if (!res.ok) return toast.error(res.error);
-    setPix(res.data);
-  }
-
-  // Passo 1: conectar Mercado Pago.
   if (!conectado) {
     return (
-      <Passo
-        n={1}
-        titulo="Conecte sua conta Mercado Pago"
-        texto="O dinheiro das cotas da sua rifa cai direto na sua conta. Conecte uma vez e pronto."
-      >
+      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+        <span className="mb-3 inline-grid size-8 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-sm font-bold text-white">
+          1
+        </span>
+        <h2 className="text-lg font-bold text-zinc-100">
+          Conecte sua conta Mercado Pago
+        </h2>
+        <p className="mt-1 mb-4 max-w-md text-sm text-zinc-400">
+          O dinheiro das cotas cai direto na sua conta. A plataforma retém apenas{" "}
+          <strong className="text-zinc-200">{percentual}% de cada cota</strong>{" "}
+          vendida — sem taxa pra criar. Conecte uma vez e pronto.
+        </p>
         <a
           href="/api/mp/oauth/connect"
           className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#009ee3] px-5 text-sm font-semibold text-white hover:opacity-90"
         >
           <Wallet className="size-4" /> Conectar Mercado Pago
         </a>
-      </Passo>
+      </div>
     );
   }
 
-  // Passo 2: pagar a taxa (vira crédito).
-  if (creditos < 1) {
-    return (
-      <>
-        <Passo
-          n={2}
-          titulo={`Pague a taxa de ${formatBRL(taxa)}`}
-          texto="Uma taxa única por rifa, paga via Pix. Assim que cair, o formulário da rifa é liberado."
-        >
-          <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-1.5 text-xs text-emerald-300">
-            <BadgeCheck className="size-4" /> Mercado Pago conectado
-          </div>
-          <button
-            type="button"
-            onClick={pagarTaxa}
-            disabled={busy}
-            className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-blue-300 disabled:opacity-60"
-          >
-            {busy ? <Loader2 className="size-4 animate-spin" /> : <Ticket className="size-4" />}
-            Pagar taxa e liberar criação
-          </button>
-        </Passo>
-        {pix && (
-          <PixModal
-            pix={pix}
-            onClose={() => {
-              setPix(null);
-              router.refresh();
-            }}
-          />
-        )}
-      </>
-    );
-  }
-
-  // Passo 3: formulário liberado.
   return (
     <div>
       <div className="mb-4 flex items-center gap-2 rounded-lg bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
-        <BadgeCheck className="size-4" /> Taxa paga — você tem {creditos} criação
-        {creditos > 1 ? "ões" : ""} liberada{creditos > 1 ? "s" : ""}. Preencha sua rifa:
+        <BadgeCheck className="size-4" /> Mercado Pago conectado. As cotas caem na
+        sua conta; a plataforma retém {percentual}% de cada uma.
       </div>
       <RifaForm usuario />
-    </div>
-  );
-}
-
-function Passo({
-  n,
-  titulo,
-  texto,
-  children,
-}: {
-  n: number;
-  titulo: string;
-  texto: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-      <span className="mb-3 inline-grid size-8 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-sm font-bold text-white">
-        {n}
-      </span>
-      <h2 className="text-lg font-bold text-zinc-100">{titulo}</h2>
-      <p className="mt-1 mb-4 max-w-md text-sm text-zinc-400">{texto}</p>
-      {children}
     </div>
   );
 }

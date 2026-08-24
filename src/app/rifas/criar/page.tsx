@@ -29,22 +29,17 @@ export default async function CriarRifaPage() {
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
           {admin
-            ? "Você é admin — cria rifas da plataforma sem pagar taxa."
-            : "Conecte seu Mercado Pago, pague a taxa única e publique sua rifa. As cotas vendidas caem direto na sua conta."}
+            ? "Você é admin — cria rifas da plataforma."
+            : "Conecte seu Mercado Pago e publique. As cotas caem direto na sua conta; a plataforma retém uma pequena % de cada cota."}
         </p>
       </header>
 
-      {admin ? <AdminCriaRifa /> : <CriarRifaUsuario />}
+      {admin ? <RifaForm /> : <CriarRifaUsuario />}
     </div>
   );
 }
 
-// Admin cria de graça (sem taxa).
-function AdminCriaRifa() {
-  return <RifaForm />;
-}
-
 async function CriarRifaUsuario() {
-  const { creditos, mp_conectado } = await meuPainelRifa();
-  return <CriarRifaPainel conectado={mp_conectado} creditos={creditos} taxa={3.5} />;
+  const { mp_conectado, percentual } = await meuPainelRifa();
+  return <CriarRifaPainel conectado={mp_conectado} percentual={percentual} />;
 }

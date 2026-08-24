@@ -219,6 +219,7 @@ export async function comprarCotas(
     .maybeSingle<{ mp_conta_user: string | null }>();
 
   let accessToken: string | undefined;
+  let applicationFee: number | undefined;
   if (pay?.mp_conta_user) {
     const tok = await getCreatorToken(pay.mp_conta_user);
     if (!tok) {
@@ -229,6 +230,15 @@ export async function comprarCotas(
       };
     }
     accessToken = tok;
+
+    // Comissão da plataforma = % (congelado na rifa) sobre o valor da cota.
+    const { data: rifa } = await supabase
+      .from("rifas")
+      .select("percentual")
+      .eq("id", rifaId)
+      .maybeSingle<{ percentual: number | null }>();
+    const pct = rifa?.percentual ?? 0;
+    if (pct > 0) applicationFee = Number(((info.valor * pct) / 100).toFixed(2));
   }
 
   // 2) Gera o Pix no Mercado Pago (na conta certa).
@@ -246,6 +256,7 @@ export async function comprarCotas(
       notificationUrl: origin ? `${origin}/api/mp/webhook` : undefined,
       expiraEmMin: 30,
       accessToken,
+      applicationFee,
     });
 
     await supabase.rpc("rifa_set_pix", {
@@ -335,58 +346,12 @@ export async function cancelarMeuPagamento(
   return { ok: true, data: null };
 }
 
-// Inicia o pagamento da TAXA de criação (Pix na nossa conta). Vira crédito.
-export async function iniciarTaxa(): Promise<ActionResult<PixPagamento>> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user?.email) return { ok: false, error: "Entre para continuar." };
-
-  const { data: ini, error: e1 } = await supabase.rpc("rifa_iniciar_taxa");
-  if (e1) return { ok: false, error: e1.message };
-  const info = ini as { pagamento_id: string; valor: number };
-
-  try {
-    const origin =
-      process.env.NEXT_PUBLIC_SITE_URL || (await headers()).get("origin") || "";
-    const pix = await criarPagamentoPix({
-      valor: info.valor,
-      descricao: "Cloud Skins · taxa de criação de rifa",
-      email: user.email,
-      idempotency: info.pagamento_id,
-      externalReference: info.pagamento_id,
-      notificationUrl: origin ? `${origin}/api/mp/webhook` : undefined,
-      expiraEmMin: 30,
-    });
-    await supabase.rpc("rifa_set_pix", {
-      p_pagamento: info.pagamento_id,
-      p_mp_id: pix.id,
-      p_copia: pix.qr_copia,
-      p_base64: pix.qr_base64,
-    });
-    return {
-      ok: true,
-      data: {
-        pagamentoId: info.pagamento_id,
-        valor: info.valor,
-        qrBase64: pix.qr_base64,
-        copiaCola: pix.qr_copia,
-        numeros: [],
-      },
-    };
-  } catch (err) {
-    await supabase.rpc("rifa_cancelar_proprio", { p_pagamento: info.pagamento_id });
-    return { ok: false, error: err instanceof Error ? err.message : "Falha no Pix." };
-  }
-}
-
-// Cria a rifa consumindo 1 crédito (exige MP conectado + crédito).
+// Cria a rifa exigindo só MP conectado (a plataforma ganha % de cada cota).
 export async function criarRifaUsuario(
   input: NovaRifa
 ): Promise<ActionResult<{ id: string }>> {
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("rifa_criar_com_credito", {
+  const { data, error } = await supabase.rpc("rifa_criar_conectado", {
     p_titulo: input.titulo,
     p_premio: input.premio,
     p_descricao: input.descricao ?? "",
@@ -399,24 +364,34 @@ export async function criarRifaUsuario(
   return { ok: true, data: { id: (data as { id: string }).id } };
 }
 
-// Estado do criador: tem MP conectado? quantos créditos?
+// Estado do criador pra criar rifa: tem MP conectado? qual o % da plataforma?
 export async function meuPainelRifa(): Promise<{
-  creditos: number;
   mp_conectado: boolean;
+  percentual: number;
 }> {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { creditos: 0, mp_conectado: false };
-  const { data } = await supabase
-    .from("profiles")
-    .select("creditos_rifa,mp_conectado")
-    .eq("id", user.id)
-    .maybeSingle<{ creditos_rifa: number; mp_conectado: boolean }>();
+
+  const [{ data: prof }, { data: cfg }] = await Promise.all([
+    user
+      ? supabase
+          .from("profiles")
+          .select("mp_conectado")
+          .eq("id", user.id)
+          .maybeSingle<{ mp_conectado: boolean }>()
+      : Promise.resolve({ data: null }),
+    supabase
+      .from("app_config")
+      .select("value")
+      .eq("key", "percentual_rifa")
+      .maybeSingle<{ value: string }>(),
+  ]);
+
   return {
-    creditos: data?.creditos_rifa ?? 0,
-    mp_conectado: data?.mp_conectado ?? false,
+    mp_conectado: prof?.mp_conectado ?? false,
+    percentual: Number(cfg?.value ?? 5),
   };
 }
 
