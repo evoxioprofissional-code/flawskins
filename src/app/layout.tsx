@@ -28,7 +28,7 @@ const anton = Anton({
 });
 
 export const metadata: Metadata = {
-  title: "Cloud Skins — Classificados P2P de Skins de CS2",
+  title: "Cloud Skins",
   description:
     "O classificado definitivo de skins de CS2. Anuncie em segundos e negocie direto no WhatsApp.",
 };
