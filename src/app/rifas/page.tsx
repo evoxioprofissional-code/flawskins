@@ -39,14 +39,25 @@ export default async function RifasPage() {
 
       <div className="mx-auto w-full max-w-5xl px-4 py-8">
       {rifas.length === 0 ? (
-        <div className="grid place-items-center rounded-2xl border border-dashed border-zinc-800 bg-zinc-900/40 px-6 py-16 text-center">
-          <Ticket className="size-10 text-zinc-600" />
-          <p className="mt-3 text-sm font-medium text-zinc-300">
-            Nenhuma rifa no momento
+        <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-neutral-900 px-6 py-14 text-center">
+          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-sky-500 text-white shadow-lg shadow-blue-500/20">
+            <Ticket className="size-7" />
+          </div>
+          <h2 className="font-display mt-4 text-xl font-bold text-zinc-100">
+            Ainda não tem rifa rolando
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-zinc-400">
+            Seja o primeiro: rife a sua skin, venda as cotas por Pix (o dinheiro
+            cai direto na sua conta) e sorteie o vencedor. A plataforma fica com
+            só <strong className="text-zinc-200">5% de cada cota</strong>.
           </p>
-          <p className="mt-1 text-sm text-zinc-500">
-            Fique de olho — em breve tem skin valendo.
-          </p>
+          <Link
+            href={user ? "/rifas/criar" : "/login?next=/rifas/criar"}
+            className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
+          >
+            <Plus className="size-4" />
+            {user ? "Criar minha rifa" : "Entrar e criar rifa"}
+          </Link>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
