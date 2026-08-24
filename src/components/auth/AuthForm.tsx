@@ -27,6 +27,10 @@ import { Input } from "@/components/ui/input";
 
 type Mode = "cadastro" | "login";
 
+// Campos mais altos, com contraste e foco azul.
+const campoCls =
+  "h-11 border-white/10 bg-neutral-950 dark:bg-neutral-950 focus-visible:border-blue-500/50 focus-visible:ring-blue-500/20";
+
 export function AuthForm({ mode }: { mode: Mode }) {
   const isCadastro = mode === "cadastro";
   const router = useRouter();
@@ -92,7 +96,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <FormItem>
                 <FormLabel>Seu nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Ex: João" autoComplete="name" {...field} />
+                  <Input
+                    placeholder="Ex: João"
+                    autoComplete="name"
+                    className={campoCls}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -111,6 +120,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
                   type="email"
                   placeholder="voce@email.com"
                   autoComplete="email"
+                  className={campoCls}
                   {...field}
                 />
               </FormControl>
@@ -130,6 +140,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
                   type="password"
                   placeholder="••••••"
                   autoComplete={isCadastro ? "new-password" : "current-password"}
+                  className={campoCls}
                   {...field}
                 />
               </FormControl>
@@ -141,7 +152,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-base font-semibold text-blue-300 transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading && <Loader2 className="size-5 animate-spin" />}
           {isCadastro ? "Criar conta" : "Entrar"}
