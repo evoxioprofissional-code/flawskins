@@ -8,7 +8,7 @@ import { isAdminEmail } from "@/lib/admin";
 import { getCreatorToken } from "@/lib/supabase/admin";
 import { consultarPagamento, criarPagamentoPix } from "@/lib/mercadopago";
 import type { ActionResult } from "@/actions/anuncios";
-import type { Rifa, RifaNumero } from "@/types/rifa";
+import type { Rifa, RifaNumero, RifaStatus } from "@/types/rifa";
 
 export async function listarRifas(): Promise<Rifa[]> {
   const supabase = await createClient();
@@ -393,6 +393,58 @@ export async function meuPainelRifa(): Promise<{
     mp_conectado: prof?.mp_conectado ?? false,
     percentual: Number(cfg?.value ?? 5),
   };
+}
+
+export type MinhaRifa = {
+  id: string;
+  titulo: string;
+  premio: string;
+  image_url: string | null;
+  status: RifaStatus;
+  preco_cota: number;
+  total_numeros: number;
+  percentual: number;
+  vencedor_numero: number | null;
+  pagos: number;
+  reservados: number;
+  created_at: string;
+  // Derivados (faturamento):
+  arrecadado: number; // pagos × cota
+  taxa: number; // % da plataforma sobre o arrecadado
+  liquido: number; // o que fica pro criador
+};
+
+// Rifas criadas pelo usuário logado, com métricas de faturamento.
+export async function listarMinhasRifas(): Promise<MinhaRifa[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("minhas_rifas");
+  if (error || !data) return [];
+
+  type Row = {
+    id: string;
+    titulo: string;
+    premio: string;
+    image_url: string | null;
+    status: RifaStatus;
+    preco_cota: number;
+    total_numeros: number;
+    percentual: number;
+    vencedor_numero: number | null;
+    pagos: number;
+    reservados: number;
+    created_at: string;
+  };
+
+  return (data as Row[]).map((r) => {
+    const arrecadado = r.pagos * r.preco_cota;
+    const taxa = Number(((arrecadado * r.percentual) / 100).toFixed(2));
+    return {
+      ...r,
+      arrecadado: Number(arrecadado.toFixed(2)),
+      taxa,
+      liquido: Number((arrecadado - taxa).toFixed(2)),
+    };
+  });
 }
 
 // Remove a conexão Mercado Pago do criador (apaga o token + baixa a flag).

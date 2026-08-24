@@ -27,12 +27,20 @@ export default async function RifasPage() {
         subtitle="Compre cotas, escolha seus números e concorra à skin."
         action={
           user && (
-            <Link
-              href="/rifas/criar"
-              className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-blue-300 transition-transform hover:-translate-y-0.5"
-            >
-              <Plus className="size-4" /> Criar minha rifa
-            </Link>
+            <div className="flex shrink-0 items-center gap-2">
+              <Link
+                href="/rifas/minhas"
+                className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-white/10 px-4 text-sm font-semibold text-zinc-200 transition-colors hover:bg-neutral-800"
+              >
+                <Ticket className="size-4" /> Minhas rifas
+              </Link>
+              <Link
+                href="/rifas/criar"
+                className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-neutral-800 px-5 text-sm font-semibold text-blue-300 ring-1 ring-white/10 transition-transform hover:-translate-y-0.5 hover:bg-neutral-700"
+              >
+                <Plus className="size-4" /> Criar minha rifa
+              </Link>
+            </div>
           )
         }
       />
