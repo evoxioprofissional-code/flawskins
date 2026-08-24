@@ -7,13 +7,24 @@ import Link from "next/link";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { Check, Copy, ImagePlus, Loader2, X } from "lucide-react";
+import {
+  Check,
+  Copy,
+  ImagePlus,
+  Loader2,
+  Rocket,
+  SlidersHorizontal,
+  Tag,
+  UserRound,
+  X,
+} from "lucide-react";
 
 import { anuncioSchema, type AnuncioFormValues } from "@/lib/schemas";
 import { CATEGORIAS, EXTERIORES } from "@/types/database";
 import { criarAnuncio } from "@/actions/anuncios";
 import { uploadParaBucket } from "@/lib/upload";
 import { buildAnuncioText } from "@/lib/whatsapp";
+import { cn } from "@/lib/utils";
 import { isSteamImg } from "@/components/skins/SkinImage";
 
 import {
@@ -34,6 +45,10 @@ import {
 } from "@/components/ui/select";
 
 type Created = { id: string; texto: string };
+
+// Estilo unificado dos campos (mais altos, contraste e foco azul).
+const campoCls =
+  "h-11 border-white/10 bg-neutral-950 dark:bg-neutral-950 focus-visible:border-blue-500/50 focus-visible:ring-blue-500/20";
 
 export function SkinForm({
   defaultNome = "",
@@ -196,7 +211,7 @@ export function SkinForm({
         <div className="flex gap-3">
           <Link
             href={`/skin/${created.id}`}
-            className="inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 px-4 text-sm font-semibold text-blue-300 transition-colors hover:bg-neutral-700"
+            className="inline-flex h-10 items-center rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
           >
             Ver anúncio
           </Link>
@@ -216,7 +231,11 @@ export function SkinForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-8">
         {/* Seção: dados da skin */}
-        <Section title="Dados da skin">
+        <Section
+          title="Dados da skin"
+          subtitle="O essencial pra quem vai comprar."
+          icon={<Tag className="size-4" />}
+        >
           <FormField
             control={form.control}
             name="titulo"
@@ -226,6 +245,7 @@ export function SkinForm({
                 <FormControl>
                   <Input
                     placeholder="Ex: Karambit | Doppler (Factory New)"
+                    className={campoCls}
                     {...field}
                   />
                 </FormControl>
@@ -246,7 +266,7 @@ export function SkinForm({
                     onValueChange={field.onChange}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className={cn("w-full", campoCls)}>
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                     </FormControl>
@@ -274,7 +294,7 @@ export function SkinForm({
                     onValueChange={field.onChange}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className={cn("w-full", campoCls)}>
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
                     </FormControl>
@@ -304,6 +324,7 @@ export function SkinForm({
                     step="0.01"
                     min="0"
                     placeholder="4500.00"
+                    className={campoCls}
                     {...field}
                     value={field.value ?? ""}
                   />
@@ -376,7 +397,11 @@ export function SkinForm({
         </Section>
 
         {/* Seção: extras opcionais */}
-        <Section title="Extras (opcional)">
+        <Section
+          title="Extras"
+          subtitle="Opcional — detalhes que valorizam a skin."
+          icon={<SlidersHorizontal className="size-4" />}
+        >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
@@ -391,6 +416,7 @@ export function SkinForm({
                       min="0"
                       max="1"
                       placeholder="0.0123"
+                      className={campoCls}
                       {...field}
                       value={field.value ?? ""}
                     />
@@ -406,7 +432,7 @@ export function SkinForm({
                 <FormItem>
                   <FormLabel>Phase</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: Phase 4" {...field} />
+                    <Input placeholder="Ex: Phase 4" className={campoCls} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -416,7 +442,11 @@ export function SkinForm({
         </Section>
 
         {/* Seção: contato */}
-        <Section title="Seu contato">
+        <Section
+          title="Seu contato"
+          subtitle="Como o comprador vai falar com você."
+          icon={<UserRound className="size-4" />}
+        >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <FormField
               control={form.control}
@@ -425,7 +455,7 @@ export function SkinForm({
                 <FormItem>
                   <FormLabel>Seu nome</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: João" {...field} />
+                    <Input placeholder="Ex: João" className={campoCls} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -438,7 +468,7 @@ export function SkinForm({
                 <FormItem>
                   <FormLabel>Cidade (opcional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Ex: São Paulo, SP" {...field} />
+                    <Input placeholder="Ex: São Paulo, SP" className={campoCls} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -455,6 +485,7 @@ export function SkinForm({
                   <Input
                     inputMode="numeric"
                     placeholder="DDD + número (ex: 11999998888)"
+                    className={campoCls}
                     {...field}
                   />
                 </FormControl>
@@ -464,14 +495,20 @@ export function SkinForm({
           />
         </Section>
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-base font-semibold text-blue-300 transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isSubmitting && <Loader2 className="size-5 animate-spin" />}
-          {isSubmitting ? "Publicando..." : "Publicar anúncio"}
-        </button>
+        <div className="sticky bottom-4 z-10">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isSubmitting ? (
+              <Loader2 className="size-5 animate-spin" />
+            ) : (
+              <Rocket className="size-5" />
+            )}
+            {isSubmitting ? "Publicando..." : "Publicar anúncio"}
+          </button>
+        </div>
       </form>
     </Form>
   );
@@ -479,17 +516,29 @@ export function SkinForm({
 
 function Section({
   title,
+  subtitle,
+  icon,
   children,
 }: {
   title: string;
+  subtitle?: string;
+  icon?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section className="space-y-4">
-      <h2 className="text-xs font-semibold tracking-widest text-zinc-500 uppercase">
-        {title}
-      </h2>
-      {children}
+    <section className="rounded-2xl border border-white/10 bg-neutral-900 p-5 sm:p-6">
+      <div className="mb-5 flex items-center gap-3">
+        {icon && (
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-blue-500/10 text-blue-300 ring-1 ring-blue-500/20">
+            {icon}
+          </span>
+        )}
+        <div>
+          <h2 className="text-sm font-bold text-zinc-100">{title}</h2>
+          {subtitle && <p className="text-xs text-zinc-500">{subtitle}</p>}
+        </div>
+      </div>
+      <div className="space-y-4">{children}</div>
     </section>
   );
 }
