@@ -1,12 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-import { steamLoginUrl } from "@/lib/steam";
+import { steamLoginUrl, origemDaReq } from "@/lib/steam";
 
 export const runtime = "nodejs";
 
 // Inicia o login com Steam: guarda o destino e manda pro OpenID da Steam.
 export async function GET(req: NextRequest) {
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin;
+  const origin = origemDaReq(req);
   const next = req.nextUrl.searchParams.get("next") || "/";
 
   const res = NextResponse.redirect(steamLoginUrl(origin));

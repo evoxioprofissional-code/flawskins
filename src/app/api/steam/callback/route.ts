@@ -2,14 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { serviceClient } from "@/lib/supabase/admin";
-import { steamVerify, steamPerfil, steamEmail } from "@/lib/steam";
+import { steamVerify, steamPerfil, steamEmail, origemDaReq } from "@/lib/steam";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 // Retorno do OpenID da Steam: valida, cria/acha o usuário e abre a sessão.
 export async function GET(req: NextRequest) {
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin;
+  const origin = origemDaReq(req);
   const next = req.cookies.get("steam_next")?.value || "/";
   const fail = (motivo: string) =>
     NextResponse.redirect(`${origin}/login?steam=erro&motivo=${motivo}`);

@@ -1,7 +1,21 @@
 // Helpers para login com Steam (OpenID 2.0) e leitura do inventário público.
 // A Steam não usa OIDC moderno — é OpenID 2.0, validado por POST de volta.
 
+import type { NextRequest } from "next/server";
+
 const OPENID_ENDPOINT = "https://steamcommunity.com/openid/login";
+
+// Origem (protocolo + domínio) a partir da requisição — assim o OpenID volta
+// pro MESMO domínio que o usuário acessou (funciona em qualquer domínio, sem
+// depender de NEXT_PUBLIC_SITE_URL, que pode estar defasado após trocar de domínio).
+export function origemDaReq(req: NextRequest): string {
+  const host = req.headers.get("host");
+  if (host) {
+    const proto = req.headers.get("x-forwarded-proto") ?? "https";
+    return `${proto}://${host}`;
+  }
+  return process.env.NEXT_PUBLIC_SITE_URL || req.nextUrl.origin;
+}
 
 // Monta a URL de redirecionamento para o usuário se autenticar na Steam.
 export function steamLoginUrl(origin: string): string {
