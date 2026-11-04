@@ -300,8 +300,7 @@ body.cloud-site {
   color: #169aff;
 }
 
-.site-header-nav svg,
-.marketplace-category svg {
+.site-header-nav svg {
   width: 17px;
   height: 17px;
   flex: none;
@@ -396,7 +395,6 @@ body.cloud-site {
 
 .marketplace-category:hover,
 .marketplace-category[data-active="true"] { color: #43a8ff; }
-.marketplace-category .marketplace-category-chevron { width: 11px; height: 11px; }
 
 .marketplace-toolbar {
   display: flex;

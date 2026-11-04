@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Box, ChevronDown, Circle, Crosshair, Hand, Sword, Target, UserRound, Zap } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { WEAPON_IMG } from "@/lib/cs2-weapons";
@@ -48,8 +47,6 @@ const CATS: Cat[] = [
   { label: "Diversos", categoria: "Outro", itens: ["Zeus x27", "Music Kit", "Graffiti", "Pin", "Patch"] },
 ];
 
-const categoryIcons = [Sword, Hand, Crosshair, Target, Zap, Crosshair, UserRound, Circle, Box];
-
 export function TopCategoryNav() {
   const params = useSearchParams();
   const catAtiva = params.get("categoria");
@@ -62,8 +59,7 @@ export function TopCategoryNav() {
     <div className="marketplace-categories">
       {/* Categorias */}
       <div className={cn("marketplace-category-row", hideScroll)}>
-        {CATS.map((c, index) => {
-          const Icon = categoryIcons[index];
+        {CATS.map((c) => {
           const aberta = aberto === c.label;
           const ativa = aberto ? aberta : (c.categoria && catAtiva === c.categoria) || (c.q && params.get("q") === c.q);
           return (
@@ -75,9 +71,7 @@ export function TopCategoryNav() {
               data-active={Boolean(ativa)}
               aria-expanded={aberta}
             >
-              <Icon aria-hidden="true" />
               {c.label}
-              {c.label !== "Diversos" && <ChevronDown aria-hidden="true" className="marketplace-category-chevron" />}
             </button>
           );
         })}
