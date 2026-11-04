@@ -13,8 +13,8 @@ export function CriarRifaPainel({
 }) {
   if (!conectado) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-        <span className="mb-3 inline-grid size-8 place-items-center rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-sm font-bold text-white">
+      <div className="cloud-panel p-6">
+        <span className="cloud-page-icon mb-3 text-sm font-bold">
           1
         </span>
         <h2 className="text-lg font-bold text-zinc-100">

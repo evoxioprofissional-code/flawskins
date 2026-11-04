@@ -24,9 +24,9 @@ export function AccountButton({
     return (
       <Link
         href="/login"
-        className="inline-flex h-9 items-center rounded-full border border-zinc-800 px-3 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-800"
+        className="site-header-account" aria-label="Entrar"
       >
-        Entrar
+        <User aria-hidden="true" className="size-5" />
       </Link>
     );
   }
@@ -47,7 +47,7 @@ export function AccountButton({
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-label="Conta"
-        className="grid size-9 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-sm font-bold text-white ring-1 ring-white/15"
+        className="site-header-account"
       >
         {avatar ? (
           // eslint-disable-next-line @next/next/no-img-element

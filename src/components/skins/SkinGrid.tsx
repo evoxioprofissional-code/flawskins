@@ -8,10 +8,12 @@ export function SkinGrid({
   anuncios,
   busca = false,
   precos,
+  stacks,
 }: {
   anuncios: Anuncio[];
   busca?: boolean;
   precos?: Map<string, number>;
+  stacks?: Map<string, number>;
 }) {
   if (anuncios.length === 0) {
     return (
@@ -53,6 +55,7 @@ export function SkinGrid({
           key={anuncio.id}
           anuncio={anuncio}
           buff={precos?.get(anuncio.titulo) ?? null}
+          offers={stacks?.get(anuncio.id)}
         />
       ))}
     </div>

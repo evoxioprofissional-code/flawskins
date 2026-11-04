@@ -48,7 +48,7 @@ export function PixModal({ pix, onClose }: { pix: PixPagamento; onClose: () => v
   return (
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" onClick={fechar}>
       <div
-        className="w-full max-w-sm rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
+        className="w-full max-w-sm cloud-panel p-5"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-3 flex items-center justify-between">

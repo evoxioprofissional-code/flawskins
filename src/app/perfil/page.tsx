@@ -30,7 +30,7 @@ export default async function PerfilPage({
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
       <BackButton className="mb-4" />
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-zinc-100">
+      <h1 className="cloud-page-title mb-6">
         Meu perfil
       </h1>
 
@@ -43,7 +43,7 @@ export default async function PerfilPage({
       />
 
       {/* Receber pagamentos (Mercado Pago) */}
-      <section className="mt-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+      <section className="mt-8 cloud-panel p-4">
         <h2 className="flex items-center gap-2 text-sm font-bold text-zinc-100">
           <Wallet className="size-4 text-emerald-400" /> Receber pagamentos (rifas)
         </h2>
@@ -85,7 +85,7 @@ export default async function PerfilPage({
         </div>
       </section>
 
-      <section className="mt-8">
+      <section id="inventario" className="mt-8 scroll-mt-20">
         <h2 className="mb-3 text-lg font-semibold text-zinc-100">
           Minhas skins{" "}
           <span className="text-sm font-normal text-zinc-500">

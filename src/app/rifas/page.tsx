@@ -12,69 +12,42 @@ export const dynamic = "force-dynamic";
 
 export default async function RifasPage() {
   const [user, rifas] = await Promise.all([getUser(), listarRifas()]);
+  const criar = user ? "/rifas/criar" : "/login?next=/rifas/criar";
 
   return (
     <>
       <PageHeader
-        title={
-          <>
-            Rifas de{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-sky-400 bg-clip-text text-transparent">
-              skins
-            </span>
-          </>
-        }
+        title="Rifas de skins"
         subtitle="Compre cotas, escolha seus números e concorra à skin."
         action={
-          user && (
-            <div className="flex shrink-0 items-center gap-2">
-              <Link
-                href="/rifas/minhas"
-                className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-white/10 px-4 text-sm font-semibold text-zinc-200 transition-colors hover:bg-neutral-800"
-              >
+          <div className="flex flex-wrap gap-2">
+            {user && (
+              <Link href="/rifas/minhas" className="inline-flex h-10 items-center gap-2 rounded-lg border border-zinc-800 bg-neutral-800 px-4 text-sm font-semibold hover:bg-neutral-700">
                 <Ticket className="size-4" /> Minhas rifas
               </Link>
-              <Link
-                href="/rifas/criar"
-                className="inline-flex h-11 items-center gap-1.5 rounded-xl bg-neutral-800 px-5 text-sm font-semibold text-blue-300 ring-1 ring-white/10 transition-transform hover:-translate-y-0.5 hover:bg-neutral-700"
-              >
-                <Plus className="size-4" /> Criar minha rifa
-              </Link>
-            </div>
-          )
+            )}
+            <Link href={criar} className="cloud-button-primary inline-flex h-10 items-center gap-2 px-4 text-sm font-semibold">
+              <Plus className="size-4" /> Criar rifa
+            </Link>
+          </div>
         }
       />
 
-      <div className="mx-auto w-full max-w-5xl px-4 py-8">
-      {rifas.length === 0 ? (
-        <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-neutral-900 px-6 py-14 text-center">
-          <div className="mx-auto grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-sky-500 text-white shadow-lg shadow-blue-500/20">
-            <Ticket className="size-7" />
+      <section className="cloud-page-wide pb-10 pt-5" aria-label="Rifas disponíveis">
+        {rifas.length === 0 ? (
+          <div className="cloud-panel flex min-h-64 flex-col items-center justify-center px-5 py-10 text-center">
+            <span className="cloud-page-icon"><Ticket className="size-5" /></span>
+            <h2 className="mt-4 text-lg font-bold">Nenhuma rifa disponível</h2>
+            <p className="mt-2 max-w-md text-sm text-zinc-400">
+              Crie uma rifa de skin e receba pelas cotas via Pix.
+            </p>
           </div>
-          <h2 className="font-display mt-4 text-xl font-bold text-zinc-100">
-            Ainda não tem rifa rolando
-          </h2>
-          <p className="mx-auto mt-2 max-w-md text-sm text-zinc-400">
-            Seja o primeiro: rife a sua skin, venda as cotas por Pix (o dinheiro
-            cai direto na sua conta) e sorteie o vencedor. A plataforma fica com
-            só <strong className="text-zinc-200">5% de cada cota</strong>.
-          </p>
-          <Link
-            href={user ? "/rifas/criar" : "/login?next=/rifas/criar"}
-            className="mt-6 inline-flex h-11 items-center gap-2 rounded-xl bg-blue-600 px-6 text-sm font-semibold text-white transition-colors hover:bg-blue-500"
-          >
-            <Plus className="size-4" />
-            {user ? "Criar minha rifa" : "Entrar e criar rifa"}
-          </Link>
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {rifas.map((r) => (
-            <RifaCard key={r.id} rifa={r} />
-          ))}
-        </div>
-      )}
-      </div>
+        ) : (
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,260px),1fr))] gap-3.5">
+            {rifas.map((rifa) => <RifaCard key={rifa.id} rifa={rifa} />)}
+          </div>
+        )}
+      </section>
     </>
   );
 }

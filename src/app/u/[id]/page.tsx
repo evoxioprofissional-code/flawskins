@@ -56,7 +56,7 @@ export default async function PublicProfilePage({ params }: Params) {
           )}
         </span>
         <div className="min-w-0">
-          <h1 className="truncate text-2xl font-bold tracking-tight text-zinc-100">
+          <h1 className="cloud-page-title truncate">
             {perfil.nome ?? "Jogador"}
           </h1>
           {perfil.regiao && (

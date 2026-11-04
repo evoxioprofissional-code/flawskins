@@ -21,7 +21,7 @@ export default async function CriarRifaPage() {
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
       <BackButton className="mb-4" fallback="/rifas" />
       <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+        <h1 className="cloud-page-title">
           {admin ? "Criar " : "Criar minha "}
           <span className="bg-gradient-to-r from-blue-400 to-sky-400 bg-clip-text text-transparent">
             rifa

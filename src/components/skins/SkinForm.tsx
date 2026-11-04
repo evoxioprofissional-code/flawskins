@@ -499,7 +499,7 @@ export function SkinForm({
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-base font-semibold text-white shadow-lg shadow-blue-600/25 transition-colors hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+            className="cloud-button-primary inline-flex h-11 w-full items-center justify-center gap-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isSubmitting ? (
               <Loader2 className="size-5 animate-spin" />
@@ -526,7 +526,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-neutral-900 p-5 sm:p-6">
+    <section className="cloud-panel p-5 sm:p-6">
       <div className="mb-5 flex items-center gap-3">
         {icon && (
           <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-blue-500/10 text-blue-300 ring-1 ring-blue-500/20">

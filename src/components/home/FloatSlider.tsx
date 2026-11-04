@@ -15,6 +15,8 @@ export function FloatSlider({
 }) {
   const [min, setMin] = useState(initMin);
   const [max, setMax] = useState(initMax);
+  const [draftMin, setDraftMin] = useState<string>();
+  const [draftMax, setDraftMax] = useState<string>();
   const minRef = useRef(min);
   const maxRef = useRef(max);
   minRef.current = min;
@@ -70,10 +72,10 @@ export function FloatSlider({
   return (
     <div>
       {/* Barra + alças */}
-      <div className="relative px-1 pt-1 pb-4 select-none">
+      <div className="marketplace-float-track">
         <div
           ref={barRef}
-          className="relative h-1.5 rounded-full bg-[linear-gradient(90deg,#22c55e_0%,#84cc16_14%,#eab308_28%,#f97316_45%,#ef4444_100%)]"
+          className="marketplace-float-gradient"
         >
           {/* Escurece fora do intervalo selecionado */}
           <div
@@ -95,7 +97,7 @@ export function FloatSlider({
             className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none"
             style={{ left: `${minPct}%` }}
           >
-            <span className="mx-auto mt-2 block size-0 border-x-[6px] border-b-[8px] border-x-transparent border-b-white drop-shadow" />
+            <span className="marketplace-float-thumb" />
           </button>
 
           {/* Alça máx */}
@@ -108,39 +110,35 @@ export function FloatSlider({
             className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize touch-none"
             style={{ left: `${maxPct}%` }}
           >
-            <span className="mx-auto mt-2 block size-0 border-x-[6px] border-b-[8px] border-x-transparent border-b-white drop-shadow" />
+            <span className="marketplace-float-thumb" />
           </button>
         </div>
       </div>
 
       {/* Inputs numéricos (sincronizados) */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="marketplace-filter-pair">
         <label className="text-[10px] font-medium tracking-wide text-zinc-500 uppercase">
-          Mínimo
+          <span className="sr-only">Mínimo</span>
           <input
-            type="number"
-            min={0}
-            max={1}
-            step="0.01"
-            value={min}
-            onChange={(e) => setMin(Math.min(Number(e.target.value) || 0, max))}
-            onBlur={(e) => editar("min", e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && editar("min", e.currentTarget.value)}
-            className="mt-1 h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 focus:border-blue-500/60 focus:outline-none"
+            type="text"
+            inputMode="decimal"
+            value={draftMin ?? min.toFixed(4).replace(".", ",")}
+            onChange={(e) => setDraftMin(e.target.value)}
+            onBlur={(e) => { editar("min", e.target.value); setDraftMin(undefined); }}
+            onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+            className="marketplace-filter-input"
           />
         </label>
         <label className="text-[10px] font-medium tracking-wide text-zinc-500 uppercase">
-          Máximo
+          <span className="sr-only">Máximo</span>
           <input
-            type="number"
-            min={0}
-            max={1}
-            step="0.01"
-            value={max}
-            onChange={(e) => setMax(Math.max(Number(e.target.value) || 0, min))}
-            onBlur={(e) => editar("max", e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && editar("max", e.currentTarget.value)}
-            className="mt-1 h-9 w-full rounded-md border border-white/10 bg-neutral-950 px-2.5 text-sm text-zinc-100 focus:border-blue-500/60 focus:outline-none"
+            type="text"
+            inputMode="decimal"
+            value={draftMax ?? max.toFixed(4).replace(".", ",")}
+            onChange={(e) => setDraftMax(e.target.value)}
+            onBlur={(e) => { editar("max", e.target.value); setDraftMax(undefined); }}
+            onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
+            className="marketplace-filter-input"
           />
         </label>
       </div>

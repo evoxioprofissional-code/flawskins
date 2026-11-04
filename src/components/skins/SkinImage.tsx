@@ -13,6 +13,7 @@ type Props = {
   alt: string;
   sizes?: string;
   priority?: boolean;
+  showSteamBackground?: boolean;
   imgClassName?: string;
   // Como ajustar fotos enviadas (a da Steam é sempre "contain" sobre o fundo).
   fit?: "cover" | "contain";
@@ -20,12 +21,12 @@ type Props = {
 
 // Imagem de skin com preenchimento do container (use dentro de um box relativo).
 // Steam (transparente) → fundo gradiente + contain; foto enviada → fit (cover/contain).
-export function SkinImage({ src, alt, sizes, priority, imgClassName, fit = "cover" }: Props) {
+export function SkinImage({ src, alt, sizes, priority, imgClassName, fit = "cover", showSteamBackground = true }: Props) {
   const steam = isSteamImg(src);
 
   return (
     <>
-      {steam && (
+      {steam && showSteamBackground && (
         <span
           aria-hidden
           className="absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_6%,#26262b_0%,#18181b_48%,#0e0e11_85%)]"

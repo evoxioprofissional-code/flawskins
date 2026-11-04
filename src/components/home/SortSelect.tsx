@@ -20,7 +20,7 @@ export function SortSelect() {
     if (e.target.value === "recentes") p.delete("ordem");
     else p.set("ordem", e.target.value);
     const qs = p.toString();
-    router.push(qs ? `/?${qs}` : "/");
+    router.push(qs ? `/?${qs}` : "/", { scroll: false });
   }
 
   return (
@@ -30,7 +30,7 @@ export function SortSelect() {
         value={atual}
         onChange={onChange}
         aria-label="Ordenar por"
-        className="h-10 appearance-none rounded-lg border border-white/10 bg-white/5 pr-8 pl-9 text-sm font-medium text-zinc-200 focus:ring-1 focus:ring-blue-500/40 focus:outline-none"
+        className="marketplace-sort"
       >
         {OPCOES.map((o) => (
           <option key={o.v} value={o.v} className="bg-neutral-900">

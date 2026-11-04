@@ -31,7 +31,7 @@ export default function CategoriasPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-6">
       <BackButton className="mb-4" />
       <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+        <h1 className="cloud-page-title">
           Categorias
         </h1>
         <p className="mt-1 text-sm text-zinc-400">
@@ -46,9 +46,9 @@ export default function CategoriasPage() {
             <Link
               key={cat}
               href={`/?categoria=${encodeURIComponent(cat)}`}
-              className="group flex flex-col items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-6 text-center transition-all hover:border-blue-500/50 hover:shadow-[0_0_20px_-6px] hover:shadow-blue-500/30"
+              className="cloud-panel group flex flex-col items-center gap-2 px-4 py-6 text-center transition-colors hover:border-blue-500/50"
             >
-              <span className="grid size-12 place-items-center rounded-xl bg-gradient-to-br from-blue-500/20 to-sky-500/20 text-blue-300 transition-colors group-hover:text-blue-200">
+              <span className="cloud-page-icon transition-colors group-hover:text-blue-200">
                 <Icon className="size-6" />
               </span>
               <span className="text-sm font-semibold text-zinc-100">{cat}</span>

@@ -37,10 +37,10 @@ export default async function SkinPage({ params }: Params) {
     return (
       <div className="mx-auto grid min-h-[60vh] max-w-md place-items-center px-4 text-center">
         <div>
-          <div className="mx-auto grid size-14 place-items-center rounded-2xl border border-white/10 bg-neutral-900">
+          <div className="mx-auto grid size-14 place-items-center cloud-panel">
             <PackageOpen className="size-7 text-zinc-500" />
           </div>
-          <h1 className="mt-4 font-display text-xl font-bold text-zinc-100">
+          <h1 className="cloud-page-title mt-4">
             Anúncio indisponível
           </h1>
           <p className="mt-1 text-sm text-zinc-400">
@@ -103,8 +103,8 @@ export default async function SkinPage({ params }: Params) {
 
         {/* Preço + detalhes + vendedor (coluna direita no desktop) */}
         <div className="space-y-6 lg:col-span-1 lg:col-start-3 lg:row-span-2 lg:row-start-1">
-          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
-            <h1 className="font-display text-xl font-bold tracking-tight text-zinc-50">
+          <div className="cloud-panel p-5">
+            <h1 className="cloud-page-title">
               {anuncio.titulo}
             </h1>
             <p className="mt-0.5 text-sm text-zinc-400">{anuncio.exterior}</p>
@@ -178,7 +178,7 @@ export default async function SkinPage({ params }: Params) {
           </div>
 
           {/* Vendedor */}
-          <div className="rounded-2xl border border-white/10 bg-neutral-900 p-5">
+          <div className="cloud-panel p-5">
             <div className="flex items-center gap-3">
               <span className="grid size-11 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-blue-500 to-sky-500 text-base font-bold text-white">
                 {sellerAvatar ? (
@@ -227,7 +227,7 @@ export default async function SkinPage({ params }: Params) {
 
         {/* Histórico de vendas */}
         <div className="lg:col-span-2 lg:col-start-1 lg:row-start-2">
-          <div className="rounded-2xl border border-white/10 bg-neutral-900">
+          <div className="cloud-panel">
             <h2 className="border-b border-white/10 px-5 py-3.5 text-sm font-semibold text-zinc-100">
               Histórico de vendas
             </h2>

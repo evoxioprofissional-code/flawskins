@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { Box, ChevronDown, Circle, Crosshair, Hand, Sword, Target, UserRound, Zap } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { WEAPON_IMG } from "@/lib/cs2-weapons";
@@ -34,7 +34,7 @@ const CATS: Cat[] = [
     itens: ["CZ75-Auto", "Desert Eagle", "Dual Berettas", "Five-SeveN", "Glock-18", "P2000", "P250", "R8 Revolver", "Tec-9", "USP-S"],
   },
   {
-    label: "SMG",
+    label: "SMGs",
     categoria: "SMG",
     itens: ["MAC-10", "MP5-SD", "MP7", "MP9", "P90", "PP-Bizon", "UMP-45"],
   },
@@ -48,6 +48,8 @@ const CATS: Cat[] = [
   { label: "Diversos", categoria: "Outro", itens: ["Zeus x27", "Music Kit", "Graffiti", "Pin", "Patch"] },
 ];
 
+const categoryIcons = [Sword, Hand, Crosshair, Target, Zap, Crosshair, UserRound, Circle, Box];
+
 export function TopCategoryNav() {
   const params = useSearchParams();
   const catAtiva = params.get("categoria");
@@ -57,24 +59,25 @@ export function TopCategoryNav() {
   const hideScroll = "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden";
 
   return (
-    <div className="rounded-xl border border-white/10 bg-neutral-900">
+    <div className="marketplace-categories">
       {/* Categorias */}
-      <div className={cn("flex items-center gap-0.5 overflow-x-auto px-1.5", hideScroll)}>
-        {CATS.map((c) => {
+      <div className={cn("marketplace-category-row", hideScroll)}>
+        {CATS.map((c, index) => {
+          const Icon = categoryIcons[index];
           const aberta = aberto === c.label;
-          const ativa = aberta || catAtiva === c.categoria;
+          const ativa = aberto ? aberta : (c.categoria && catAtiva === c.categoria) || (c.q && params.get("q") === c.q);
           return (
             <button
               key={c.label}
               type="button"
               onClick={() => setAberto(aberta ? null : c.label)}
-              className={cn(
-                "inline-flex shrink-0 items-center gap-1 rounded-lg px-3.5 py-3 text-sm font-semibold transition-colors",
-                ativa ? "text-white" : "text-zinc-400 hover:text-white"
-              )}
+              className="marketplace-category"
+              data-active={Boolean(ativa)}
+              aria-expanded={aberta}
             >
+              <Icon aria-hidden="true" />
               {c.label}
-              <ChevronDown className={cn("size-3.5 transition-transform", aberta && "rotate-180")} />
+              {c.label !== "Diversos" && <ChevronDown aria-hidden="true" className="marketplace-category-chevron" />}
             </button>
           );
         })}

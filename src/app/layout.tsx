@@ -47,7 +47,7 @@ export default async function RootLayout({
       lang="pt-BR"
       className={`dark ${inter.variable} ${spaceGrotesk.variable} ${anton.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-950 text-zinc-100">
+      <body className={`min-h-full flex flex-col bg-background text-foreground${isAdmin ? "" : " cloud-site"}`}>
         {isAdmin ? (
           <main className="flex-1">{children}</main>
         ) : (

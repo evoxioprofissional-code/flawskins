@@ -17,7 +17,7 @@ export default async function NovaRifaPage() {
     <div className="mx-auto w-full max-w-2xl px-4 py-6">
       <BackButton className="mb-4" fallback="/rifas" />
       <header className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-100">
+        <h1 className="cloud-page-title">
           Nova rifa
         </h1>
         <p className="mt-1 text-sm text-zinc-400">

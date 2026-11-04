@@ -1,11 +1,12 @@
 import { Suspense } from "react";
-import { AlertTriangle, Search } from "lucide-react";
+import { AlertTriangle, LayoutGrid, List } from "lucide-react";
 
 import { listarAnuncios } from "@/actions/anuncios";
 import { getPrecosGrade } from "@/lib/precos";
 import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
-import { Hero } from "@/components/home/Hero";
+import { StackToggle } from "@/components/home/StackToggle";
+import { marketRarity, marketSkinTitle } from "@/lib/market-skin";
 import { TopCategoryNav } from "@/components/home/TopCategoryNav";
 import { SortSelect } from "@/components/home/SortSelect";
 import { FilterSidebar } from "@/components/home/FilterSidebar";
@@ -23,6 +24,10 @@ type Search = {
   fmin?: string;
   fmax?: string;
   ext?: string;
+  raridade?: string;
+  pintura?: string;
+  extra?: string;
+  unstacked?: string;
 };
 
 const num = (v?: string) => {
@@ -36,8 +41,8 @@ export default async function HomePage({
   searchParams: Promise<Search>;
 }) {
   const sp = await searchParams;
-  const { q, categoria, ordem, pmin, pmax, fmin, fmax, ext } = sp;
-  const temBusca = Boolean(q || categoria || pmin || pmax || fmin || fmax || ext);
+  const { q, categoria, ordem, pmin, pmax, fmin, fmax, ext, raridade, pintura, extra, unstacked } = sp;
+  const temBusca = Boolean(q || categoria || pmin || pmax || fmin || fmax || ext || raridade || pintura || extra);
 
   const exteriores = ext
     ? ext.split(",").map((a) => ABBR_TO_EXT[a]).filter(Boolean)
@@ -60,11 +65,34 @@ export default async function HomePage({
     erro = true;
   }
 
+  const finishes = [...new Set(anuncios.map((item) => marketSkinTitle(item.titulo).finish))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const histogram = Array<number>(22).fill(0);
+  const highestPrice = Math.max(1, num(pmin) ?? 0, ...anuncios.map((item) => item.preco));
+  for (const item of anuncios) {
+    const bucket = Math.min(histogram.length - 1, Math.floor(Math.log1p(Math.max(0, item.preco)) / Math.log1p(highestPrice) * histogram.length));
+    histogram[bucket]++;
+  }
+
+  const filtered = anuncios.filter((item) =>
+    (!raridade || marketRarity(item.titulo, item.categoria) === raridade) &&
+    (!pintura || marketSkinTitle(item.titulo).finish === pintura) &&
+    (!extra || item.titulo.toLowerCase().includes(extra.toLowerCase()))
+  );
+  const groups = new Map<string, Anuncio>();
+  const stacks = new Map<string, number>();
+  for (const item of filtered) {
+    const key = JSON.stringify([item.titulo, item.exterior, item.phase]);
+    const first = groups.get(key);
+    if (!first) groups.set(key, item);
+    else stacks.set(first.id, (stacks.get(first.id) ?? 1) + 1);
+  }
+  const visible = unstacked === "1" ? filtered : [...groups.values()];
+
   // Remonta o sidebar (inputs) quando os filtros mudam de fora (ex: Limpar).
   const sidebarKey = `${pmin ?? ""}|${pmax ?? ""}|${fmin ?? ""}|${fmax ?? ""}|${ext ?? ""}`;
 
   // Preços Buff cacheados (leitura em lote, sem chamar a API) pro selo nos cards.
-  const precos = erro ? undefined : await getPrecosGrade(anuncios.map((a) => a.titulo));
+  const precos = erro ? undefined : await getPrecosGrade(visible.map((a) => a.titulo));
 
   const grid = erro ? (
     <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-neutral-900 px-4 py-6 text-sm text-zinc-300">
@@ -72,64 +100,41 @@ export default async function HomePage({
       Não foi possível carregar o feed agora. Tente novamente em instantes.
     </div>
   ) : (
-    <SkinGrid anuncios={anuncios} busca={temBusca} precos={precos} />
+    <SkinGrid anuncios={visible} busca={temBusca} precos={precos} stacks={unstacked === "1" ? undefined : stacks} />
   );
-
-  const marketplace = (
-    <div className="w-full px-4 sm:px-6">
-      <Suspense>
-        <TopCategoryNav />
-      </Suspense>
-      <div className="mt-5 flex gap-6">
-        <aside className="hidden w-64 shrink-0 lg:block">
-          <div className="sticky top-20">
-            <Suspense>
-              <FilterSidebar key={sidebarKey} />
-            </Suspense>
-          </div>
-        </aside>
-
-        <div className="min-w-0 flex-1">
-          <div className="mb-3 flex items-center gap-2">
-            <form action="/" className="relative min-w-0 flex-1">
-              {categoria && (
-                <input type="hidden" name="categoria" value={categoria} />
-              )}
-              <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-zinc-500" />
-              <input
-                type="search"
-                name="q"
-                defaultValue={q ?? ""}
-                placeholder="Buscar skins, facas, luvas, vendedor..."
-                aria-label="Buscar skins"
-                className="h-11 w-full rounded-lg border border-white/10 bg-neutral-900 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-500 focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/40 focus:outline-none"
-              />
-            </form>
-            <Suspense>
-              <SortSelect />
-            </Suspense>
-          </div>
-          <p className="mb-3 text-xs text-zinc-500">
-            {anuncios.length} skin{anuncios.length === 1 ? "" : "s"}
-            {q ? ` para "${q}"` : ""}
-          </p>
-          {grid}
-        </div>
-      </div>
-    </div>
-  );
-
-  // Modo busca/filtro: só o marketplace.
-  if (temBusca) {
-    return <div className="py-6">{marketplace}</div>;
-  }
 
   return (
-    <>
-      <Hero />
-      <div id="skins" className="scroll-mt-20 pt-6 pb-10">
-        {marketplace}
-      </div>
-    </>
+    <div id="skins" className="marketplace">
+      <aside className="marketplace-sidebar">
+        <Suspense>
+          <FilterSidebar key={sidebarKey} finishes={finishes} histogram={histogram} highestPrice={highestPrice} />
+        </Suspense>
+      </aside>
+
+        <div className="marketplace-results">
+          <Suspense><TopCategoryNav /></Suspense>
+          <div className="marketplace-toolbar">
+            <h2>
+              {erro ? "Skins" : `${visible.length.toLocaleString("pt-BR")} ${visible.length === 1 ? "skin encontrada" : "skins encontradas"}`}
+              {q ? ` para "${q}"` : ""}
+            </h2>
+            <Suspense>
+              <StackToggle />
+              <SortSelect />
+            </Suspense>
+            <div className="marketplace-view" role="group" aria-label="Visualização">
+              <label title="Grade">
+                <input type="radio" name="marketplace-view" value="grid" defaultChecked aria-label="Grade" />
+                <LayoutGrid aria-hidden="true" />
+              </label>
+              <label title="Lista">
+                <input type="radio" name="marketplace-view" value="list" aria-label="Lista" />
+                <List aria-hidden="true" />
+              </label>
+            </div>
+          </div>
+          <div className="marketplace-feed">{grid}</div>
+        </div>
+    </div>
   );
 }

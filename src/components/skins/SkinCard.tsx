@@ -1,30 +1,12 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
-import type { Anuncio, Categoria, Exterior } from "@/types/database";
-import { formatBRL } from "@/lib/format";
-import { cn } from "@/lib/utils";
 import { SkinImage } from "@/components/skins/SkinImage";
-import { WearBar } from "@/components/skins/WearBar";
-import { SKIN_RARITY } from "@/lib/skin-rarity";
+import { formatBRL } from "@/lib/format";
+import { marketRarity, marketSkinTitle } from "@/lib/market-skin";
+import type { Anuncio, Exterior } from "@/types/database";
 
-// Cor da faixa = cor de raridade REAL da skin (Mil-Spec azul, Restricted roxo,
-// Classified rosa, Covert vermelho — e faca/luva também são vermelho no CS2).
-function corRaridade(titulo: string, categoria: Categoria): string {
-  const base = titulo
-    .replace(/^★\s*/, "")
-    .replace(/^StatTrak™\s*/i, "")
-    .replace(/^Souvenir\s*/i, "")
-    .replace(/\s*\([^)]*\)\s*$/, "")
-    .trim()
-    .toLowerCase();
-  const cor = SKIN_RARITY[base];
-  if (cor) return cor;
-  // Não achou pelo nome: faca/luva são no mínimo Covert (vermelho); resto neutro.
-  if (categoria === "Faca" || categoria === "Luva") return "#eb4b4b";
-  return "#52525b"; // zinc-600
-}
-
-const EXT_ABBR: Record<Exterior, string> = {
+const WEAR: Record<Exterior, string> = {
   "Factory New": "FN",
   "Minimal Wear": "MW",
   "Field-Tested": "FT",
@@ -32,104 +14,40 @@ const EXT_ABBR: Record<Exterior, string> = {
   "Battle-Scarred": "BS",
 };
 
-// "AK-47 | Redline (Field-Tested)" → { arma: "AK-47", nome: "Redline" }
-function parseTitulo(titulo: string): { arma: string; nome: string } {
-  const partes = titulo.split("|");
-  if (partes.length < 2) return { arma: "", nome: titulo.trim() };
-  const arma = partes[0].trim();
-  const nome = partes.slice(1).join("|").replace(/\s*\([^)]*\)\s*$/, "").trim();
-  return { arma, nome };
-}
-
-export function SkinCard({ anuncio, buff }: { anuncio: Anuncio; buff?: number | null }) {
-  const vendido = anuncio.status === "vendido";
-  const { arma, nome } = parseTitulo(anuncio.titulo);
-  const float = anuncio.float_val;
-  const diffBuff = buff && buff > 0 ? ((anuncio.preco - buff) / buff) * 100 : null;
+export function SkinCard({ anuncio, buff, offers }: { anuncio: Anuncio; buff?: number | null; offers?: number }) {
+  const { weapon, finish } = marketSkinTitle(anuncio.titulo);
+  const rarity = marketRarity(anuncio.titulo, anuncio.categoria);
+  const diff = buff && buff > 0 ? ((anuncio.preco - buff) / buff) * 100 : null;
 
   return (
-    <Link
-      href={`/skin/${anuncio.id}`}
-      className={cn(
-        "group relative flex flex-col overflow-hidden rounded-xl border border-white/10 bg-neutral-900 transition-all duration-200",
-        "hover:-translate-y-0.5 hover:border-white/25 hover:shadow-xl hover:shadow-black/40"
-      )}
-    >
-      {/* Faixa de raridade (cor real da skin) */}
-      <div
-        className="h-1 w-full"
-        style={{ backgroundColor: corRaridade(anuncio.titulo, anuncio.categoria) }}
-      />
-
-      {/* Imagem */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-neutral-950">
+    <Link href={`/skin/${anuncio.id}`} className="skin-card" style={{ "--skin-color": rarity ?? "#e2e7ef" } as CSSProperties}>
+      <div className="skin-card-wear">
+        <span>{WEAR[anuncio.exterior]}</span>
+        {anuncio.float_val != null && <span>{Number(anuncio.float_val).toFixed(4)}</span>}
+      </div>
+      <div className="skin-card-art">
         <SkinImage
           src={anuncio.image_url}
           alt={anuncio.titulo}
-          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 18vw"
-          imgClassName="transition-transform duration-300 group-hover:scale-[1.06]"
+          sizes="(max-width: 600px) 45vw, (max-width: 1100px) 27vw, 15vw"
+          fit="contain"
+          showSteamBackground={false}
+          imgClassName="skin-card-render"
         />
-        <span className="absolute top-2 left-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-bold tracking-wider text-zinc-300 uppercase backdrop-blur">
-          {anuncio.categoria}
-        </span>
-        {vendido && (
-          <div className="absolute inset-0 grid place-items-center bg-neutral-950/75">
-            <span className="rounded-md border border-zinc-500 px-2.5 py-1 text-xs font-bold tracking-widest text-zinc-100">
-              VENDIDO
-            </span>
-          </div>
-        )}
+        {anuncio.status === "vendido" && <span className="skin-card-sold">Vendido</span>}
       </div>
-
-      {/* Conteúdo */}
-      <div className="flex flex-1 flex-col gap-2.5 p-3">
-        <div className="min-h-[2.5rem]">
-          {arma && (
-            <p className="truncate text-[11px] font-medium text-zinc-500">{arma}</p>
-          )}
-          <h3 className="line-clamp-1 text-sm font-semibold text-zinc-100">{nome}</h3>
-        </div>
-
-        {/* Float / desgaste */}
-        {float != null && (
-          <div className="flex items-center gap-2">
-            <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-bold text-zinc-300">
-              {EXT_ABBR[anuncio.exterior]}
-            </span>
-            <WearBar float={Number(float)} compact className="flex-1" />
-            <span className="font-mono text-[10px] text-zinc-400">
-              {Number(float).toFixed(4)}
-            </span>
-          </div>
-        )}
-
-        <div className="mt-auto flex items-center justify-between gap-2 pt-0.5">
-          <span className="font-display text-lg font-bold text-sky-400">
-            {formatBRL(anuncio.preco)}
+      <div className="skin-card-title">
+        {weapon && <p>{weapon}</p>}
+        <h3>{finish}</h3>
+      </div>
+      <div className="skin-card-price">
+        <strong>{formatBRL(anuncio.preco)}</strong>
+        {offers && offers > 1 && <span className="skin-card-offers" title={`${offers} anúncios`}>×{offers}</span>}
+        {diff != null && (
+          <span className="skin-card-diff" data-discount={diff < 0} title="Comparado ao preço do Buff163">
+            {new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1, signDisplay: "exceptZero" }).format(diff)}%
           </span>
-          {diffBuff != null ? (
-            <span
-              title="Comparado ao preço do Buff163"
-              className={cn(
-                "rounded px-1.5 py-0.5 text-[10px] font-bold",
-                diffBuff <= -2
-                  ? "bg-emerald-500/15 text-emerald-300"
-                  : diffBuff >= 2
-                    ? "bg-red-500/15 text-red-300"
-                    : "bg-white/5 text-zinc-300"
-              )}
-            >
-              {diffBuff > 0 ? "+" : ""}
-              {diffBuff.toFixed(0)}% Buff
-            </span>
-          ) : (
-            float == null && (
-              <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-semibold text-zinc-400">
-                {anuncio.exterior}
-              </span>
-            )
-          )}
-        </div>
+        )}
       </div>
     </Link>
   );

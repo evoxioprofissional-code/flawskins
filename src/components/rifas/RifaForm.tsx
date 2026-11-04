@@ -151,7 +151,7 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
       <button
         type="submit"
         disabled={busy}
-        className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-base font-semibold text-blue-300 disabled:opacity-60"
+        className="cloud-button-primary inline-flex h-11 w-full items-center justify-center gap-2 text-sm font-semibold disabled:opacity-60"
       >
         {busy && <Loader2 className="size-5 animate-spin" />}
         {busy ? "Salvando…" : edicao ? "Salvar alterações" : "Criar rifa"}

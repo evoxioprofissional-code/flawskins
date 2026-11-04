@@ -19,7 +19,7 @@ export function MinhaRifaCard({ rifa }: { rifa: MinhaRifa }) {
   );
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-neutral-900">
+    <div className="overflow-hidden cloud-panel">
       <div className="flex gap-4 p-4">
         {/* Capa */}
         <div className="relative size-20 shrink-0 overflow-hidden rounded-xl border border-white/10 bg-neutral-950">
@@ -69,7 +69,7 @@ export function MinhaRifaCard({ rifa }: { rifa: MinhaRifa }) {
           </div>
           <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-zinc-800">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-blue-500 to-sky-500"
+              className="h-full rounded-full bg-cloud-blue"
               style={{ width: `${pct}%` }}
             />
           </div>

@@ -71,7 +71,7 @@ export function RifaReserva({
 
   if (!aberta) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-center text-sm text-zinc-400">
+      <div className="cloud-panel p-4 text-center text-sm text-zinc-400">
         As vendas desta rifa estão encerradas.
       </div>
     );
@@ -79,11 +79,11 @@ export function RifaReserva({
 
   if (!logged) {
     return (
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 text-center">
+      <div className="cloud-panel p-6 text-center">
         <p className="text-sm text-zinc-400">Entre para comprar cotas.</p>
         <Link
           href={`/login?next=/rifas/${rifaId}`}
-          className="mt-3 inline-flex h-10 items-center rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-5 text-sm font-semibold text-blue-300"
+          className="cloud-button-primary mt-3 inline-flex h-10 items-center px-5 text-sm font-semibold"
         >
           Entrar
         </Link>
@@ -119,7 +119,7 @@ export function RifaReserva({
       )}
 
       {/* Reserva rápida */}
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+      <div className="cloud-panel p-4">
         <p className="text-sm font-semibold text-zinc-100">Reserva rápida</p>
         <p className="mt-0.5 text-xs text-zinc-500">
           {restante} cota{restante === 1 ? "" : "s"} disponíve{restante === 1 ? "l" : "is"}
@@ -139,7 +139,7 @@ export function RifaReserva({
             type="button"
             onClick={aleatorio}
             disabled={busy || restante === 0}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 text-sm font-semibold text-blue-300 disabled:opacity-60"
+            className="cloud-button-primary inline-flex h-11 flex-1 items-center justify-center gap-1.5 text-sm font-semibold disabled:opacity-60"
           >
             <Dice5 className="size-4" />
             Comprar {qtd} · {formatBRL(qtd * preco)}
@@ -149,7 +149,7 @@ export function RifaReserva({
 
       {/* Grid de números (rifas pequenas) */}
       {total <= GRID_MAX ? (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+        <div className="cloud-panel p-4">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-sm font-semibold text-zinc-100">Escolher números</p>
             {sel.size > 0 && (
@@ -157,7 +157,7 @@ export function RifaReserva({
                 type="button"
                 onClick={reservarSelecionados}
                 disabled={busy}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-neutral-800 ring-1 ring-white/10 hover:bg-neutral-700 px-3 text-sm font-semibold text-blue-300 disabled:opacity-60"
+                className="cloud-button-primary inline-flex h-9 items-center gap-1.5 px-3 text-sm font-semibold disabled:opacity-60"
               >
                 <Ticket className="size-4" /> Comprar {sel.size} · {formatBRL(sel.size * preco)}
               </button>

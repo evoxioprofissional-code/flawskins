@@ -21,7 +21,7 @@ export default async function AdminLoginPage() {
           <span className="grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-sky-500 text-white">
             <ShieldCheck className="size-7" />
           </span>
-          <h1 className="mt-4 text-2xl font-bold tracking-tight text-zinc-100">
+          <h1 className="cloud-page-title mt-4">
             Painel do Admin
           </h1>
           <p className="mt-1 text-sm text-zinc-400">
