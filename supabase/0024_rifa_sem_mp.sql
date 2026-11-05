@@ -10,6 +10,17 @@
 -- do criador até terminarem; o app/webhook continua conferindo esses Pix.
 -- ============================================================
 
+-- Pré-requisitos (idempotentes): garantem o que a 0024 usa mesmo se alguma
+-- migration antiga não tiver sido aplicada neste banco.
+alter table public.rifas add column if not exists percentual numeric not null default 5;
+insert into public.app_config (key, value) values ('percentual_rifa', '5')
+on conflict (key) do nothing;
+create table if not exists public.mp_contas (
+  user_id      uuid primary key references auth.users (id) on delete cascade,
+  access_token text
+);
+alter table public.mp_contas enable row level security;
+
 create table if not exists public.rifa_repasses (
   rifa_id    uuid primary key references public.rifas(id) on delete cascade,
   user_id    uuid not null references auth.users(id) on delete cascade,
@@ -76,7 +87,19 @@ revoke all on function public.rifa_criar(text, text, text, text, numeric, int, t
 grant execute on function public.rifa_criar(text, text, text, text, numeric, int, text) to authenticated;
 
 -- A criação antiga (que exigia MP conectado) deixa de ser usada.
-revoke execute on function public.rifa_criar_conectado(text, text, text, text, numeric, int) from authenticated;
+-- Revoga só se existir, com qualquer assinatura (varia entre bancos).
+do $do$
+declare f regprocedure;
+begin
+  for f in
+    select p.oid::regprocedure
+    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public' and p.proname = 'rifa_criar_conectado'
+  loop
+    execute format('revoke execute on function %s from authenticated', f);
+  end loop;
+end
+$do$;
 
 -- ------------------------------------------------------------
 -- Iniciar pagamento de cota: rifas novas cobram na conta da plataforma.
