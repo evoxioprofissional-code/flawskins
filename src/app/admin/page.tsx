@@ -17,11 +17,12 @@ import {
 import { getUser } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/admin";
 import { getAdminMetrics, getAdminUsers } from "@/actions/admin";
-import { listarRifas } from "@/actions/rifas";
+import { listarRepasses, listarRifas } from "@/actions/rifas";
 import { formatBRL } from "@/lib/format";
 import { Logo } from "@/components/layout/Logo";
 import { AdminSignOut } from "@/components/admin/AdminSignOut";
 import { AdminRifaRow } from "@/components/rifas/AdminRifaRow";
+import { AdminRepasses } from "@/components/rifas/AdminRepasses";
 
 export const metadata: Metadata = { title: "Painel — Cloud Skins" };
 export const dynamic = "force-dynamic";
@@ -30,11 +31,14 @@ export default async function AdminPage() {
   const user = await getUser();
   if (!isAdminEmail(user?.email)) redirect("/admin/login");
 
-  const [metrics, users, rifas] = await Promise.all([
+  const [metrics, users, rifas, repasses] = await Promise.all([
     getAdminMetrics(),
     getAdminUsers(),
     listarRifas(),
+    listarRepasses(),
   ]);
+  const pendentes = repasses.filter((r) => r.status === "pendente");
+  const totalPendente = pendentes.reduce((s, r) => s + r.liquido, 0);
 
   if (!metrics) {
     return (
@@ -181,6 +185,19 @@ export default async function AdminPage() {
             ))}
           </ul>
         )}
+      </section>
+
+      {/* Repasses aos criadores de rifa */}
+      <section className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
+            <Ticket className="size-4 text-emerald-400" /> Repasses de rifas
+          </h2>
+          <span className="text-xs text-zinc-400">
+            {pendentes.length} pendente(s) · {formatBRL(totalPendente)} a repassar
+          </span>
+        </div>
+        <AdminRepasses repasses={repasses} />
       </section>
     </div>
   );

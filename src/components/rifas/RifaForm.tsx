@@ -20,7 +20,9 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
   const [total, setTotal] = useState(rifa ? String(rifa.total_numeros) : "");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(rifa?.image_url ?? null);
+  const [chavePix, setChavePix] = useState("");
   const [busy, setBusy] = useState(false);
+  const pedeChavePix = usuario && !edicao;
 
   function pick(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -43,6 +45,8 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
       return toast.error("A cota mínima é R$ 5,00.");
     if (!(totalN >= 1 && totalN <= 100000))
       return toast.error("Total de números de 1 a 100000.");
+    if (pedeChavePix && chavePix.trim().length < 5)
+      return toast.error("Informe a chave Pix para receber o repasse.");
 
     setBusy(true);
     try {
@@ -61,7 +65,7 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
       const res = edicao
         ? await editarRifa(rifa!.id, payload)
         : usuario
-          ? await criarRifaUsuario(payload)
+          ? await criarRifaUsuario({ ...payload, chave_pix: chavePix })
           : await criarRifa(payload);
       if (!res.ok) {
         toast.error(res.error);
@@ -131,6 +135,22 @@ export function RifaForm({ rifa, usuario }: { rifa?: Rifa; usuario?: boolean }) 
           />
         </Campo>
       </div>
+
+      {pedeChavePix && (
+        <Campo label="Chave Pix para receber o repasse">
+          <input
+            value={chavePix}
+            onChange={(e) => setChavePix(e.target.value)}
+            placeholder="CPF, e-mail, telefone ou chave aleatória"
+            autoComplete="off"
+            maxLength={140}
+            className={inputCls}
+          />
+          <p className="mt-1.5 text-xs text-zinc-500">
+            Só você e a equipe da Cloud veem essa chave. É para onde enviamos o valor das cotas vendidas.
+          </p>
+        </Campo>
+      )}
 
       <Campo label="Imagem da rifa">
         <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-zinc-700 bg-zinc-900 px-4 py-6 text-center transition-colors hover:border-blue-500/60">

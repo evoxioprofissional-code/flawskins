@@ -346,53 +346,39 @@ export async function cancelarMeuPagamento(
   return { ok: true, data: null };
 }
 
-// Cria a rifa exigindo só MP conectado (a plataforma ganha % de cada cota).
+// Cria a rifa do usuário. As cotas são cobradas na conta da plataforma e o
+// líquido (arrecadado − % da rifa) é repassado para a chave Pix informada.
 export async function criarRifaUsuario(
-  input: NovaRifa
+  input: NovaRifa & { chave_pix: string }
 ): Promise<ActionResult<{ id: string }>> {
+  const chave = input.chave_pix?.trim() ?? "";
+  if (chave.length < 5 || chave.length > 140) {
+    return { ok: false, error: "Informe uma chave Pix válida para receber o repasse." };
+  }
   const supabase = await createClient();
-  const { data, error } = await supabase.rpc("rifa_criar_conectado", {
+  const { data, error } = await supabase.rpc("rifa_criar", {
     p_titulo: input.titulo,
     p_premio: input.premio,
     p_descricao: input.descricao ?? "",
     p_image_url: input.image_url ?? "",
     p_preco: input.preco_cota,
     p_total: input.total_numeros,
+    p_chave_pix: chave,
   });
   if (error) return { ok: false, error: error.message };
   revalidatePath("/rifas");
   return { ok: true, data: { id: (data as { id: string }).id } };
 }
 
-// Estado do criador pra criar rifa: tem MP conectado? qual o % da plataforma?
-export async function meuPainelRifa(): Promise<{
-  mp_conectado: boolean;
-  percentual: number;
-}> {
+// % da plataforma sobre cada cota (mostrado ao criar a rifa).
+export async function meuPainelRifa(): Promise<{ percentual: number }> {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const [{ data: prof }, { data: cfg }] = await Promise.all([
-    user
-      ? supabase
-          .from("profiles")
-          .select("mp_conectado")
-          .eq("id", user.id)
-          .maybeSingle<{ mp_conectado: boolean }>()
-      : Promise.resolve({ data: null }),
-    supabase
-      .from("app_config")
-      .select("value")
-      .eq("key", "percentual_rifa")
-      .maybeSingle<{ value: string }>(),
-  ]);
-
-  return {
-    mp_conectado: prof?.mp_conectado ?? false,
-    percentual: Number(cfg?.value ?? 5),
-  };
+  const { data: cfg } = await supabase
+    .from("app_config")
+    .select("value")
+    .eq("key", "percentual_rifa")
+    .maybeSingle<{ value: string }>();
+  return { percentual: Number(cfg?.value ?? 5) };
 }
 
 export type MinhaRifa = {
@@ -447,13 +433,95 @@ export async function listarMinhasRifas(): Promise<MinhaRifa[]> {
   });
 }
 
-// Remove a conexão Mercado Pago do criador (apaga o token + baixa a flag).
-export async function desconectarMercadoPago(): Promise<ActionResult<null>> {
-  const supabase = await createClient();
-  const { error } = await supabase.rpc("mp_desconectar");
+// ---- Repasses (a plataforma recebe as cotas e repassa ao criador) ----
+
+export type Repasse = {
+  rifa_id: string;
+  titulo: string;
+  rifa_status: RifaStatus;
+  chave_pix: string;
+  status: "pendente" | "pago";
+  pago_em: string | null;
+  criador: string | null;
+  pagos: number;
+  arrecadado: number;
+  taxa: number;
+  liquido: number;
+};
+
+// Admin: repasses de todas as rifas de usuários (pendentes primeiro).
+export async function listarRepasses(): Promise<Repasse[]> {
+  const { supabase, ok } = await exigirAdmin();
+  if (!ok) return [];
+
+  type Row = {
+    rifa_id: string;
+    user_id: string;
+    chave_pix: string;
+    status: "pendente" | "pago";
+    pago_em: string | null;
+    rifas: { titulo: string; status: RifaStatus; preco_cota: number; percentual: number | null } | null;
+  };
+  const { data, error } = await supabase
+    .from("rifa_repasses")
+    .select("rifa_id, user_id, chave_pix, status, pago_em, rifas(titulo, status, preco_cota, percentual)")
+    .order("status", { ascending: false })
+    .order("created_at", { ascending: false })
+    .returns<Row[]>();
+  if (error || !data?.length) return [];
+
+  const ids = data.map((r) => r.rifa_id);
+  const donos = [...new Set(data.map((r) => r.user_id))];
+  const [{ data: numeros }, { data: perfis }] = await Promise.all([
+    supabase.from("rifa_numeros").select("rifa_id").eq("status", "pago").in("rifa_id", ids).returns<{ rifa_id: string }[]>(),
+    supabase.from("profiles").select("id, nome").in("id", donos).returns<{ id: string; nome: string | null }[]>(),
+  ]);
+  const pagosPor = new Map<string, number>();
+  for (const n of numeros ?? []) pagosPor.set(n.rifa_id, (pagosPor.get(n.rifa_id) ?? 0) + 1);
+  const nomePor = new Map((perfis ?? []).map((p) => [p.id, p.nome]));
+
+  return data.map((r) => {
+    const pagos = pagosPor.get(r.rifa_id) ?? 0;
+    const arrecadado = Number((pagos * (r.rifas?.preco_cota ?? 0)).toFixed(2));
+    const taxa = Number(((arrecadado * (r.rifas?.percentual ?? 5)) / 100).toFixed(2));
+    return {
+      rifa_id: r.rifa_id,
+      titulo: r.rifas?.titulo ?? "Rifa",
+      rifa_status: r.rifas?.status ?? "aberta",
+      chave_pix: r.chave_pix,
+      status: r.status,
+      pago_em: r.pago_em,
+      criador: nomePor.get(r.user_id) ?? null,
+      pagos,
+      arrecadado,
+      taxa,
+      liquido: Number((arrecadado - taxa).toFixed(2)),
+    };
+  });
+}
+
+// Admin: marca o repasse de uma rifa como feito.
+export async function marcarRepassePago(rifaId: string): Promise<ActionResult<null>> {
+  const { supabase, ok } = await exigirAdmin();
+  if (!ok) return { ok: false, error: "Apenas o admin pode registrar repasses." };
+  const { error } = await supabase
+    .from("rifa_repasses")
+    .update({ status: "pago", pago_em: new Date().toISOString() })
+    .eq("rifa_id", rifaId);
   if (error) return { ok: false, error: error.message };
-  revalidatePath("/perfil");
+  revalidatePath("/admin");
+  revalidatePath("/rifas/minhas");
   return { ok: true, data: null };
+}
+
+// Criador: chave Pix e status do repasse das próprias rifas.
+export async function meusRepasses(): Promise<Record<string, { chave_pix: string; status: "pendente" | "pago" }>> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("rifa_repasses")
+    .select("rifa_id, chave_pix, status")
+    .returns<{ rifa_id: string; chave_pix: string; status: "pendente" | "pago" }[]>();
+  return Object.fromEntries((data ?? []).map((r) => [r.rifa_id, { chave_pix: r.chave_pix, status: r.status }]));
 }
 
 export type Participante = {

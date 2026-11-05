@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Plus, Ticket } from "lucide-react";
 
 import { getUser } from "@/lib/auth";
-import { listarMinhasRifas } from "@/actions/rifas";
+import { listarMinhasRifas, meusRepasses } from "@/actions/rifas";
 import { formatBRL } from "@/lib/format";
 import { MinhaRifaCard } from "@/components/rifas/MinhaRifaCard";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -16,7 +16,7 @@ export default async function MinhasRifasPage() {
   const user = await getUser();
   if (!user) redirect("/login?next=/rifas/minhas");
 
-  const rifas = await listarMinhasRifas();
+  const [rifas, repasses] = await Promise.all([listarMinhasRifas(), meusRepasses()]);
 
   const totalArrecadado = rifas.reduce((s, r) => s + r.arrecadado, 0);
   const totalLiquido = rifas.reduce((s, r) => s + r.liquido, 0);
@@ -73,7 +73,7 @@ export default async function MinhasRifasPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               {rifas.map((r) => (
-                <MinhaRifaCard key={r.id} rifa={r} />
+                <MinhaRifaCard key={r.id} rifa={r} repasse={repasses[r.id]} />
               ))}
             </div>
           </>

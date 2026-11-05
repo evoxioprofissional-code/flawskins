@@ -30,7 +30,7 @@ export default async function CriarRifaPage() {
         <p className="mt-1 text-sm text-zinc-400">
           {admin
             ? "Você é admin — cria rifas da plataforma."
-            : "Conecte seu Mercado Pago e publique. As cotas caem direto na sua conta; a plataforma retém uma pequena % de cada cota."}
+            : "Preencha os dados e publique. Os pagamentos das cotas são feitos por Pix e repassados para você."}
         </p>
       </header>
 
@@ -40,6 +40,6 @@ export default async function CriarRifaPage() {
 }
 
 async function CriarRifaUsuario() {
-  const { mp_conectado, percentual } = await meuPainelRifa();
-  return <CriarRifaPainel conectado={mp_conectado} percentual={percentual} />;
+  const { percentual } = await meuPainelRifa();
+  return <CriarRifaPainel percentual={percentual} />;
 }

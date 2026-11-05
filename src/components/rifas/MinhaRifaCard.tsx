@@ -12,7 +12,13 @@ const STATUS_COR: Record<string, string> = {
   finalizada: "bg-blue-500/15 text-blue-300",
 };
 
-export function MinhaRifaCard({ rifa }: { rifa: MinhaRifa }) {
+export function MinhaRifaCard({
+  rifa,
+  repasse,
+}: {
+  rifa: MinhaRifa;
+  repasse?: { chave_pix: string; status: "pendente" | "pago" };
+}) {
   const pct = Math.min(
     100,
     Math.round((rifa.pagos / rifa.total_numeros) * 100) || 0
@@ -90,6 +96,23 @@ export function MinhaRifaCard({ rifa }: { rifa: MinhaRifa }) {
           cor="text-zinc-400"
         />
       </div>
+
+      {/* Repasse para a chave Pix do criador */}
+      {repasse && (
+        <div className="flex items-center justify-between gap-3 border-t border-white/10 px-4 py-2.5 text-xs">
+          <span className="min-w-0 truncate text-zinc-400">
+            Repasse para <span className="font-semibold text-zinc-200">{repasse.chave_pix}</span>
+          </span>
+          <span
+            className={
+              "shrink-0 rounded-md px-2 py-0.5 font-semibold " +
+              (repasse.status === "pago" ? "bg-emerald-500/15 text-emerald-300" : "bg-white/5 text-zinc-300")
+            }
+          >
+            {repasse.status === "pago" ? "Repassado" : "Repasse pendente"}
+          </span>
+        </div>
+      )}
 
       {/* Ações */}
       <div className="flex items-center gap-2 border-t border-white/10 p-3">
