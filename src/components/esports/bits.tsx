@@ -92,7 +92,10 @@ export function EsportsErrorState({ error }: { error: unknown }) {
   const kind = error instanceof PandaScoreError ? error.kind : "unknown";
   if (kind === "unknown") console.error("[esports] erro inesperado:", error);
   const copy: Record<string, [string, string]> = {
-    config: ["Integração não configurada", "Defina PANDASCORE_TOKEN no .env.local do servidor para carregar os dados."],
+    config: [
+      "Integração não configurada",
+      "Defina a variável de ambiente PANDASCORE_TOKEN no servidor (na Vercel: Settings → Environment Variables) e faça um novo deploy.",
+    ],
     unauthorized: ["Não foi possível autenticar na fonte de dados", "Verifique o token da PandaScore configurado no servidor."],
     forbidden: ["Dados indisponíveis no plano atual", "Este conteúdo não é fornecido pelo plano atual da PandaScore."],
     rate_limited: ["Muitas consultas em pouco tempo", "O limite da fonte de dados foi atingido. Tente novamente em instantes."],

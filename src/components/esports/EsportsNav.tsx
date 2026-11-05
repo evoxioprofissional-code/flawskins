@@ -87,8 +87,14 @@ export function EsportsNav({ liveCount, runningTournaments }: { liveCount: numbe
       <p className="esports-side-label">Comunidade</p>
       <ul className="esports-side-list">
         <li>
-          {/* Apostas: apenas indicação. Nenhuma funcionalidade de aposta existe. */}
-          <span className="esports-nav-item" aria-disabled="true" title="Em breve">
+          {/* Apostas: vitrine bloqueada. Nenhuma funcionalidade de aposta existe. */}
+          <Link
+            href="/esports/apostas"
+            className="esports-nav-item esports-nav-locked"
+            data-active={path.startsWith("/esports/apostas")}
+            aria-current={path.startsWith("/esports/apostas") ? "page" : undefined}
+            title="Em breve"
+          >
             <span className="esports-nav-icon">
               <HandCoins aria-hidden="true" />
             </span>
@@ -97,7 +103,7 @@ export function EsportsNav({ liveCount, runningTournaments }: { liveCount: numbe
               <small>Em breve na Cloud</small>
             </span>
             <Lock className="esports-nav-lock" aria-hidden="true" />
-          </span>
+          </Link>
         </li>
       </ul>
     </nav>

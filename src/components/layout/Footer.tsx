@@ -11,7 +11,6 @@ const COLUNAS: { titulo: string; links: { href: string; label: string; externo?:
     links: [
       { href: "/", label: "Comprar skins" },
       { href: "/novo", label: "Vender skin" },
-      { href: "/categorias", label: "Categorias" },
       { href: "/alertas", label: "Alertas" },
     ],
   },

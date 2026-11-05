@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { AlertTriangle, LayoutGrid, List } from "lucide-react";
+import { AlertTriangle, LayoutGrid, List, SlidersHorizontal, X } from "lucide-react";
 
 import { POR_PAGINA, buscarAnunciosPorIds, listarAnunciosLeves, paginaValida, type AnuncioLeve } from "@/lib/market-feed";
 import { MarketPagination } from "@/components/home/MarketPagination";
@@ -92,6 +92,8 @@ export default async function HomePage({
   }
   const visible = unstacked === "1" ? filtered : [...groups.values()];
 
+  const filtrosAtivos = [pmin || pmax, fmin || fmax, ext, raridade, categoria, pintura, extra].filter(Boolean).length;
+
   // Remonta o sidebar (inputs) quando os filtros mudam de fora (ex: Limpar).
   const sidebarKey = `${pmin ?? ""}|${pmax ?? ""}|${fmin ?? ""}|${fmax ?? ""}|${ext ?? ""}`;
 
@@ -126,10 +128,19 @@ export default async function HomePage({
 
   return (
     <div id="skins" className="marketplace">
-      <aside className="marketplace-sidebar">
+      {/* Mobile: os filtros abrem como painel (checkbox + :has, sem JS). */}
+      <input type="checkbox" id="filtros-mobile" className="marketplace-filters-toggle" aria-hidden="true" tabIndex={-1} />
+      <aside className="marketplace-sidebar" aria-label="Filtros">
+        <div className="marketplace-sheet-head">
+          <strong>Filtros</strong>
+          <label htmlFor="filtros-mobile" aria-label="Fechar filtros"><X aria-hidden="true" /></label>
+        </div>
         <Suspense>
           <FilterSidebar key={sidebarKey} finishes={finishes} histogram={histogram} highestPrice={highestPrice} />
         </Suspense>
+        <label htmlFor="filtros-mobile" className="marketplace-sheet-done">
+          Ver {visible.length.toLocaleString("pt-BR")} {visible.length === 1 ? "resultado" : "resultados"}
+        </label>
       </aside>
 
         <div className="marketplace-results">
@@ -144,6 +155,10 @@ export default async function HomePage({
               )}
               {q ? <span className="marketplace-query"> para &ldquo;{q}&rdquo;</span> : ""}
             </h2>
+            <label htmlFor="filtros-mobile" className="marketplace-filters-button">
+              <SlidersHorizontal aria-hidden="true" /> Filtros
+              {filtrosAtivos > 0 && <span>{filtrosAtivos}</span>}
+            </label>
             <Suspense>
               <StackToggle />
               <SortSelect />
