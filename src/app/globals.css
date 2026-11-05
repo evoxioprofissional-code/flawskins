@@ -781,3 +781,1137 @@ body.cloud-site {
   .marketplace-results:has([value="list"]:checked) .skin-card-wear { grid-column: 1 / -1; }
   .marketplace-results:has([value="list"]:checked) .skin-card-price { flex-direction: column; }
 }
+
+/* ============================================================
+   Cloud E-Sports — mesmos tokens/medidas do Market (sidebar,
+   toolbar, cards, controles). Sem glow, sem gradientes.
+   ============================================================ */
+.esports {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  align-items: start;
+  column-gap: 29px;
+  min-height: calc(100svh - 68px);
+  padding: 26px 24px 68px 32px;
+}
+
+/* Sidebar — mesmo painel dos filtros do Market (borda, raio, superfície). */
+.esports-side {
+  position: sticky;
+  top: 93px;
+  border: 1px solid #212834;
+  border-radius: 13px;
+  background: linear-gradient(155deg, #11161e, #12171f);
+}
+.esports-side-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 16px 16px 15px;
+  border-bottom: 1px solid #1d2530;
+}
+.esports-side-mascot { position: relative; flex: none; width: 44px; height: 32px; overflow: hidden; }
+.esports-side-mascot img { position: absolute; left: -36px; top: -23px; width: 116px; max-width: none; height: auto; }
+.esports-side-head strong { display: block; color: #f3f5f9; font-size: 15px; font-weight: 700; line-height: 1.2; }
+.esports-side-head small { display: block; color: #95a2b6; font-size: 12px; }
+
+.esports-side-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 18px 7px;
+  color: #7d889a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.esports-side-list { display: grid; gap: 2px; padding: 0 8px; }
+
+.esports-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 50px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: #dbe0e9;
+}
+a.esports-nav-item:hover { background: #171c25; }
+.esports-nav-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #232a34;
+  border-radius: 8px;
+  background: #151a22;
+  color: #b6bfce;
+}
+.esports-nav-icon svg { width: 16px; height: 16px; }
+.esports-nav-text { display: grid; min-width: 0; line-height: 1.25; }
+.esports-nav-text strong { font-size: 14px; font-weight: 650; }
+.esports-nav-text small { overflow: hidden; color: #7d889a; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.esports-nav-item[data-active="true"] { border-color: #17477b; background: #14253a; color: #43a8ff; }
+.esports-nav-item[data-active="true"] .esports-nav-icon { border-color: #1d5a99; background: #163252; color: #43a8ff; }
+.esports-nav-item[data-active="true"] small { color: #7fa9d6; }
+.esports-nav-item[aria-disabled="true"] { cursor: not-allowed; }
+.esports-nav-item[aria-disabled="true"] strong { color: #95a2b6; }
+.esports-nav-item[aria-disabled="true"] .esports-nav-icon { color: #6b7587; }
+.esports-nav-lock { width: 14px; height: 14px; margin-left: auto; color: #5d6779; flex: none; }
+
+.esports-nav-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 6px;
+  background: #1b222d;
+  color: #aab6c8;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.esports-nav-badge[data-tone="live"] { background: #2a1a1f; color: #ff8a8a; }
+.esports-nav-badge[data-tone="live"]::before { width: 5px; height: 5px; border-radius: 50%; background: #ef4444; content: ""; }
+
+.esports-side-live { margin-top: 8px; padding: 0 8px 4px; border-top: 1px solid #1d2530; }
+.esports-side-live .esports-side-label { padding-inline: 10px; }
+.esports-side-dot { width: 6px; height: 6px; border-radius: 50%; background: #4a5363; }
+.esports-side-dot[data-on="true"] { background: #ef4444; }
+.esports-side-empty { padding: 2px 10px 10px; color: #7d889a; font-size: 13px; }
+.esports-side-match {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border: 1px solid #1f2630;
+  border-radius: 9px;
+  background: #10151c;
+}
+.esports-side-match:hover { border-color: #344152; }
+.esports-side-team { display: flex; align-items: center; gap: 8px; min-width: 0; color: #dbe0e9; font-size: 13px; font-weight: 600; }
+.esports-side-team > span:not(.esports-logo) { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.esports-side-team b { color: #f3f5f9; font-weight: 750; font-variant-numeric: tabular-nums; }
+.esports-side-more { display: block; padding: 6px 10px; color: #43a8ff; font-size: 12px; font-weight: 650; }
+.esports-side-more:hover { text-decoration: underline; }
+
+.esports-side-foot {
+  margin-top: 8px;
+  padding: 11px 18px 13px;
+  border-top: 1px solid #1d2530;
+  color: #6b7587;
+  font-size: 11px;
+}
+
+.esports-soon {
+  margin-left: auto;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #1b222d;
+  color: #95a2b6;
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+/* Selo "CS2" (usado no cabeçalho). */
+.esports-context-mark {
+  display: inline-grid;
+  place-items: center;
+  height: 22px;
+  padding: 0 7px;
+  border: 1px solid #17477b;
+  border-radius: 6px;
+  background: #14253a;
+  color: #43a8ff;
+  font-size: 11px;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+}
+
+/* Cabeçalho das páginas: contexto, título, números reais e controles. */
+.esports-header {
+  margin-bottom: 18px;
+  padding: 2px 0 16px;
+  border-bottom: 1px solid #1d242e;
+}
+.esports-header-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.esports-header-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #95a2b6;
+  font-size: 13px;
+  font-weight: 600;
+}
+.esports-header-title {
+  margin-top: 9px;
+  color: #f3f5f9;
+  font-size: clamp(24px, 2.1vw, 28px);
+  font-weight: 750;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+.esports-header-desc { margin-top: 5px; color: #95a2b6; font-size: 13px; }
+
+.esports-stats { display: flex; gap: 8px; }
+.esports-stat {
+  display: grid;
+  gap: 1px;
+  min-width: 96px;
+  padding: 9px 14px 10px;
+  border: 1px solid #212834;
+  border-radius: 11px;
+  background: #11161e;
+}
+.esports-stat dt { color: #7d889a; font-size: 12px; font-weight: 600; }
+.esports-stat dd {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #f3f5f9;
+  font-size: 20px;
+  font-weight: 750;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+.esports-stat[data-tone="live"] dd { color: #ff8a8a; }
+.esports-stat[data-tone="live"] dd::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  content: "";
+}
+
+.esports-header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+
+/* Filtros: controle segmentado único (em vez de botões soltos). */
+.esports-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid #212834;
+  border-radius: 11px;
+  background: #0f141b;
+}
+.esports-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #95a2b6;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.esports-chip:hover { background: #161c25; color: #e2e7ee; }
+.esports-chip[data-active="true"] { border-color: #17477b; background: #14253a; color: #43a8ff; }
+.esports-chip-dot { width: 6px; height: 6px; border-radius: 50%; background: #ef4444; }
+.esports-chip-count {
+  padding: 0 5px;
+  border-radius: 5px;
+  background: #1b222d;
+  color: #aab6c8;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tag estática (ex.: equipes participantes). */
+.esports-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 11px 0 7px;
+  border: 1px solid #232a34;
+  border-radius: 9px;
+  background: #151a22;
+  color: #dbe0e9;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.esports-toolbar { flex-wrap: wrap; row-gap: 12px; }
+
+.esports-day {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 20px 0 8px;
+  color: #c4cddb;
+  font-size: 13px;
+  font-weight: 650;
+}
+.esports-day:first-child { margin-top: 4px; }
+.esports-day span { color: #7d889a; font-weight: 550; }
+
+.esports-list { display: grid; gap: 8px; }
+
+.esports-match {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) minmax(0, 270px) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 72px;
+  padding: 10px 16px;
+  border: 1px solid #262d38;
+  border-radius: 12px;
+  background: #10151c;
+}
+.esports-match:hover { border-color: #344152; }
+
+.esports-when {
+  display: grid;
+  align-self: stretch;
+  align-content: center;
+  gap: 3px;
+  border-right: 1px solid #1d242e;
+}
+.esports-when strong { color: #f3f5f9; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.esports-versus {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+}
+.esports-team {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: #dbe0e9;
+  font-size: 14px;
+  font-weight: 600;
+}
+.esports-team:first-child { flex-direction: row-reverse; text-align: right; }
+.esports-team span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.esports-team[data-result="win"] { color: #f3f5f9; }
+.esports-team[data-result="loss"] { color: #8792a4; }
+.esports-team[data-tbd="true"] { color: #7d889a; font-weight: 550; }
+
+.esports-logo {
+  display: grid;
+  flex: none;
+  place-items: center;
+  overflow: hidden;
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  color: #95a2b6;
+  font-size: 10px;
+  font-weight: 700;
+}
+/* Só o fallback (iniciais) ganha fundo; logos reais ficam soltos. */
+.esports-logo:not(:has(img)) { background: #1b222d; }
+.esports-logo img { width: 100%; height: 100%; object-fit: contain; }
+.esports-logo img[data-ink="true"] { filter: brightness(0) invert(0.9); }
+.esports-logo[data-size="sm"] { width: 20px; height: 20px; border-radius: 5px; font-size: 8px; }
+.esports-logo[data-size="lg"] { width: 64px; height: 64px; border-radius: 12px; font-size: 16px; }
+
+.esports-score {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 56px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: #161c25;
+  color: #f3f5f9;
+  font-size: 15px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+.esports-score[data-empty="true"] { background: transparent; color: #6b7587; font-size: 12px; font-weight: 650; text-transform: uppercase; letter-spacing: 0.04em; }
+.esports-score i { color: #6b7587; font-style: normal; font-weight: 500; }
+.esports-score b[data-win="true"] { color: #43a8ff; }
+
+.esports-event { display: grid; gap: 3px; min-width: 0; }
+.esports-event-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: #dbe0e9;
+  font-size: 13px;
+  font-weight: 600;
+}
+.esports-event-name span,
+.esports-event-meta { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.esports-event-meta { color: #95a2b6; font-size: 12px; }
+
+.esports-format {
+  padding: 1px 6px;
+  border: 1px solid #262d38;
+  border-radius: 6px;
+  color: #aab6c8;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.esports-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
+  border: 1px solid #282f3a;
+  border-radius: 9px;
+  background: #1b202a;
+  color: #e2e7ee;
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.esports-button:hover { background: #232b37; }
+.esports-button svg { width: 15px; height: 15px; }
+.esports-button[aria-disabled="true"] { opacity: 0.45; pointer-events: none; }
+
+.esports-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #95a2b6;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.esports-status[data-status="live"] { color: #ff8a8a; }
+.esports-status[data-status="live"]::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  content: "";
+}
+.esports-status[data-status="postponed"] { color: #e4b75a; }
+.esports-status[data-status="canceled"] { color: #d18f97; }
+
+.esports-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  color: #95a2b6;
+  font-size: 13px;
+}
+
+.esports-state {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 46px 20px;
+  border: 1px dashed #262d38;
+  border-radius: 12px;
+  text-align: center;
+}
+.esports-state img { width: 76px; height: auto; margin-bottom: 8px; opacity: 0.9; }
+.esports-state h3 { color: #f3f5f9; font-size: 15px; font-weight: 700; }
+.esports-state p { max-width: 420px; color: #95a2b6; font-size: 13px; }
+
+.esports-panel {
+  border: 1px solid #262d38;
+  border-radius: 12px;
+  background: #10151c;
+}
+.esports-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 13px 16px;
+  border-bottom: 1px solid #1d242e;
+  color: #f3f5f9;
+  font-size: 14px;
+  font-weight: 700;
+}
+.esports-panel-head span { color: #95a2b6; font-size: 12px; font-weight: 550; }
+
+.esports-scoreboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  padding: 26px 20px;
+}
+.esports-scoreboard-team { display: grid; justify-items: center; gap: 10px; min-width: 0; text-align: center; }
+.esports-scoreboard-team strong { max-width: 100%; overflow: hidden; color: #f3f5f9; font-size: 16px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.esports-scoreboard-team[data-result="loss"] strong { color: #8792a4; }
+.esports-scoreboard-team small { color: #95a2b6; font-size: 12px; }
+.esports-scoreboard-center { display: grid; justify-items: center; gap: 8px; }
+.esports-scoreboard-center .esports-score { height: auto; padding: 6px 18px; font-size: 30px; gap: 12px; }
+
+.esports-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.esports-fact { padding: 12px 16px; border-top: 1px solid #1d242e; }
+.esports-fact dt { color: #95a2b6; font-size: 12px; }
+.esports-fact dd { margin-top: 2px; color: #e2e7ee; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+
+.esports-rows > * { border-top: 1px solid #1d242e; }
+.esports-rows > *:first-child { border-top: 0; }
+.esports-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 8px 16px;
+  color: #dbe0e9;
+  font-size: 14px;
+}
+a.esports-row:hover { background: #131922; }
+
+.esports-tournament {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 16px;
+  border: 1px solid #262d38;
+  border-radius: 12px;
+  background: #10151c;
+}
+.esports-tournament:hover { border-color: #344152; }
+.esports-tournament h3 { overflow: hidden; color: #f3f5f9; font-size: 14px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.esports-tournament p { overflow: hidden; color: #95a2b6; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.esports-tournament-dates { color: #aab6c8; font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+
+.esports-select-wrap { position: relative; display: inline-flex; align-items: center; }
+.esports-select {
+  height: 40px;
+  min-width: 210px;
+  max-width: 300px;
+  appearance: none;
+  border: 1px solid #222a35;
+  border-radius: 10px;
+  background: #141922;
+  padding: 0 34px 0 36px;
+  color: #e2e7ee;
+  font-size: 13px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+}
+.esports-select:hover { border-color: #2c3542; }
+.esports-select:focus-visible { outline: 1px solid #2687e5; }
+.esports-select-icon,
+.esports-select-chevron { position: absolute; width: 15px; height: 15px; color: #95a2b6; pointer-events: none; }
+.esports-select-icon { left: 13px; }
+.esports-select-chevron { right: 12px; }
+
+@media (max-width: 1320px) {
+  .esports { grid-template-columns: 210px minmax(0, 1fr); gap: 22px; }
+  .esports-match { grid-template-columns: 88px minmax(0, 1fr) minmax(0, 210px) auto; gap: 14px; }
+}
+
+@media (max-width: 1100px) {
+  .esports-match { grid-template-columns: 84px minmax(0, 1fr) auto; }
+  .esports-match .esports-event { grid-column: 2 / -1; grid-row: 2; }
+}
+
+@media (max-width: 900px) {
+  .esports { grid-template-columns: minmax(0, 1fr); padding: 12px 16px 32px; row-gap: 12px; }
+  .esports-side { position: static; }
+  .esports-side-head, .esports-side-live, .esports-side-foot, .esports-side-label { display: none; }
+  .esports-side nav { display: flex; overflow-x: auto; scrollbar-width: none; padding: 6px; gap: 2px; }
+  .esports-side-list { display: flex; padding: 0; }
+  .esports-nav-item { min-height: 38px; padding: 4px 10px 4px 6px; white-space: nowrap; }
+  .esports-nav-icon { width: 26px; height: 26px; }
+  .esports-nav-text small { display: none; }
+  .esports-nav-badge { margin-left: 4px; }
+}
+
+@media (max-width: 640px) {
+  .esports-match {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 12px;
+  }
+  .esports-match .esports-when { grid-column: 1; grid-row: 1; display: flex; align-items: center; gap: 10px; border-right: 0; }
+  .esports-stats { width: 100%; }
+  .esports-stat { flex: 1; min-width: 0; }
+  .esports-chips { display: flex; flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .esports-select-wrap, .esports-select { width: 100%; max-width: none; }
+  .esports-match .esports-versus { grid-column: 1 / -1; grid-row: 2; }
+  .esports-match .esports-event { grid-column: 1 / -1; grid-row: 3; }
+  .esports-match > a { grid-column: 2; grid-row: 1; }
+  .esports-versus { grid-template-columns: minmax(0, 1fr) 52px minmax(0, 1fr); gap: 8px; }
+  .esports-team { font-size: 13px; gap: 7px; }
+  .esports-scoreboard { gap: 10px; padding: 20px 12px; }
+  .esports-scoreboard-center .esports-score { font-size: 24px; }
+  .esports-tournament { grid-template-columns: 34px minmax(0, 1fr) auto; }
+  .esports-tournament-dates { display: none; }
+}
+
+/* Paginação do feed do Market (mesmos controles da toolbar). */
+.marketplace-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 26px;
+}
+.marketplace-page-numbers { display: flex; align-items: center; gap: 6px; }
+.marketplace-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 41px;
+  height: 41px;
+  padding: 0 12px;
+  border: 1px solid #232a34;
+  border-radius: 9px;
+  background: #171c25;
+  color: #dbe0e9;
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.marketplace-page svg { width: 16px; height: 16px; }
+a.marketplace-page:hover { border-color: #344152; background: #1b212b; }
+.marketplace-page[data-active="true"] { border-color: #17477b; background: #14253a; color: #2094ff; }
+.marketplace-page[aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
+.marketplace-page-gap { padding: 0 2px; color: #7d889a; }
+@media (max-width: 640px) {
+  .marketplace-page span:not(.sr-only) { display: none; }
+  .marketplace-page { min-width: 38px; height: 38px; padding: 0 10px; }
+}
+
+/* ============================================================
+   Market — refinamentos visuais (mascote no header, categorias
+   em abas, contagem e cards com acento de raridade).
+   ============================================================ */
+.site-brand { gap: 7px; }
+.site-brand .site-brand-mascot {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 30px;
+  overflow: hidden;
+}
+.site-brand .site-brand-mascot img {
+  position: absolute;
+  left: -33px;
+  top: -20px;
+  width: 106px;
+  max-width: none;
+  height: auto;
+}
+
+/* Categorias: abas alinhadas à esquerda (antes espalhadas na largura toda). */
+.marketplace-category-row {
+  justify-content: flex-start;
+  gap: 4px;
+  min-height: 58px;
+  padding: 0 0 10px;
+}
+.marketplace-category {
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #c4cddb;
+  transition: background-color 0.15s, color 0.15s;
+}
+.marketplace-category:hover { background: #151a22; color: #f3f5f9; }
+.marketplace-category[data-active="true"] { border-color: #17477b; background: #14253a; color: #43a8ff; }
+
+/* Contagem: número em destaque, texto secundário. */
+.marketplace-toolbar h2 { color: #aab6c8; font-weight: 600; }
+.marketplace-count { color: #f3f5f9; font-weight: 750; font-variant-numeric: tabular-nums; }
+.marketplace-query { color: #f3f5f9; }
+
+/* Cards */
+.skin-card {
+  position: relative;
+  overflow: hidden;
+  background: #10151c;
+  transition: border-color 0.18s, transform 0.18s, background-color 0.18s;
+}
+.skin-card::before {
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--skin-color);
+  opacity: 0.85;
+  content: "";
+}
+.skin-card:hover,
+.skin-card:focus-visible {
+  border-color: color-mix(in srgb, var(--skin-color) 45%, #262d38);
+  background: #121820;
+  transform: translateY(-2px);
+}
+.skin-card-art {
+  flex-basis: 112px;
+  margin: 8px 0 6px;
+  border-radius: 10px;
+  background: radial-gradient(55% 60% at 50% 55%, color-mix(in srgb, var(--skin-color) 12%, transparent), transparent 72%);
+}
+.skin-card-art img { transition: transform 0.25s ease; }
+.skin-card:hover .skin-card-art img { transform: scale(1.05); }
+.skin-card-wear span:first-child {
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #1b222d;
+  color: #c4cddb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.skin-card-wear span:last-child:not(:first-child) { color: #95a2b6; font-size: 13px; }
+.skin-card-price {
+  margin-top: 12px;
+  padding-top: 11px;
+  border-top: 1px solid #1d242e;
+}
+.skin-card-price strong { font-size: 17px; }
+
+/* Modo lista: acento vira barra lateral e o preço perde o divisor. */
+.marketplace-results:has([value="list"]:checked) .skin-card::before { top: 14px; bottom: 14px; left: 0; right: auto; width: 2px; height: auto; border-radius: 0 2px 2px 0; }
+.marketplace-results:has([value="list"]:checked) .skin-card-price { margin-top: 0; padding-top: 0; border-top: 0; }
+.marketplace-results:has([value="list"]:checked) .skin-card-art { margin: 0; flex-basis: auto; }
+
+@media (max-width: 767px) {
+  .site-brand .site-brand-mascot { width: 34px; height: 26px; }
+  .site-brand .site-brand-mascot img { left: -28px; top: -17px; width: 90px; }
+  .marketplace-category { padding: 0 11px; }
+  .skin-card-art { flex-basis: 84px; }
+  .skin-card-price strong { font-size: 14px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skin-card, .skin-card-art img { transition: none; }
+  .skin-card:hover, .skin-card:hover .skin-card-art img { transform: none; }
+}
+
+/* ============================================================
+   Rodapé — mesma superfície e alinhamento do header.
+   ============================================================ */
+.site-footer {
+  margin-top: 40px;
+  border-top: 1px solid #1d232e;
+  background: #0e1219;
+}
+.site-footer-main {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: 48px;
+  padding: 44px 33px 36px 48px;
+}
+.site-footer-logo > img { width: 104px; height: auto; }
+.site-footer-brand p {
+  max-width: 340px;
+  margin-top: 14px;
+  color: #95a2b6;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* "Comunidade": mascote + nome, sem cara de botão. */
+.site-footer-community {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+/* Mesma fonte de impacto do hero (Anton): pesada e condensada, combina com
+   a wordmark CLOUD. */
+.site-footer-community-name {
+  color: #f3f5f9;
+  font-family: var(--font-impact), var(--font-display), sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: 0.045em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: color 0.15s;
+}
+.site-footer-community:hover .site-footer-community-name { color: #43a8ff; }
+
+/* Mascote flutuando devagar, bem de leve. */
+@keyframes cloud-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.site-footer-community .site-brand-mascot {
+  animation: cloud-float 3.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-footer-community .site-brand-mascot { animation: none; }
+}
+
+.site-footer-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 190px));
+  justify-content: end;
+  gap: 32px;
+}
+.site-footer-heading {
+  margin-bottom: 14px;
+  color: #7d889a;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.site-footer-nav ul { display: grid; gap: 11px; }
+.site-footer-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #c4cddb;
+  font-size: 14px;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+.site-footer-nav a:hover { color: #43a8ff; }
+.site-footer-nav a svg { width: 13px; height: 13px; color: #7d889a; }
+
+.site-footer-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 33px 0 48px;
+  padding: 14px 16px;
+  border: 1px solid #1f2630;
+  border-radius: 12px;
+  background: #11161e;
+}
+.site-footer-notice svg { width: 18px; height: 18px; flex: none; margin-top: 1px; color: #43a8ff; }
+.site-footer-notice p { color: #95a2b6; font-size: 13px; line-height: 1.55; }
+.site-footer-notice strong { color: #e2e7ee; font-weight: 650; }
+
+.site-footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+  padding: 16px 33px 20px 48px;
+  border-top: 1px solid #181e27;
+  color: #6b7587;
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  .site-footer-main { grid-template-columns: minmax(0, 1fr); gap: 32px; padding-inline: 24px; }
+  .site-footer-nav { justify-content: start; }
+  .site-footer-notice { margin-inline: 24px; }
+  .site-footer-bottom { padding-inline: 24px; }
+}
+
+/* ============================================================
+   Página da skin — mesmo sistema do Market (superfícies, bordas,
+   acento de raridade via --skin-color).
+   ============================================================ */
+.skin-page {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 22px clamp(16px, 2.1vw, 32px) 64px;
+}
+.skin-topbar { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.skin-crumbs { display: flex; align-items: center; gap: 6px; min-width: 0; color: #7d889a; font-size: 13px; font-weight: 550; }
+.skin-crumbs a { white-space: nowrap; transition: color 0.15s; }
+.skin-crumbs a:hover { color: #e2e7ee; }
+.skin-crumbs a:last-child { color: #c4cddb; }
+.skin-crumbs svg { width: 14px; height: 14px; flex: none; }
+
+.skin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  align-items: start;
+  gap: 20px;
+}
+
+/* Palco da imagem */
+.skin-stage {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #262d38;
+  border-radius: 16px;
+  background: #10151c;
+}
+.skin-stage::before {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: 28px;
+  right: 28px;
+  height: 2px;
+  border-radius: 0 0 2px 2px;
+  background: var(--skin-color);
+  content: "";
+}
+.skin-stage-art {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background:
+    radial-gradient(48% 55% at 50% 52%, color-mix(in srgb, var(--skin-color) 15%, transparent), transparent 72%),
+    linear-gradient(180deg, #10151c, #0e1319);
+}
+.skin-stage-img { padding: 5% 11%; filter: drop-shadow(0 18px 28px rgb(0 0 0 / 0.45)); }
+.skin-stage-sold {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(13 17 23 / 0.7);
+}
+.skin-stage-sold span {
+  padding: 6px 14px;
+  border: 1px solid #4a5363;
+  border-radius: 8px;
+  color: #f3f5f9;
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.skin-stage-thumbs { display: flex; justify-content: center; gap: 8px; padding: 2px 20px 6px; }
+.skin-stage-thumb {
+  position: relative;
+  width: 64px;
+  height: 48px;
+  overflow: hidden;
+  border: 1px solid #262d38;
+  border-radius: 9px;
+  background: #131922;
+  cursor: pointer;
+}
+.skin-stage-thumb:hover { border-color: #344152; }
+.skin-stage-thumb[data-active="true"] { border-color: #17477b; background: #14253a; }
+
+/* Float */
+.skin-wear {
+  margin: 10px 20px 20px;
+  padding: 14px 16px 12px;
+  border: 1px solid #1f2630;
+  border-radius: 12px;
+  background: #0f141b;
+}
+.skin-wear-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.skin-wear-head span { color: #7d889a; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.skin-wear-head strong { color: #f3f5f9; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 16px; font-weight: 650; }
+.skin-wear-head em { margin-left: auto; color: #aab6c8; font-size: 12px; font-style: normal; font-weight: 600; }
+.wear-track { position: relative; display: flex; gap: 2px; height: 8px; }
+.wear-seg { border-radius: 2px; opacity: 0.25; }
+.wear-seg:first-child { border-radius: 4px 2px 2px 4px; }
+.wear-seg:nth-last-child(2) { border-radius: 2px 4px 4px 2px; }
+.wear-seg[data-active="true"] { opacity: 1; }
+.wear-marker {
+  position: absolute;
+  top: 50%;
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  background: #f3f5f9;
+  box-shadow: 0 0 0 2px #0f141b;
+  transform: translate(-50%, -50%);
+}
+.wear-labels { display: flex; gap: 2px; margin-top: 9px; color: #5d6779; font-size: 10px; font-weight: 700; }
+.wear-labels span { text-align: center; }
+.wear-labels span[data-active="true"] { color: #e2e7ee; }
+
+/* Coluna lateral */
+.skin-side { position: sticky; top: 88px; display: grid; gap: 14px; }
+.skin-buy {
+  padding: 20px;
+  border: 1px solid #262d38;
+  border-radius: 16px;
+  background: #10151c;
+}
+.skin-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.skin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 9px;
+  border: 1px solid #232a34;
+  border-radius: 7px;
+  background: #151a22;
+  color: #c4cddb;
+  font-size: 12px;
+  font-weight: 650;
+}
+.skin-tag-rarity {
+  border-color: color-mix(in srgb, var(--skin-color) 35%, #232a34);
+  background: color-mix(in srgb, var(--skin-color) 9%, #151a22);
+  color: var(--skin-color);
+}
+.skin-tag-rarity i { width: 6px; height: 6px; border-radius: 50%; background: var(--skin-color); }
+.skin-tag-st { border-color: #5a3420; background: #23170f; color: #e0844c; }
+.skin-tag-souvenir { border-color: #5a4c18; background: #221d0c; color: #f0cf4a; }
+.skin-weapon { color: #aab6c8; font-size: 14px; font-weight: 600; }
+.skin-finish {
+  margin-top: 2px;
+  color: var(--skin-color);
+  font-size: clamp(26px, 2.2vw, 32px);
+  font-weight: 750;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}
+.skin-price { margin-top: 18px; padding-top: 16px; border-top: 1px solid #1d242e; }
+.skin-price span { color: #7d889a; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.skin-price strong {
+  display: block;
+  margin-top: 2px;
+  color: #f3f5f9;
+  font-size: 34px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.skin-actions { display: grid; gap: 10px; margin-top: 16px; }
+.skin-cta-buy {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: #25d366;
+  color: #06210f;
+  font-size: 15px;
+  font-weight: 700;
+  transition: background-color 0.15s;
+}
+.skin-cta-buy:hover { background: #22c35e; }
+.skin-cta-buy strong { margin-left: auto; font-variant-numeric: tabular-nums; }
+.skin-cta-offer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 46px;
+  border: 1px solid #282f3a;
+  border-radius: 12px;
+  background: #1b202a;
+  color: #e2e7ee;
+  font-size: 14px;
+  font-weight: 650;
+  transition: background-color 0.15s;
+}
+.skin-cta-offer:hover { background: #232b37; }
+.skin-offer-box { padding: 12px; border: 1px solid #282f3a; border-radius: 12px; background: #131820; }
+.skin-hint, .skin-sold-note { color: #7d889a; font-size: 12px; text-align: center; }
+.skin-sold-note { padding: 14px; border: 1px dashed #2c3440; border-radius: 12px; font-size: 13px; }
+.skin-safe { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: #7d889a; font-size: 12px; }
+.skin-safe svg { width: 15px; height: 15px; flex: none; color: #43a8ff; }
+
+/* Vendedor */
+.skin-seller {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid #262d38;
+  border-radius: 14px;
+  background: #10151c;
+}
+.skin-seller-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #1b222d;
+  color: #c4cddb;
+  font-weight: 700;
+}
+.skin-seller-label { color: #7d889a; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+.skin-seller-name { overflow: hidden; color: #f3f5f9; font-size: 15px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.skin-seller-city { display: flex; align-items: center; gap: 4px; color: #95a2b6; font-size: 12px; }
+.skin-seller-city svg { width: 12px; height: 12px; }
+.skin-seller-link { display: inline-flex; flex: none; align-items: center; gap: 2px; color: #43a8ff; font-size: 13px; font-weight: 650; }
+.skin-seller-link:hover { text-decoration: underline; }
+.skin-seller-link svg { width: 14px; height: 14px; }
+
+/* Preços de referência */
+.skin-panel { padding: 14px 12px 10px; border: 1px solid #262d38; border-radius: 14px; background: #10151c; }
+.skin-panel-loading { height: 220px; animation: skin-pulse 1.4s ease-in-out infinite; }
+@keyframes skin-pulse { 50% { opacity: 0.55; } }
+.skin-panel-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 4px 8px; }
+.skin-panel-head h2 { color: #f3f5f9; font-size: 13px; font-weight: 700; }
+.skin-delta { padding: 2px 8px; border-radius: 7px; background: #1b222d; color: #c4cddb; font-size: 12px; font-weight: 750; }
+.skin-delta[data-tone="bom"] { background: #192e23; color: #8ee6a8; }
+.skin-delta[data-tone="caro"] { background: #3a2128; color: #ffc1c7; }
+.skin-markets { display: grid; gap: 2px; }
+.skin-markets li {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.skin-market-name { color: #c4cddb; font-weight: 550; }
+.skin-market-bar { height: 4px; border-radius: 2px; background: #1b222d; }
+.skin-market-bar span { display: block; height: 100%; border-radius: 2px; background: #3a4658; }
+.skin-markets strong { color: #f3f5f9; font-weight: 650; font-variant-numeric: tabular-nums; }
+.skin-markets li[data-best] strong { color: #4ade80; }
+.skin-markets li[data-best] .skin-market-bar span { background: #2f7a4b; }
+.skin-markets li[data-own] { background: #14253a; }
+.skin-markets li[data-own] .skin-market-name,
+.skin-markets li[data-own] strong { color: #43a8ff; font-weight: 700; }
+.skin-markets li[data-own] .skin-market-bar span { background: #2094ff; }
+
+/* Relacionados */
+.skin-related { margin-top: 36px; }
+.skin-related-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.skin-related-head h2 { color: #f3f5f9; font-size: 18px; font-weight: 750; letter-spacing: -0.01em; }
+.skin-related-head a { display: inline-flex; align-items: center; gap: 2px; color: #43a8ff; font-size: 13px; font-weight: 650; }
+.skin-related-head a:hover { text-decoration: underline; }
+.skin-related-head svg { width: 14px; height: 14px; }
+.skin-related-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+
+@media (max-width: 1100px) {
+  .skin-layout { grid-template-columns: minmax(0, 1fr) 360px; }
+  .skin-related-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 900px) {
+  .skin-layout { grid-template-columns: minmax(0, 1fr); }
+  .skin-side { position: static; }
+}
+@media (max-width: 640px) {
+  .skin-page { padding-top: 14px; }
+  .skin-crumbs { display: none; }
+  .skin-stage-art { aspect-ratio: 4 / 3; }
+  .skin-price strong { font-size: 28px; }
+  .skin-related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+}

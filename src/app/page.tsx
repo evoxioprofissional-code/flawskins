@@ -1,7 +1,8 @@
 import { Suspense } from "react";
 import { AlertTriangle, LayoutGrid, List } from "lucide-react";
 
-import { listarAnuncios } from "@/actions/anuncios";
+import { POR_PAGINA, buscarAnunciosPorIds, listarAnunciosLeves, paginaValida, type AnuncioLeve } from "@/lib/market-feed";
+import { MarketPagination } from "@/components/home/MarketPagination";
 import { getPrecosGrade } from "@/lib/precos";
 import { ABBR_TO_EXT } from "@/lib/exterior";
 import { SkinGrid } from "@/components/skins/SkinGrid";
@@ -28,6 +29,7 @@ type Search = {
   pintura?: string;
   extra?: string;
   unstacked?: string;
+  pagina?: string;
 };
 
 const num = (v?: string) => {
@@ -48,10 +50,12 @@ export default async function HomePage({
     ? ext.split(",").map((a) => ABBR_TO_EXT[a]).filter(Boolean)
     : undefined;
 
-  let anuncios: Anuncio[] = [];
+  // Etapa 1: dados leves de todos os anúncios filtrados (contagem, histograma,
+  // filtros por título e empilhamento continuam valendo para o feed inteiro).
+  let anuncios: AnuncioLeve[] = [];
   let erro = false;
   try {
-    anuncios = await listarAnuncios({
+    anuncios = await listarAnunciosLeves({
       q,
       categoria,
       ordem,
@@ -78,7 +82,7 @@ export default async function HomePage({
     (!pintura || marketSkinTitle(item.titulo).finish === pintura) &&
     (!extra || item.titulo.toLowerCase().includes(extra.toLowerCase()))
   );
-  const groups = new Map<string, Anuncio>();
+  const groups = new Map<string, AnuncioLeve>();
   const stacks = new Map<string, number>();
   for (const item of filtered) {
     const key = JSON.stringify([item.titulo, item.exterior, item.phase]);
@@ -91,8 +95,22 @@ export default async function HomePage({
   // Remonta o sidebar (inputs) quando os filtros mudam de fora (ex: Limpar).
   const sidebarKey = `${pmin ?? ""}|${pmax ?? ""}|${fmin ?? ""}|${fmax ?? ""}|${ext ?? ""}`;
 
-  // Preços Buff cacheados (leitura em lote, sem chamar a API) pro selo nos cards.
-  const precos = erro ? undefined : await getPrecosGrade(visible.map((a) => a.titulo));
+  // Etapa 2: só a página atual é buscada completa e renderizada.
+  const totalPaginas = Math.max(1, Math.ceil(visible.length / POR_PAGINA));
+  const pagina = paginaValida(sp.pagina, totalPaginas);
+  const idsDaPagina = visible.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA).map((a) => a.id);
+
+  let paginaAtual: Anuncio[] = [];
+  if (!erro) {
+    try {
+      paginaAtual = await buscarAnunciosPorIds(idsDaPagina);
+    } catch {
+      erro = true;
+    }
+  }
+
+  // Preços Buff cacheados (leitura em lote) só dos cards visíveis.
+  const precos = erro ? undefined : await getPrecosGrade(paginaAtual.map((a) => a.titulo));
 
   const grid = erro ? (
     <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-neutral-900 px-4 py-6 text-sm text-zinc-300">
@@ -100,7 +118,10 @@ export default async function HomePage({
       Não foi possível carregar o feed agora. Tente novamente em instantes.
     </div>
   ) : (
-    <SkinGrid anuncios={visible} busca={temBusca} precos={precos} stacks={unstacked === "1" ? undefined : stacks} />
+    <>
+      <SkinGrid anuncios={paginaAtual} busca={temBusca} precos={precos} stacks={unstacked === "1" ? undefined : stacks} />
+      <MarketPagination pagina={pagina} totalPaginas={totalPaginas} params={sp} />
+    </>
   );
 
   return (
@@ -115,8 +136,13 @@ export default async function HomePage({
           <Suspense><TopCategoryNav /></Suspense>
           <div className="marketplace-toolbar">
             <h2>
-              {erro ? "Skins" : `${visible.length.toLocaleString("pt-BR")} ${visible.length === 1 ? "skin encontrada" : "skins encontradas"}`}
-              {q ? ` para "${q}"` : ""}
+              {erro ? "Skins" : (
+                <>
+                  <span className="marketplace-count">{visible.length.toLocaleString("pt-BR")}</span>{" "}
+                  {visible.length === 1 ? "skin encontrada" : "skins encontradas"}
+                </>
+              )}
+              {q ? <span className="marketplace-query"> para &ldquo;{q}&rdquo;</span> : ""}
             </h2>
             <Suspense>
               <StackToggle />

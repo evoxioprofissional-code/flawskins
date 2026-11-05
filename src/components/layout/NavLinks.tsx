@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { BriefcaseBusiness, Gift, LayoutGrid, Tag, UsersRound } from "lucide-react";
+import { BriefcaseBusiness, Gift, LayoutGrid, Tag, Trophy, UsersRound } from "lucide-react";
 import { WHATSAPP_COMUNIDADE } from "@/lib/whatsapp";
 
 const LINKS = [
@@ -11,6 +11,7 @@ const LINKS = [
   { href: "/novo", label: "Vender", Icon: Tag },
   { href: "/perfil#inventario", label: "Inventário", Icon: BriefcaseBusiness },
   { href: "/rifas", label: "Rifas", Icon: Gift },
+  { href: "/esports", label: "E-Sports", Icon: Trophy },
   { href: WHATSAPP_COMUNIDADE, label: "Comunidade", Icon: UsersRound },
 ];
 
