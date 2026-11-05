@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test:esports": "node --experimental-strip-types --no-warnings --test tests/esports.test.mjs"
+    "test:esports": "node --experimental-strip-types --no-warnings --test tests/esports.test.mjs",
+    "test:nexuspag": "node --experimental-strip-types --no-warnings --test tests/nexuspag-webhook.test.mjs",
+    "test": "node --experimental-strip-types --no-warnings --test \"tests/*.test.mjs\""
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
