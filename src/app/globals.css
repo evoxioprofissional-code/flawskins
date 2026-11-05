@@ -2653,8 +2653,9 @@ a.marketplace-page:hover { border-color: #344152; background: #1b212b; }
 .carteira-item-valor { flex: none; color: #e2e7ee; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .carteira-item-valor[data-tipo="entrada"] { color: #34d399; }
 .carteira-status { display: inline-block; margin-top: 2px; padding: 1px 7px; border-radius: 6px; background: #1b222d; color: #c4cddb; font-size: 11px; font-weight: 700; }
-.carteira-status[data-status="pago"] { background: #13281d; color: #6ee7a8; }
-.carteira-status[data-status="recusado"] { background: #3a2128; color: #ffc1c7; }
+.carteira-status[data-status="completed"] { background: #13281d; color: #6ee7a8; }
+.carteira-status[data-status="failed"] { background: #3a2128; color: #ffc1c7; }
+.carteira-status[data-status="processing"] { background: #14253a; color: #8cc8ff; }
 
 .carteira-vazio {
   display: grid;
@@ -2754,3 +2755,13 @@ a.marketplace-page:hover { border-color: #344152; background: #1b212b; }
 @keyframes sk-shine { to { background-position: -120% 0; } }
 @media (max-width: 900px) { .sk-hide-mobile { display: none; } }
 @media (prefers-reduced-motion: reduce) { .sk, .sk-art { animation: none; } }
+
+/* Saque: tipo da chave e revisão antes de confirmar */
+.carteira-chips-tipo { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.carteira-revisao { display: grid; overflow: hidden; border: 1px solid #262d38; border-radius: 12px; }
+.carteira-revisao > div { display: flex; justify-content: space-between; gap: 12px; padding: 11px 14px; }
+.carteira-revisao > div + div { border-top: 1px solid #1d242e; }
+.carteira-revisao dt { color: #7d889a; font-size: 13px; }
+.carteira-revisao dd { color: #f3f5f9; font-size: 14px; font-weight: 700; text-align: right; }
+.carteira-check { display: flex; align-items: flex-start; gap: 10px; color: #c4cddb; font-size: 13px; line-height: 1.45; cursor: pointer; }
+.carteira-check input { flex: none; width: 18px; height: 18px; margin-top: 1px; accent-color: #25d366; }

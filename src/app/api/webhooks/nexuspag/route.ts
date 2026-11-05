@@ -2,11 +2,13 @@ import { NextResponse, type NextRequest } from "next/server";
 
 import { DEFAULT_TOLERANCE_SECONDS, processWebhook } from "@/lib/nexuspag/webhook";
 import { getNexusPagEventStore } from "@/lib/nexuspag/store";
+import { aplicarWebhookDeSaque } from "@/lib/nexuspag/saques-server";
 
 // POST /api/webhooks/nexuspag
 // Recebe eventos da NexusPag, valida o HMAC sobre o corpo CRU, registra cada
-// evento uma única vez e responde. Nenhuma movimentação financeira acontece
-// aqui nesta etapa (ver src/lib/nexuspag/webhook.ts → HANDLERS).
+// evento uma única vez e responde. Eventos cashout.* reconciliam o saque
+// correspondente (src/lib/nexuspag/saques.ts); pagamentos e estornos ainda só
+// são registrados.
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,6 +31,12 @@ export async function POST(req: NextRequest) {
     toleranceSeconds: tolerance(),
     // Log seguro: só motivo/evento/chave — nunca segredo, header ou payload.
     log: (msg) => console.info(`[nexuspag] ${msg}`),
+    // Saques: fecha o saque correspondente (idempotente; só afeta saques criados por nós).
+    afterStore: async (e) => {
+      if (e.name === "cashout.success" || e.name === "cashout.failed") {
+        return `saque: ${await aplicarWebhookDeSaque({ name: e.name, payload: e.payload })}`;
+      }
+    },
   });
 
   return NextResponse.json(result.body, {

@@ -8,6 +8,8 @@ import { isAdminEmail } from "@/lib/admin";
 import { criarPagamentoPix } from "@/lib/mercadopago";
 import type { ActionResult } from "@/actions/anuncios";
 import type { CompraSel, PixPagamento } from "@/actions/rifas";
+import { validarPedido, type PixKeyType, type SaqueStatus } from "@/lib/nexuspag/saques";
+import { despacharSaque, reconciliarSaques, saqueConfig } from "@/lib/nexuspag/saques-server";
 
 // Carteira do usuário. O saldo vem SEMPRE da soma do extrato no banco
 // (carteira_movimentos); todas as operações de dinheiro são funções do
@@ -28,8 +30,11 @@ export type Saque = {
   user_id: string;
   valor: number;
   chave_pix: string;
-  status: "pendente" | "pago" | "recusado";
+  status: SaqueStatus;
+  pix_key_type: PixKeyType | null;
   motivo: string | null;
+  precisa_revisao: boolean;
+  provider_withdrawal_id: string | null;
   created_at: string;
   processado_em: string | null;
 };
@@ -119,15 +124,47 @@ export async function iniciarDeposito(valor: number): Promise<ActionResult<PixPa
   }
 }
 
-export async function solicitarSaque(valor: number, chavePix: string): Promise<ActionResult<null>> {
-  if (!Number.isFinite(valor) || valor < 10) return { ok: false, error: "O saque mínimo é R$ 10,00." };
-  const chave = chavePix.trim();
-  if (chave.length < 5 || chave.length > 140) return { ok: false, error: "Informe uma chave Pix válida." };
+/**
+ * Pedido de saque Pix. Valida de novo no servidor (e o banco valida limites,
+ * saldo e saque em andamento com trava por usuário) e reserva o saldo.
+ * O envio à NexusPag só acontece se NEXUSPAG_WITHDRAW_ENABLED=true; senão o
+ * saque fica na fila para a equipe.
+ */
+export async function solicitarSaque(input: {
+  valor: number;
+  tipo: string;
+  chave: string;
+  confirmado: boolean;
+}): Promise<ActionResult<{ status: SaqueStatus; enviado: boolean }>> {
+  if (!input.confirmado) return { ok: false, error: "Confirme os dados do saque." };
+  const v = validarPedido(input);
+  if (!v.ok) return { ok: false, error: v.erro };
+
   const supabase = await createClient();
-  const { error } = await supabase.rpc("carteira_solicitar_saque", { p_valor: valor, p_chave_pix: chave });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser(); // identidade validada no servidor do Supabase
+  if (!user) return { ok: false, error: "Entre para sacar." };
+
+  const { data, error } = await supabase.rpc("carteira_saque_solicitar", {
+    p_valor: v.pedido.valor,
+    p_chave_pix: v.pedido.chave,
+    p_tipo: v.pedido.tipo,
+  });
   if (error) return { ok: false, error: error.message };
+  const criado = data as { id: string; status: SaqueStatus };
+
+  let status: SaqueStatus = criado.status;
+  let enviado = false;
+  if (saqueConfig().enabled) {
+    const r = await despacharSaque(criado.id).catch(() => null);
+    if (r?.estado === "enviado") {
+      enviado = true;
+      status = r.decisao.status;
+    }
+  }
   revalidatePath("/carteira");
-  return { ok: true, data: null };
+  return { ok: true, data: { status, enviado } };
 }
 
 /** Compra cotas debitando do saldo (cotas já saem pagas). */
@@ -160,13 +197,14 @@ async function exigirAdmin() {
 
 export type SaqueAdmin = Saque & { nome: string | null };
 
+/** Saques que pedem atenção: na fila, em processamento ou marcados para revisão. */
 export async function listarSaquesPendentes(): Promise<SaqueAdmin[]> {
   const { supabase, ok } = await exigirAdmin();
   if (!ok) return [];
   const { data } = await supabase
     .from("carteira_saques")
     .select("*")
-    .eq("status", "pendente")
+    .or("status.in.(pending,processing),precisa_revisao.eq.true")
     .order("created_at", { ascending: true })
     .returns<Saque[]>();
   if (!data?.length) return [];
@@ -177,6 +215,20 @@ export async function listarSaquesPendentes(): Promise<SaqueAdmin[]> {
     .returns<{ id: string; nome: string | null }[]>();
   const nome = new Map((perfis ?? []).map((p) => [p.id, p.nome]));
   return data.map((s) => ({ ...s, valor: Number(s.valor), nome: nome.get(s.user_id) ?? null }));
+}
+
+/** Admin: reconcilia saques em processamento com o histórico da NexusPag (não reenvia nada). */
+export async function reconciliarSaquesAdmin(): Promise<ActionResult<{ verificados: number; concluidos: number; falhos: number; revisao: number }>> {
+  const { ok } = await exigirAdmin();
+  if (!ok) return { ok: false, error: "Não autorizado." };
+  try {
+    const r = await reconciliarSaques();
+    if (!r) return { ok: false, error: "Integração de saques não configurada (chave ou subconta)." };
+    revalidatePath("/admin");
+    return { ok: true, data: r };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Falha ao consultar a NexusPag." };
+  }
 }
 
 export async function processarSaque(id: string, aprovar: boolean, motivo = ""): Promise<ActionResult<null>> {

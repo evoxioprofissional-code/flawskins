@@ -188,11 +188,11 @@ export const HANDLERS: Record<SupportedEvent, (e: NormalizedEvent) => HandlerOut
   }),
   "cashout.success": (e) => ({
     action: "registrado",
-    note: `Saque ${e.resourceId ?? "?"} concluído. Baixa do saque ainda não implementada.`,
+    note: `Saque ${e.resourceId ?? "?"} concluído (reconciliado com carteira_saques).`,
   }),
   "cashout.failed": (e) => ({
     action: "registrado",
-    note: `Saque ${e.resourceId ?? "?"} falhou. Estorno ao usuário ainda não implementado.`,
+    note: `Saque ${e.resourceId ?? "?"} falhou (reconciliado com carteira_saques; saldo devolvido se for nosso).`,
   }),
   "refund.completed": (e) => ({
     action: "registrado",
@@ -232,6 +232,8 @@ export async function processWebhook(opts: {
   nowSeconds?: number;
   toleranceSeconds?: number;
   log?: (msg: string) => void;
+  /** Efeito após registrar (também em reentregas — deve ser idempotente). Erro → 500 e a NexusPag reenvia. */
+  afterStore?: (event: NormalizedEvent) => Promise<string | void>;
 }): Promise<WebhookResult> {
   const log = opts.log ?? (() => {});
 
@@ -294,11 +296,21 @@ export async function processWebhook(opts: {
     return { status: 500, body: { error: "storage_failed" } };
   }
 
+  let efeito: string | void = undefined;
+  if (opts.afterStore && e.supported) {
+    try {
+      efeito = await opts.afterStore(e);
+    } catch (err) {
+      log(`falha ao aplicar ${e.idempotencyKey}: ${err instanceof Error ? err.message : String(err)}`);
+      return { status: 500, body: { error: "apply_failed" } };
+    }
+  }
+
   if (result === "duplicate") {
-    log(`reentrega ignorada: ${e.idempotencyKey}`);
+    log(`reentrega: ${e.idempotencyKey}${efeito ? ` (${efeito})` : ""}`);
     return { status: 200, body: { ok: true, duplicate: true, event: e.name } };
   }
-  log(`${e.name} ${outcome.action}: ${e.idempotencyKey}`);
+  log(`${e.name} ${outcome.action}: ${e.idempotencyKey}${efeito ? ` (${efeito})` : ""}`);
   return { status: 200, body: { ok: true, duplicate: false, event: e.name, action: outcome.action } };
 }
 

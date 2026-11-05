@@ -8,6 +8,7 @@ import { meuExtrato, resumoCarteira, type Movimento, type Saque } from "@/action
 import { CarteiraAcoes } from "@/components/carteira/CarteiraAcoes";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { formatBRL } from "@/lib/format";
+import { PIX_KEY_LABEL } from "@/lib/nexuspag/saques";
 
 export const metadata: Metadata = { title: "Carteira — Cloud Skins" };
 export const dynamic = "force-dynamic";
@@ -22,9 +23,10 @@ const ROTULO: Record<Movimento["tipo"], string> = {
 };
 
 const SAQUE_STATUS: Record<Saque["status"], string> = {
-  pendente: "Em análise",
-  pago: "Pago",
-  recusado: "Recusado",
+  pending: "Na fila",
+  processing: "Processando",
+  completed: "Pago",
+  failed: "Não realizado",
 };
 
 const data = (iso: string) =>
@@ -52,7 +54,7 @@ export default async function CarteiraPage() {
     );
   }
 
-  const saquesPendentes = saques.filter((s) => s.status === "pendente");
+  const saquesPendentes = saques.filter((s) => s.status === "pending" || s.status === "processing");
 
   return (
     <>
@@ -100,7 +102,10 @@ export default async function CarteiraPage() {
                     <Clock aria-hidden="true" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="carteira-item-titulo">Saque para {s.chave_pix}</p>
+                    <p className="carteira-item-titulo">
+                      Saque para {s.chave_pix}
+                      {s.pix_key_type ? ` (${PIX_KEY_LABEL[s.pix_key_type]})` : ""}
+                    </p>
                     <p className="carteira-item-data">
                       {data(s.created_at)}
                       {s.motivo ? ` · ${s.motivo}` : ""}

@@ -214,5 +214,19 @@ test("nenhum efeito financeiro: o único efeito é o registro no store", async (
   const store = { insert: async (rec) => { chamadas.push(rec); return "inserted"; } };
   for (const payload of Object.values(EVENTOS)) await run(entrega(payload), store);
   assert.equal(chamadas.length, 4);
-  assert.ok(chamadas.every((c) => /não implementad/.test(c.note)));
+  // Pagamento e estorno ainda só registram; saques são reconciliados à parte (afterStore).
+  assert.ok(chamadas.filter((c) => !c.event.startsWith("cashout.")).every((c) => /não implementad/.test(c.note)));
+  assert.ok(chamadas.filter((c) => c.event.startsWith("cashout.")).every((c) => /reconciliado/.test(c.note)));
+});
+
+test("afterStore: roda em entrega e reentrega; erro nele → 500 para a NexusPag reenviar", async () => {
+  const store = createMemoryStore();
+  const vistos = [];
+  const ok = { afterStore: async (e) => { vistos.push(e.name); return "aplicado"; } };
+  const d = entrega(EVENTOS["cashout.success"]);
+  assert.equal((await run(d, store, ok)).status, 200);
+  assert.equal((await run(entrega(EVENTOS["cashout.success"], { t: NOW + 5 }), store, { ...ok, nowSeconds: NOW + 5 })).body.duplicate, true);
+  assert.deepEqual(vistos, ["cashout.success", "cashout.success"]);
+  const falha = await run(entrega(EVENTOS["cashout.failed"]), store, { afterStore: async () => { throw new Error("db"); } });
+  assert.equal(falha.status, 500);
 });

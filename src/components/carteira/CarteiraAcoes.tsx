@@ -9,6 +9,14 @@ import { iniciarDeposito, solicitarSaque } from "@/actions/carteira";
 import type { PixPagamento } from "@/actions/rifas";
 import { PixModal } from "@/components/rifas/PixModal";
 import { formatBRL } from "@/lib/format";
+import {
+  LIMITES_PADRAO,
+  PIX_KEY_LABEL,
+  PIX_KEY_TYPES,
+  validarPedido,
+  type PedidoSaque,
+  type PixKeyType,
+} from "@/lib/nexuspag/saques";
 
 const SUGESTOES = [10, 25, 50, 100];
 
@@ -28,8 +36,8 @@ export function CarteiraAcoes({ saldo }: { saldo: number }) {
           type="button"
           className="carteira-btn"
           onClick={() => setAberto("saque")}
-          disabled={saldo < 10}
-          title={saldo < 10 ? "Saque mínimo de R$ 10,00" : undefined}
+          disabled={saldo < LIMITES_PADRAO.minimo}
+          title={saldo < LIMITES_PADRAO.minimo ? "Saque mínimo de R$ 10,00" : undefined}
         >
           <ArrowUpFromLine aria-hidden="true" /> Sacar
         </button>
@@ -115,30 +123,87 @@ function Deposito({ onClose }: { onClose: () => void }) {
   );
 }
 
+const PLACEHOLDER: Record<PixKeyType, string> = {
+  cpf: "000.000.000-00",
+  cnpj: "00.000.000/0000-00",
+  email: "voce@exemplo.com",
+  phone: "(11) 91234-5678",
+  random: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+};
+
 function SaqueForm({ saldo, onClose }: { saldo: number; onClose: () => void }) {
   const router = useRouter();
-  const [valor, setValor] = useState(saldo >= 10 ? saldo.toFixed(2).replace(".", ",") : "");
+  const [valor, setValor] = useState(saldo >= LIMITES_PADRAO.minimo ? Math.min(saldo, LIMITES_PADRAO.maximo).toFixed(2).replace(".", ",") : "");
+  const [tipo, setTipo] = useState<PixKeyType>("cpf");
   const [chave, setChave] = useState("");
+  const [revisao, setRevisao] = useState<PedidoSaque | null>(null);
+  const [confirmado, setConfirmado] = useState(false);
   const [busy, setBusy] = useState(false);
 
-  async function enviar(e: React.FormEvent) {
+  function revisar(e: React.FormEvent) {
     e.preventDefault();
-    const v = parse(valor);
-    if (!(v >= 10)) return toast.error("O saque mínimo é R$ 10,00.");
-    if (v > saldo) return toast.error("Valor maior que o seu saldo.");
-    if (chave.trim().length < 5) return toast.error("Informe a chave Pix.");
+    const v = validarPedido({ valor: parse(valor), tipo, chave });
+    if (!v.ok) return toast.error(v.erro);
+    if (v.pedido.valor > saldo) return toast.error("Valor maior que o seu saldo.");
+    setConfirmado(false);
+    setRevisao(v.pedido);
+  }
+
+  async function confirmar() {
+    if (!revisao || !confirmado) return;
     setBusy(true);
-    const res = await solicitarSaque(v, chave);
+    const res = await solicitarSaque({ valor: revisao.valor, tipo: revisao.tipo, chave: revisao.chave, confirmado });
     setBusy(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success("Saque solicitado! Você recebe por Pix após a aprovação.");
+    toast.success(
+      res.data.status === "completed"
+        ? "Saque enviado por Pix!"
+        : res.data.enviado
+          ? "Saque enviado: aguardando confirmação do Pix."
+          : "Saque solicitado! Ele entra na fila e é enviado por Pix.",
+    );
     onClose();
     router.refresh();
   }
 
+  if (revisao) {
+    return (
+      <Painel titulo="Confirmar saque" onClose={onClose}>
+        <div className="grid gap-4">
+          <dl className="carteira-revisao">
+            <div>
+              <dt>Valor</dt>
+              <dd>{formatBRL(revisao.valor)}</dd>
+            </div>
+            <div>
+              <dt>Tipo da chave</dt>
+              <dd>{PIX_KEY_LABEL[revisao.tipo]}</dd>
+            </div>
+            <div>
+              <dt>Chave Pix</dt>
+              <dd className="break-all">{revisao.chave}</dd>
+            </div>
+          </dl>
+          <label className="carteira-check">
+            <input type="checkbox" checked={confirmado} onChange={(e) => setConfirmado(e.target.checked)} />
+            <span>Confirmo que a chave Pix é minha e que os dados estão corretos. Pix enviado não pode ser desfeito.</span>
+          </label>
+          <div className="carteira-acoes">
+            <button type="button" className="carteira-btn" onClick={() => setRevisao(null)} disabled={busy}>
+              Voltar
+            </button>
+            <button type="button" className="carteira-btn carteira-btn-primary" onClick={confirmar} disabled={!confirmado || busy}>
+              {busy && <Loader2 className="animate-spin" aria-hidden="true" />} Confirmar saque
+            </button>
+          </div>
+        </div>
+      </Painel>
+    );
+  }
+
   return (
     <Painel titulo="Sacar saldo" onClose={onClose}>
-      <form onSubmit={enviar} className="grid gap-4">
+      <form onSubmit={revisar} className="grid gap-4">
         <label className="carteira-field">
           <span>Valor (disponível: {formatBRL(saldo)})</span>
           <div>
@@ -146,22 +211,35 @@ function SaqueForm({ saldo, onClose }: { saldo: number; onClose: () => void }) {
             <input inputMode="decimal" value={valor} onChange={(e) => setValor(e.target.value)} aria-label="Valor do saque" />
           </div>
         </label>
+        <div className="carteira-field">
+          <span>Tipo da chave Pix</span>
+          <div className="carteira-chips carteira-chips-tipo" role="radiogroup" aria-label="Tipo da chave Pix">
+            {PIX_KEY_TYPES.map((t) => (
+              <button key={t} type="button" role="radio" aria-checked={tipo === t} data-active={tipo === t} onClick={() => setTipo(t)}>
+                {PIX_KEY_LABEL[t]}
+              </button>
+            ))}
+          </div>
+        </div>
         <label className="carteira-field">
-          <span>Chave Pix</span>
+          <span>Chave Pix ({PIX_KEY_LABEL[tipo]})</span>
           <div>
             <input
               value={chave}
               onChange={(e) => setChave(e.target.value)}
-              placeholder="CPF, e-mail, telefone ou chave aleatória"
+              placeholder={PLACEHOLDER[tipo]}
+              inputMode={tipo === "cpf" || tipo === "cnpj" || tipo === "phone" ? "numeric" : tipo === "email" ? "email" : "text"}
               autoComplete="off"
               maxLength={140}
               aria-label="Chave Pix"
             />
           </div>
         </label>
-        <p className="carteira-hint">O valor sai do seu saldo agora e é enviado por Pix após a aprovação. Se o saque for recusado, o valor volta para a carteira.</p>
-        <button type="submit" className="carteira-btn carteira-btn-primary" disabled={busy}>
-          {busy && <Loader2 className="animate-spin" aria-hidden="true" />} Solicitar saque
+        <p className="carteira-hint">
+          Mínimo {formatBRL(LIMITES_PADRAO.minimo)} e máximo {formatBRL(LIMITES_PADRAO.maximo)} por saque, um saque por vez. O valor fica reservado no seu saldo; se o saque não for concluído, ele volta para a carteira.
+        </p>
+        <button type="submit" className="carteira-btn carteira-btn-primary">
+          Revisar saque
         </button>
       </form>
     </Painel>
