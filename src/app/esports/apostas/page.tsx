@@ -118,7 +118,7 @@ export default async function ApostasP2PPage() {
           <span className="bet-orbit bet-orbit-2" />
           <span className="bet-orbit bet-orbit-3" />
           <span className="bet-mascot">
-            <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} priority />
+            <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} sizes="(max-width: 760px) 451px, 636px" priority />
           </span>
           <span className="bet-lockchip">
             <Lock />

@@ -28,7 +28,7 @@ export async function EsportsSidebar() {
       <div className="esports-side-head">
         {/* O arquivo do mascote tem bastante margem; o wrapper recorta a nuvem. */}
         <span className="esports-side-mascot" aria-hidden="true">
-          <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} />
+          <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} sizes="116px" />
         </span>
         <div className="min-w-0">
           <strong>Cloud E-Sports</strong>

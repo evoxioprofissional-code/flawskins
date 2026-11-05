@@ -15,7 +15,7 @@ export function Logo({ className, mascot = false }: { className?: string; mascot
       {mascot && (
         // O arquivo do mascote tem bastante margem; o wrapper recorta a nuvem.
         <span className="site-brand-mascot" aria-hidden="true">
-          <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} priority />
+          <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} sizes="106px" priority />
         </span>
       )}
       <Image
@@ -23,6 +23,7 @@ export function Logo({ className, mascot = false }: { className?: string; mascot
         alt="Cloud Skins"
         width={417}
         height={91}
+        sizes="110px"
         priority
         className="h-7 w-auto sm:h-8"
       />

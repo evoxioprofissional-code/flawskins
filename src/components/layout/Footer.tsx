@@ -50,7 +50,7 @@ export function Footer() {
           >
             {/* O arquivo do mascote tem bastante margem; o wrapper recorta a nuvem. */}
             <span className="site-brand-mascot" aria-hidden="true">
-              <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} />
+              <Image src="/esports/mascote.webp" alt="" width={1536} height={1024} sizes="106px" />
             </span>
             <span className="site-footer-community-name">Comunidade</span>
           </a>
