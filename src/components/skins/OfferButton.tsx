@@ -33,16 +33,16 @@ export function OfferButton({
       <button
         type="button"
         onClick={() => setAberto(true)}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue-500/50 bg-blue-500/10 px-4 py-3.5 text-base font-semibold text-blue-200 transition-colors hover:bg-blue-500/20"
+        className="skin-cta-offer"
       >
-        <HandCoins className="size-5" />
+        <HandCoins className="size-[18px]" />
         Dar um lance
       </button>
     );
   }
 
   return (
-    <div className="rounded-xl border border-blue-500/40 bg-zinc-900 p-3">
+    <div className="skin-offer-box">
       <label className="text-sm font-medium text-zinc-200">
         Seu lance (anunciada por {formatBRL(preco)})
       </label>
@@ -61,14 +61,14 @@ export function OfferButton({
             onChange={(e) => setValor(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && enviar()}
             placeholder="1000"
-            className="h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-500/60 focus:outline-none"
+            className="h-11 w-full rounded-[10px] border border-[#222a35] bg-[#10151d] pr-3 pl-9 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-[#2687e5] focus:outline-none"
           />
         </div>
         <button
           type="button"
           onClick={enviar}
           disabled={!valido}
-          className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-lg bg-whatsapp px-4 text-sm font-semibold text-white transition-colors hover:bg-whatsapp-dark disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-[10px] bg-whatsapp px-4 text-sm font-semibold text-[#06210f] transition-colors hover:bg-whatsapp-dark disabled:cursor-not-allowed disabled:opacity-50"
         >
           <HandCoins className="size-4" />
           Enviar lance

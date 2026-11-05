@@ -28,7 +28,7 @@ export async function Header() {
   return (
     <header className="site-header sticky top-0 z-40">
       <div className="site-header-row">
-        <Logo className="site-header-brand" />
+        <Logo className="site-header-brand" mascot />
         <NavLinks />
 
         <HeaderSearch />

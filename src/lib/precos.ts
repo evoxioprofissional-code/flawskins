@@ -1,3 +1,5 @@
+import { after } from "next/server";
+
 import { serviceClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -48,7 +50,8 @@ async function buscarNaApi(nome: string): Promise<PrecoRef> {
     const url =
       `https://www.steamwebapi.com/steam/api/item?key=${KEY}` +
       `&market_hash_name=${encodeURIComponent(nome)}&currency=BRL`;
-    const r = await fetch(url, { cache: "no-store" });
+    // Timeout: a API externa nunca pode travar a renderização da página.
+    const r = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(4000) });
     if (!r.ok) return null;
     const j = (await r.json()) as SwaItem;
     if (j.error) return null;
@@ -143,9 +146,13 @@ export async function getPrecosGrade(
   const faltando = [...new Set(nomes)]
     .filter((n) => n && !mapa.has(n))
     .slice(0, limiteBusca);
-  for (const nome of faltando) {
-    const ref = await getPrecoRef(nome);
-    if (ref?.buff != null) mapa.set(nome, ref.buff);
+  // A busca na API externa (lenta e limitada a 2 req/min) roda DEPOIS da
+  // resposta ser enviada: a grade nunca espera por ela. Os preços aparecem
+  // nos próximos carregamentos, já vindos do cache.
+  if (faltando.length) {
+    after(async () => {
+      for (const nome of faltando) await getPrecoRef(nome).catch(() => null);
+    });
   }
   return mapa;
 }

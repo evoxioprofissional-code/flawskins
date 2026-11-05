@@ -7,17 +7,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FloatSlider } from "@/components/home/FloatSlider";
 import { ABBR_TO_EXT, WEAR_ABBRS } from "@/lib/exterior";
 import { formatBRL } from "@/lib/format";
+import { MARKET_RARITIES } from "@/lib/rarities";
 import { CATEGORIAS } from "@/types/database";
-
-const MARKET_RARITIES = [
-  ["#b0c3d9", "Consumer Grade"],
-  ["#5e98d9", "Industrial Grade"],
-  ["#4b69ff", "Mil-Spec"],
-  ["#8847ff", "Restricted"],
-  ["#d32ce6", "Classified"],
-  ["#eb4b4b", "Covert / Especial"],
-  ["#e4ae39", "Contraband"],
-] as const;
 
 const FILTERS = ["pmin", "pmax", "fmin", "fmax", "ext", "raridade", "categoria", "pintura", "extra"];
 
@@ -40,6 +31,7 @@ export function FilterSidebar({ finishes, histogram, highestPrice }: { finishes:
 
   function update(values: Record<string, string>) {
     const next = new URLSearchParams(params);
+    next.delete("pagina"); // filtro novo => volta para a página 1
     for (const [key, value] of Object.entries(values)) {
       if (value) next.set(key, value);
       else next.delete(key);

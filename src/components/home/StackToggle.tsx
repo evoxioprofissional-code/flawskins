@@ -10,6 +10,7 @@ export function StackToggle() {
     <label className="marketplace-stack">
       <input type="checkbox" checked={params.get("unstacked") === "1"} onChange={(event) => {
         const next = new URLSearchParams(params);
+        next.delete("pagina");
         if (event.target.checked) next.set("unstacked", "1");
         else next.delete("unstacked");
         router.push(next.size ? `/?${next}` : "/", { scroll: false });

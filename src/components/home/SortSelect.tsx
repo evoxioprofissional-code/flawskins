@@ -17,6 +17,7 @@ export function SortSelect() {
 
   function onChange(e: React.ChangeEvent<HTMLSelectElement>) {
     const p = new URLSearchParams(params.toString());
+    p.delete("pagina"); // nova ordem => volta para a página 1
     if (e.target.value === "recentes") p.delete("ordem");
     else p.set("ordem", e.target.value);
     const qs = p.toString();
