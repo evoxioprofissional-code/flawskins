@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Check, Copy, Loader2 } from "lucide-react";
+import { Check, Copy, Loader2, Wallet } from "lucide-react";
 
 import { marcarRepassePago, type Repasse } from "@/actions/rifas";
 import { formatBRL } from "@/lib/format";
@@ -40,13 +40,17 @@ function RepasseRow({ repasse: r }: { repasse: Repasse }) {
     }
   }
 
-  async function marcarPago() {
-    if (!confirm(`Confirmar que ${formatBRL(r.liquido)} foi enviado para ${r.chave_pix}?`)) return;
+  async function concluir(forma: "carteira" | "pix") {
+    const msg =
+      forma === "carteira"
+        ? `Creditar ${formatBRL(r.liquido)} na carteira de ${r.criador ?? "criador"}?`
+        : `Confirmar que ${formatBRL(r.liquido)} foi enviado por Pix para ${r.chave_pix}?`;
+    if (!confirm(msg)) return;
     setBusy(true);
-    const res = await marcarRepassePago(r.rifa_id);
+    const res = await marcarRepassePago(r.rifa_id, forma);
     setBusy(false);
     if (!res.ok) return toast.error(res.error);
-    toast.success("Repasse registrado.");
+    toast.success(forma === "carteira" ? "Valor creditado na carteira." : "Repasse registrado.");
     router.refresh();
   }
 
@@ -95,15 +99,25 @@ function RepasseRow({ repasse: r }: { repasse: Repasse }) {
           <span className="truncate">{r.chave_pix}</span>
         </button>
         {r.status === "pendente" && (
-          <button
-            type="button"
-            onClick={marcarPago}
-            disabled={busy}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-60"
-          >
-            {busy ? <Loader2 className="size-4 animate-spin" /> : <Check className="size-4" />}
-            Marcar como pago
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => concluir("carteira")}
+              disabled={busy || r.liquido <= 0}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-emerald-600 px-3 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-60"
+            >
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Wallet className="size-4" />}
+              Creditar na carteira
+            </button>
+            <button
+              type="button"
+              onClick={() => concluir("pix")}
+              disabled={busy}
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-700 px-3 text-sm font-semibold text-zinc-200 hover:bg-zinc-800 disabled:opacity-60"
+            >
+              <Check className="size-4" /> Paguei por Pix
+            </button>
+          </>
         )}
       </div>
     </li>

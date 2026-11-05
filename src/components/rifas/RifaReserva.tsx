@@ -2,10 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Dice5, Ticket } from "lucide-react";
+import { Dice5, QrCode, Ticket, Wallet } from "lucide-react";
 
-import { comprarCotas } from "@/actions/rifas";
+import { comprarCotas, type CompraSel } from "@/actions/rifas";
+import { comprarCotasComSaldo } from "@/actions/carteira";
 import { PixModal } from "@/components/rifas/PixModal";
 import { formatBRL } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -23,6 +25,7 @@ export function RifaReserva({
   logged,
   taken,
   meus,
+  saldo = null,
 }: {
   rifaId: string;
   total: number;
@@ -32,7 +35,11 @@ export function RifaReserva({
   logged: boolean;
   taken: { numero: number; user_id: string }[];
   meus: RifaNumero[];
+  /** Saldo da carteira (null = sem carteira / deslogado). */
+  saldo?: number | null;
 }) {
+  const router = useRouter();
+  const [forma, setForma] = useState<"pix" | "saldo">("pix");
   const [qtd, setQtd] = useState(1);
   const [sel, setSel] = useState<Set<number>>(new Set());
   const [busy, setBusy] = useState(false);
@@ -51,22 +58,42 @@ export function RifaReserva({
     });
   }
 
-  async function aleatorio() {
+  // Compra pelo meio escolhido: Pix (gera QR) ou saldo (debita e já confirma).
+  async function comprar(compra: CompraSel, valor: number): Promise<boolean> {
+    if (forma === "saldo") {
+      if (saldo === null || saldo < valor) {
+        toast.error("Saldo insuficiente. Adicione saldo na Carteira ou pague por Pix.");
+        return false;
+      }
+      setBusy(true);
+      const res = await comprarCotasComSaldo(rifaId, compra);
+      setBusy(false);
+      if (!res.ok) {
+        toast.error(res.error);
+        return false;
+      }
+      toast.success(`Cotas garantidas: ${res.data.numeros.sort((a, b) => a - b).join(", ")}`);
+      router.refresh();
+      return true;
+    }
     setBusy(true);
-    const res = await comprarCotas(rifaId, { tipo: "aleatorio", qtd });
+    const res = await comprarCotas(rifaId, compra);
     setBusy(false);
-    if (!res.ok) return toast.error(res.error);
+    if (!res.ok) {
+      toast.error(res.error);
+      return false;
+    }
     setPix(res.data);
+    return true;
+  }
+
+  async function aleatorio() {
+    await comprar({ tipo: "aleatorio", qtd }, qtd * preco);
   }
 
   async function reservarSelecionados() {
     if (sel.size === 0) return;
-    setBusy(true);
-    const res = await comprarCotas(rifaId, { tipo: "numeros", numeros: [...sel] });
-    setBusy(false);
-    if (!res.ok) return toast.error(res.error);
-    setSel(new Set());
-    setPix(res.data);
+    if (await comprar({ tipo: "numeros", numeros: [...sel] }, sel.size * preco)) setSel(new Set());
   }
 
   if (!aberta) {
@@ -115,6 +142,31 @@ export function RifaReserva({
               </span>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Forma de pagamento (só com carteira) */}
+      {saldo !== null && (
+        <div className="cloud-panel flex flex-wrap items-center justify-between gap-3 p-3">
+          <div className="esports-chips" role="group" aria-label="Forma de pagamento">
+            <button type="button" className="esports-chip" data-active={forma === "pix"} onClick={() => setForma("pix")}>
+              <QrCode className="size-4" aria-hidden="true" /> Pix
+            </button>
+            <button type="button" className="esports-chip" data-active={forma === "saldo"} onClick={() => setForma("saldo")}>
+              <Wallet className="size-4" aria-hidden="true" /> Saldo
+            </button>
+          </div>
+          <span className="text-xs text-zinc-400">
+            Seu saldo: <strong className="text-zinc-100">{formatBRL(saldo)}</strong>
+            {saldo < preco && (
+              <>
+                {" · "}
+                <Link href="/carteira" className="font-semibold text-[#43a8ff] hover:underline">
+                  adicionar
+                </Link>
+              </>
+            )}
+          </span>
         </div>
       )}
 
@@ -198,9 +250,13 @@ export function RifaReserva({
       )}
 
       <p className="rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs text-zinc-500">
-        💳 Pagamento por <b>Pix</b> (Mercado Pago). As cotas são confirmadas
-        automaticamente assim que o pagamento cair. Se não pagar, elas voltam a
-        ficar livres.
+        {forma === "saldo" ? (
+          <>💰 Pagamento com <b>saldo da carteira</b>: o valor é debitado na hora e as cotas já ficam confirmadas.</>
+        ) : (
+          <>💳 Pagamento por <b>Pix</b> (Mercado Pago). As cotas são confirmadas
+          automaticamente assim que o pagamento cair. Se não pagar, elas voltam a
+          ficar livres.</>
+        )}
       </p>
 
       {pix && <PixModal pix={pix} onClose={() => setPix(null)} />}

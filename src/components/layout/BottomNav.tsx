@@ -16,6 +16,7 @@ import {
   Trophy,
   User,
   UsersRound,
+  Wallet,
   X,
 } from "lucide-react";
 
@@ -46,6 +47,7 @@ const MENU: { titulo: string; itens: Item[] }[] = [
   {
     titulo: "Sua conta",
     itens: [
+      { href: "/carteira", label: "Carteira", Icon: Wallet },
       { href: "/perfil", label: "Meu perfil", Icon: User },
       { href: "/rifas/minhas", label: "Minhas rifas", Icon: Ticket },
       { href: "/alertas", label: "Alertas", Icon: Bell },

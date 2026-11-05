@@ -23,6 +23,8 @@ import { Logo } from "@/components/layout/Logo";
 import { AdminSignOut } from "@/components/admin/AdminSignOut";
 import { AdminRifaRow } from "@/components/rifas/AdminRifaRow";
 import { AdminRepasses } from "@/components/rifas/AdminRepasses";
+import { AdminSaques } from "@/components/carteira/AdminSaques";
+import { listarSaquesPendentes } from "@/actions/carteira";
 
 export const metadata: Metadata = { title: "Painel — Cloud Skins" };
 export const dynamic = "force-dynamic";
@@ -31,11 +33,12 @@ export default async function AdminPage() {
   const user = await getUser();
   if (!isAdminEmail(user?.email)) redirect("/admin/login");
 
-  const [metrics, users, rifas, repasses] = await Promise.all([
+  const [metrics, users, rifas, repasses, saques] = await Promise.all([
     getAdminMetrics(),
     getAdminUsers(),
     listarRifas(),
     listarRepasses(),
+    listarSaquesPendentes(),
   ]);
   const pendentes = repasses.filter((r) => r.status === "pendente");
   const totalPendente = pendentes.reduce((s, r) => s + r.liquido, 0);
@@ -198,6 +201,19 @@ export default async function AdminPage() {
           </span>
         </div>
         <AdminRepasses repasses={repasses} />
+      </section>
+
+      {/* Saques da carteira */}
+      <section className="mt-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="flex items-center gap-2 text-sm font-semibold text-zinc-200">
+            <Ticket className="size-4 text-emerald-400" /> Saques pendentes
+          </h2>
+          <span className="text-xs text-zinc-400">
+            {saques.length} pedido(s) · {formatBRL(saques.reduce((s, x) => s + x.valor, 0))}
+          </span>
+        </div>
+        <AdminSaques saques={saques} />
       </section>
     </div>
   );

@@ -2546,3 +2546,187 @@ a.marketplace-page:hover { border-color: #344152; background: #1b212b; }
   .marketplace-sort { width: 150px; }
   .marketplace-view { display: none; }
 }
+
+/* ============================================================
+   Carteira — saldo no header e página /carteira
+   ============================================================ */
+.site-header-wallet {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 13px;
+  border: 1px solid #1f3a2b;
+  border-radius: 11px;
+  background: #121b17;
+  color: #e9fbef;
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.site-header-wallet:hover { border-color: #2f6d4a; background: #14211b; }
+.site-header-wallet svg { width: 17px; height: 17px; color: #34d399; }
+@media (max-width: 767px) {
+  .site-header-wallet { height: 36px; padding: 0 10px; gap: 6px; font-size: 13px; }
+  .site-header-wallet svg { width: 15px; height: 15px; }
+}
+@media (max-width: 380px) {
+  .site-header-wallet span { display: none; }
+}
+
+.carteira { display: grid; gap: 18px; padding-block: 22px 48px; max-width: 980px; }
+.carteira-label { color: #7d889a; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+.carteira-sub { margin-top: 6px; color: #95a2b6; font-size: 13px; line-height: 1.5; }
+.carteira-sub a { color: #43a8ff; font-weight: 600; }
+.carteira-sub a:hover { text-decoration: underline; }
+
+.carteira-saldo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid #1f3a2b;
+  border-radius: 18px;
+  background:
+    radial-gradient(70% 120% at 0% 0%, rgb(52 211 153 / 0.1), transparent 60%),
+    #10151c;
+}
+.carteira-valor {
+  margin-top: 6px;
+  color: #f3f5f9;
+  font-size: clamp(34px, 4vw, 46px);
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.carteira-acoes { display: flex; flex-wrap: wrap; gap: 10px; }
+.carteira-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 18px;
+  border: 1px solid #282f3a;
+  border-radius: 12px;
+  background: #1b202a;
+  color: #e2e7ee;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background-color 0.15s;
+}
+.carteira-btn:hover:not(:disabled) { background: #232b37; }
+.carteira-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.carteira-btn svg { width: 17px; height: 17px; }
+.carteira-btn-primary { border-color: #22b35f; background: #25d366; color: #06210f; }
+.carteira-btn-primary:hover:not(:disabled) { background: #22c35e; }
+
+.carteira-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.carteira-card { padding: 18px 20px; border: 1px solid #262d38; border-radius: 16px; background: #10151c; }
+.carteira-card-valor { margin-top: 6px; color: #f3f5f9; font-size: 24px; font-weight: 750; font-variant-numeric: tabular-nums; }
+
+.carteira-section h2 { margin-bottom: 10px; color: #f3f5f9; font-size: 16px; font-weight: 700; }
+.carteira-lista { overflow: hidden; border: 1px solid #262d38; border-radius: 16px; background: #10151c; }
+.carteira-lista li { display: flex; align-items: center; gap: 12px; padding: 13px 16px; }
+.carteira-lista li + li { border-top: 1px solid #1d242e; }
+.carteira-ico {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #1b222d;
+  color: #95a2b6;
+}
+.carteira-ico svg { width: 17px; height: 17px; }
+.carteira-ico[data-tipo="entrada"] { background: #13281d; color: #34d399; }
+.carteira-item-titulo { overflow: hidden; color: #e2e7ee; font-size: 14px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.carteira-item-data { overflow: hidden; color: #7d889a; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.carteira-item-valor { flex: none; color: #e2e7ee; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.carteira-item-valor[data-tipo="entrada"] { color: #34d399; }
+.carteira-status { display: inline-block; margin-top: 2px; padding: 1px 7px; border-radius: 6px; background: #1b222d; color: #c4cddb; font-size: 11px; font-weight: 700; }
+.carteira-status[data-status="pago"] { background: #13281d; color: #6ee7a8; }
+.carteira-status[data-status="recusado"] { background: #3a2128; color: #ffc1c7; }
+
+.carteira-vazio {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 34px 20px;
+  border: 1px dashed #262d38;
+  border-radius: 16px;
+  color: #95a2b6;
+  font-size: 14px;
+  text-align: center;
+}
+.carteira-vazio svg { width: 26px; height: 26px; color: #4a5363; }
+
+/* Modais de depósito/saque */
+.carteira-modal { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 16px; background: rgb(5 8 12 / 0.7); }
+.carteira-modal-box { width: 100%; max-width: 420px; padding: 20px; border: 1px solid #262d38; border-radius: 18px; background: #10151c; }
+.carteira-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.carteira-modal-head h2 { color: #f3f5f9; font-size: 17px; font-weight: 700; }
+.carteira-modal-head button { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; color: #95a2b6; }
+.carteira-modal-head button:hover { background: #1b222d; color: #e2e7ee; }
+.carteira-modal-head svg { width: 18px; height: 18px; }
+.carteira-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.carteira-chips button {
+  height: 38px;
+  border: 1px solid #262d38;
+  border-radius: 10px;
+  background: #151a22;
+  color: #c4cddb;
+  font-size: 13px;
+  font-weight: 700;
+}
+.carteira-chips button[data-active="true"] { border-color: #17477b; background: #14253a; color: #43a8ff; }
+.carteira-field { display: grid; gap: 6px; }
+.carteira-field > span { color: #c4cddb; font-size: 13px; font-weight: 600; }
+.carteira-field > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 14px;
+  border: 1px solid #262d38;
+  border-radius: 12px;
+  background: #0f141b;
+}
+.carteira-field > div:focus-within { border-color: #2687e5; }
+.carteira-field em { color: #7d889a; font-size: 15px; font-style: normal; font-weight: 600; }
+.carteira-field input { flex: 1; min-width: 0; height: 100%; background: transparent; color: #f3f5f9; font-size: 16px; font-weight: 600; outline: none; }
+.carteira-hint { color: #7d889a; font-size: 12px; line-height: 1.5; }
+
+@media (max-width: 640px) {
+  .carteira-cards { grid-template-columns: minmax(0, 1fr); }
+  .carteira-saldo { padding: 20px; }
+  .carteira-acoes { width: 100%; }
+  .carteira-acoes .carteira-btn { flex: 1; }
+}
+
+/* Pagar cotas com saldo (rifa) */
+.rifa-pagar-saldo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 46px;
+  border: 1px solid #1f3a2b;
+  border-radius: 12px;
+  background: #121b17;
+  color: #e9fbef;
+  font-size: 14px;
+  font-weight: 700;
+}
+.rifa-pagar-saldo:hover:not(:disabled) { border-color: #2f6d4a; background: #14211b; }
+.rifa-pagar-saldo:disabled { opacity: 0.5; cursor: not-allowed; }
+.rifa-pagar-saldo svg { width: 17px; height: 17px; color: #34d399; }

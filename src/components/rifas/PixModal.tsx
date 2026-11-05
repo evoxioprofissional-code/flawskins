@@ -9,7 +9,15 @@ import { cancelarMeuPagamento, statusPagamento } from "@/actions/rifas";
 import { formatBRL } from "@/lib/format";
 import type { PixPagamento } from "@/actions/rifas";
 
-export function PixModal({ pix, onClose }: { pix: PixPagamento; onClose: () => void }) {
+export function PixModal({
+  pix,
+  onClose,
+  mensagemSucesso,
+}: {
+  pix: PixPagamento;
+  onClose: () => void;
+  mensagemSucesso?: string;
+}) {
   const router = useRouter();
   const [status, setStatus] = useState<"pendente" | "pago" | "cancelado">("pendente");
   const [copiado, setCopiado] = useState(false);
@@ -21,14 +29,14 @@ export function PixModal({ pix, onClose }: { pix: PixPagamento; onClose: () => v
       const s = await statusPagamento(pix.pagamentoId);
       if (s === "pago") {
         setStatus("pago");
-        toast.success("Pagamento confirmado! Cotas garantidas. 🎉");
+        toast.success(mensagemSucesso ? "Pagamento confirmado!" : "Pagamento confirmado! Cotas garantidas. 🎉");
         router.refresh();
       } else if (s === "cancelado") {
         setStatus("cancelado");
       }
     }, 3500);
     return () => clearInterval(t);
-  }, [status, pix.pagamentoId, router]);
+  }, [status, pix.pagamentoId, router, mensagemSucesso]);
 
   async function copiar() {
     await navigator.clipboard.writeText(pix.copiaCola);
@@ -67,7 +75,7 @@ export function PixModal({ pix, onClose }: { pix: PixPagamento; onClose: () => v
             <p className="text-sm text-zinc-400">
               {pix.numeros.length > 0
                 ? `Suas cotas (${pix.numeros.sort((a, b) => a - b).join(", ")}) estão garantidas.`
-                : "Tudo certo! Você já pode criar sua rifa."}
+                : (mensagemSucesso ?? "Tudo certo! Pagamento recebido.")}
             </p>
             <button
               type="button"

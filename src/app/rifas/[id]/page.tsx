@@ -9,6 +9,7 @@ import { buscarRifa, listarParticipantes, numerosDaRifa } from "@/actions/rifas"
 import { buscarPerfil } from "@/actions/perfil";
 import { formatBRL } from "@/lib/format";
 import { RIFA_STATUS_LABEL } from "@/types/rifa";
+import { resumoCarteira } from "@/actions/carteira";
 import { RifaReserva } from "@/components/rifas/RifaReserva";
 import { RifaAdmin } from "@/components/rifas/RifaAdmin";
 import { Participantes } from "@/components/rifas/Participantes";
@@ -32,9 +33,10 @@ export default async function RifaPage({ params }: Params) {
   const admin = isAdminEmail(user?.email);
   const ehDono = !!user && user.id === rifa.created_by;
   const podeGerenciar = admin || ehDono;
-  const [numeros, participantes] = await Promise.all([
+  const [numeros, participantes, carteira] = await Promise.all([
     numerosDaRifa(rifa.id),
     listarParticipantes(rifa.id),
+    user ? resumoCarteira() : Promise.resolve(null),
   ]);
   const meus = user ? numeros.filter((n) => n.user_id === user.id) : [];
   const pagos = numeros.filter((n) => n.status === "pago").length;
@@ -132,6 +134,7 @@ export default async function RifaPage({ params }: Params) {
           logged={!!user}
           taken={numeros.map((n) => ({ numero: n.numero, user_id: n.user_id }))}
           meus={meus}
+          saldo={carteira?.saldo ?? null}
         />
       </div>
 

@@ -500,17 +500,19 @@ export async function listarRepasses(): Promise<Repasse[]> {
   });
 }
 
-// Admin: marca o repasse de uma rifa como feito.
-export async function marcarRepassePago(rifaId: string): Promise<ActionResult<null>> {
+// Admin: conclui o repasse de uma rifa — creditando o líquido na carteira do
+// criador ("carteira") ou registrando que foi pago por Pix fora do site ("pix").
+export async function marcarRepassePago(
+  rifaId: string,
+  forma: "pix" | "carteira" = "pix"
+): Promise<ActionResult<null>> {
   const { supabase, ok } = await exigirAdmin();
   if (!ok) return { ok: false, error: "Apenas o admin pode registrar repasses." };
-  const { error } = await supabase
-    .from("rifa_repasses")
-    .update({ status: "pago", pago_em: new Date().toISOString() })
-    .eq("rifa_id", rifaId);
+  const { error } = await supabase.rpc("rifa_liberar_repasse", { p_rifa: rifaId, p_forma: forma });
   if (error) return { ok: false, error: error.message };
   revalidatePath("/admin");
   revalidatePath("/rifas/minhas");
+  revalidatePath("/carteira");
   return { ok: true, data: null };
 }
 
